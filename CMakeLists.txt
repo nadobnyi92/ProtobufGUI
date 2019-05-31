@@ -9,9 +9,11 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
 set(SRC     src/main.cpp
-            src/MainWindow.cpp)
+            src/MainWindow.cpp
+            src/WindowController.cpp)
 
-set(HEADERS src/MainWindow.h)
+set(HEADERS src/MainWindow.h
+            src/WindowController.h)
 
 set(QML rsc/qml.qrc)
 

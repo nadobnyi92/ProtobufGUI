@@ -3,9 +3,11 @@ import QtQuick.Window 2.12
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.5
 import QtQuick.Controls.Material 2.0
+import QtQuick.Dialogs 1.3
+import com.protobufgui 1.0
 
 Window {
-    property int toolHeight: 20
+    property int toolHeight: 30
 
     id: window
     visible: true
@@ -20,17 +22,23 @@ Window {
 
         Label {
             id: lbPackage
+            height: parent.height
+            verticalAlignment: Text.AlignVCenter
             text: "Пакет: "
-            anchors.left: parent.left
+            anchors.left: parent.left         
         }
         ComboBox {
             id: cbPackage
             height: toolHeight
             anchors.left: lbPackage.right
             width: (parent.width - (lbClass.width + lbPackage.width + tbOpen.width) ) / 2
+            model: controller.packages
+            onCurrentTextChanged: controller.curPackage = cbPackage.currentText
         }
         Label {
             id: lbClass
+            height: parent.height
+            verticalAlignment: Text.AlignVCenter
             text: "Класс: "
             anchors.left: cbPackage.right
         }
@@ -39,6 +47,7 @@ Window {
             height: toolHeight
             anchors.left: lbClass.right
             width: (parent.width - (lbClass.width + lbPackage.width + tbOpen.width) ) / 2
+            model: controller.classes
         }
         ToolButton {
             id: tbOpen
@@ -46,6 +55,9 @@ Window {
             height: toolHeight
             width: toolHeight
             anchors.right: parent.right
+            onClicked: {
+                protoFolderDialog.open()
+            }
         }
     }
 
@@ -68,67 +80,40 @@ Window {
             id: pbDataLoad
             text: "Загрузить"
             height: toolHeight
+            width: parent.width / 3
             anchors.right: pbDataSave.left
         }
         Button {
             id: pbDataSave
             text: "Сохранить"
             height: toolHeight
+            width: parent.width / 3
             anchors.right: pbDataReset.left
         }
         Button {
             id: pbDataReset
             text: "Отменить"
             height: toolHeight
+            width: parent.width / 3
             anchors.right: parent.right
         }
     }
 
-        /*
-        RowLayout {
-            id: topRow
-            anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.left: parent.left
-            height: toolHeight
-
-            Label {
-                text: "Пакет: "
-            }
-            ComboBox {
-                id: cbPacket
-                height: 20
-            }
-            Label {
-                text: "Класс: "
-            }
-            ComboBox {
-                id: cbClass
-                height: 20
-            }
-
-            ToolButton {
-                id: tbLoad
-                height: 20
-            }
-        }
-
-        ListView {
-            id: lvProtoTree
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: topRow.bottom
-            anchors.bottom: bottomRow.top
-            height: parent.height - buttonHeight * 2
-        }
-
-        RowLayout {
-            id: bottomRow
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: buttonHeight
-        }
+    WindowController {
+        id:controller
     }
-    */
+
+    FileDialog {
+        id: protoFolderDialog
+        title: "Select folder with proto files"
+        selectFolder: true
+        folder: shortcuts.home
+        onAccepted: {
+            controller.loadProtoClasses(protoFolderDialog.fileUrls)
+        }
+        onRejected: {
+            console.log("Canceled")
+        }
+        Component.onCompleted: visible = false
+    }
 }
