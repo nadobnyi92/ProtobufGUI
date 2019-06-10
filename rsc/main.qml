@@ -109,7 +109,7 @@ Window {
         selectFolder: true
         folder: shortcuts.home
         onAccepted: {
-            controller.loadProtoClasses(protoFolderDialog.fileUrls)
+            controller.loadProtoClasses(protoFolderDialog.fileUrl)
         }
         onRejected: {
             console.log("Canceled")

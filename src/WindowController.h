@@ -48,7 +48,7 @@ public:
     void setCurClass(const QString& className);
 
 public slots:
-    void loadProtoClasses(const QString& path);
+    void loadProtoClasses(const QUrl& path);
 
 signals:
     void curPackageChange();
@@ -65,7 +65,7 @@ private:
     QString mCurPackage;
     QString mCurClass;
 
-    void load(const QString &path);
+    void load(const QUrl &path);
 };
 
 #endif // WINDOWCOPNTROLLER_H
