@@ -13,6 +13,7 @@ void WindowController::setCurPackage(const QString& packageName)
 {
     if(mCurPackage == packageName)
         return;
+    mCurPackage = packageName;
     mClasses.clear();
     for(auto const& data: mProtoPackages)
     {
