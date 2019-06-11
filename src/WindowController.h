@@ -2,19 +2,32 @@
 #define WINDOWCOPNTROLLER_H
 
 #include <QObject>
+#include <google/protobuf/dynamic_message.h>
+#include <google/protobuf/compiler/importer.h>
+
+namespace protoc = google::protobuf::compiler;
+namespace proto = google::protobuf;
 
 class WindowController : public QObject
 {
+    class ErrorLog : public protoc::MultiFileErrorCollector
+    {
+    public:
+        void AddError(const std::string & filename, int line,
+                      int column, const std::string & message);
+    };
+
     struct ProtobufData
     {
         ProtobufData() = default;
-        ProtobufData(const QString& pName, const QString& cName)
-            : packageName(pName), className(cName) {}
-        ProtobufData(const char * pName, const char * cName)
-            : packageName(pName), className(cName) {}
+        ProtobufData(const QString& pName, const QString& cName, proto::Descriptor const * desc)
+            : packageName(pName), className(cName), fDesc(desc) {}
+        ProtobufData(const char * pName, const char * cName, proto::Descriptor const * desc)
+            : packageName(pName), className(cName), fDesc(desc) {}
 
         QString packageName;
         QString className;
+        proto::Descriptor const * fDesc;
 
         bool operator = (const ProtobufData& d) const
         {
@@ -36,7 +49,7 @@ class WindowController : public QObject
 
 public:
     explicit WindowController(QObject *parent = nullptr)
-        : QObject(parent) { }
+        : QObject(parent), mImporter(&mProtoTree, &mError) { }
 
     const QStringList& getPackages() const;
     const QStringList& getClasses() const;
@@ -48,7 +61,7 @@ public:
     void setCurClass(const QString& className);
 
 public slots:
-    void loadProtoClasses(const QUrl& path);
+    void loadProtoClasses(const QUrl& p);
 
 signals:
     void curPackageChange();
@@ -65,7 +78,13 @@ private:
     QString mCurPackage;
     QString mCurClass;
 
-    void load(const QUrl &path);
+    protoc::DiskSourceTree mProtoTree;
+    protoc::Importer mImporter;
+    proto::DynamicMessageFactory mFactory;
+    ErrorLog mError;
+
+    void load(const QString &p);
+    void initTree();
 };
 
 #endif // WINDOWCOPNTROLLER_H
