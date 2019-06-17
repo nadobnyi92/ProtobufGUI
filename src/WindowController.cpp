@@ -20,10 +20,16 @@ void WindowController::ErrorLog::AddError(const std::string & filename, int line
     std::cout << "[" << filename << ":" << line << "]" << message << std::endl;
 }
 
+WindowController::WindowController(QObject *parent)
+    : QObject(parent)
+    , mProtoTreeModel(new ProtobufModel())
+    , mImporter(&mProtoTree, &mError) {}
+
 const QStringList& WindowController::getPackages() const { return mPackages; }
 const QStringList& WindowController::getClasses() const { return mClasses; }
 const QString& WindowController::getCurPackage() const { return mCurPackage; }
 const QString& WindowController::getCurClass() const { return mCurClass; }
+QAbstractItemModel * WindowController::getProtoTreeModel() const { return mProtoTreeModel; }
 
 void WindowController::setCurPackage(const QString& packageName)
 {
@@ -44,8 +50,14 @@ void WindowController::setCurClass(const QString& className)
     if(mCurClass == className)
         return;
     mCurClass = className;
-    initTree();
-    //emit curClassChange();
+
+    auto it = std::find_if(mProtoPackages.begin(), mProtoPackages.end(),
+        [this](const ProtobufData& p) {return p.packageName == mCurPackage && p.className == mCurClass;});
+    if(it != mProtoPackages.end())
+    {
+        mProtoTreeModel->setProtoClass(it->fDesc);
+        emit protoTreeModelChange();
+    }
 }
 
 void WindowController::loadProtoClasses(const QUrl& p)
@@ -79,9 +91,4 @@ void WindowController::load(const QString& p)
             mProtoPackages.append(ProtobufData(fDesc->package().c_str(), desc->name().c_str(), desc));
         }
     }
-}
-
-void WindowController::initTree()
-{
-
 }

@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Layouts 1.3
+import QtQuick.Controls 1.4
 import QtQuick.Controls 2.5
 import QtQuick.Controls.Material 2.0
 import QtQuick.Dialogs 1.3
@@ -48,6 +49,7 @@ Window {
             anchors.left: lbClass.right
             width: (parent.width - (lbClass.width + lbPackage.width + tbOpen.width) ) / 2
             model: controller.classes
+            onCurrentTextChanged: controller.curClass = cbClass.currentText
         }
         ToolButton {
             id: tbOpen
@@ -61,12 +63,30 @@ Window {
         }
     }
 
-    ListView {
+    TreeView {
         id: tvProtoData
         height: parent.height - 2 * toolHeight
         width: parent.width
         anchors.left: parent.left
         anchors.top: tbTop.bottom
+        headerVisible: true
+
+        TableViewColumn {
+            role: "name"
+            title: "Поле"
+        }
+        TableViewColumn {
+            role: "type"
+            title: "Тип"
+        }
+        TableViewColumn {
+            role: "requirment"
+            title: "Признак обязаельности"
+        }
+        TableViewColumn {
+            role: "value"
+            title: "Значение"
+        }
     }
 
     ToolBar {
@@ -101,6 +121,9 @@ Window {
 
     WindowController {
         id:controller
+        onProtoTreeModelChange: {
+            tvProtoData.model = controller.model
+        }
     }
 
     FileDialog {

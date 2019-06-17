@@ -2,11 +2,16 @@
 #define WINDOWCOPNTROLLER_H
 
 #include <QObject>
+
 #include <google/protobuf/dynamic_message.h>
 #include <google/protobuf/compiler/importer.h>
 
+#include "ProtobufModel.h"
+
 namespace protoc = google::protobuf::compiler;
 namespace proto = google::protobuf;
+
+class QAbstractItemModel;
 
 class WindowController : public QObject
 {
@@ -46,16 +51,17 @@ class WindowController : public QObject
     Q_PROPERTY(QString curClass READ getCurClass WRITE setCurClass NOTIFY curClassChange)
     Q_PROPERTY(QStringList packages READ getPackages NOTIFY packagesChange)
     Q_PROPERTY(QStringList classes READ getClasses NOTIFY classesChange)
+    Q_PROPERTY(QAbstractItemModel* model READ getProtoTreeModel NOTIFY protoTreeModelChange)
 
 public:
-    explicit WindowController(QObject *parent = nullptr)
-        : QObject(parent), mImporter(&mProtoTree, &mError) { }
+    explicit WindowController(QObject *parent = nullptr);
 
     const QStringList& getPackages() const;
     const QStringList& getClasses() const;
 
     const QString& getCurPackage() const;
     const QString& getCurClass() const;
+    QAbstractItemModel * getProtoTreeModel() const;
 
     void setCurPackage(const QString& packageName);
     void setCurClass(const QString& className);
@@ -68,6 +74,7 @@ signals:
     void curClassChange();
     void packagesChange();
     void classesChange();
+    void protoTreeModelChange();
 
 private:
     QList<ProtobufData> mProtoPackages;
@@ -78,13 +85,14 @@ private:
     QString mCurPackage;
     QString mCurClass;
 
+    ProtobufModel * mProtoTreeModel;
+
     protoc::DiskSourceTree mProtoTree;
     protoc::Importer mImporter;
     proto::DynamicMessageFactory mFactory;
     ErrorLog mError;
 
     void load(const QString &p);
-    void initTree();
 };
 
 #endif // WINDOWCOPNTROLLER_H
