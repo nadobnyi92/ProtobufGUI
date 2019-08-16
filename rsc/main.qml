@@ -70,6 +70,7 @@ Window {
         anchors.left: parent.left
         anchors.top: tbTop.bottom
         headerVisible: true
+        model: controller.model
 
         TableViewColumn {
             role: "name"
@@ -122,7 +123,7 @@ Window {
     WindowController {
         id:controller
         onProtoTreeModelChange: {
-            tvProtoData.model = controller.model
+            tvProtoData.update()
         }
     }
 

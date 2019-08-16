@@ -18,7 +18,7 @@ public:
         ProtoValueRole
     };
 
-    ProtobufModel();
+    ProtobufModel(const google::protobuf::Descriptor *pclass = nullptr);
 
     void setProtoClass(proto::Descriptor const * protoclass);
 

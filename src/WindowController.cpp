@@ -11,7 +11,7 @@
 
 QString getFilePath(QDir root, QString filePath)
 {
-    return root.dirName() + QDir::separator() + root.relativeFilePath(filePath);
+    return root.dirName() + "/" + root.relativeFilePath(filePath);
 }
 
 void WindowController::ErrorLog::AddError(const std::string & filename, int line,
@@ -55,14 +55,15 @@ void WindowController::setCurClass(const QString& className)
         [this](const ProtobufData& p) {return p.packageName == mCurPackage && p.className == mCurClass;});
     if(it != mProtoPackages.end())
     {
-        mProtoTreeModel->setProtoClass(it->fDesc);
+        delete mProtoTreeModel;
+        mProtoTreeModel = new ProtobufModel(it->fDesc);
         emit protoTreeModelChange();
     }
 }
 
 void WindowController::loadProtoClasses(const QUrl& p)
 {
-    load(p.path());
+    load(p.toLocalFile());
     mPackages.clear();
     for(auto const& data: mProtoPackages)
     {
@@ -81,7 +82,7 @@ void WindowController::load(const QString& p)
     while(it.hasNext())
     {
         QString protoFile = it.next();
-        const proto::FileDescriptor * fDesc = mImporter.Import(getFilePath(root, protoFile).toStdString());
+        const proto::FileDescriptor * fDesc = mImporter.Import( root.relativeFilePath(protoFile).toStdString());
         if(fDesc == nullptr)
             continue;
 

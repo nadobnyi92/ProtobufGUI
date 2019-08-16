@@ -1,18 +1,12 @@
 #include "ProtobufModel.h"
 
-ProtobufModel::ProtobufModel() :
-    mProtoClass(nullptr)
+ProtobufModel::ProtobufModel(const google::protobuf::Descriptor *pclass) :
+    mProtoClass(pclass)
 {
     mRoleMapping[ProtoNameRole] = "name";
     mRoleMapping[ProtoTypeRole] = "type";
     mRoleMapping[ProtoRequirementsRole] = "requirment";
     mRoleMapping[ProtoValueRole] = "value";
-}
-
-void ProtobufModel::setProtoClass(const google::protobuf::Descriptor *protoclass)
-{
-    mProtoClass = protoclass;
-
 }
 
 QModelIndex ProtobufModel::index(int row, int column, const QModelIndex &parent) const
