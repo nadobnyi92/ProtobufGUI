@@ -23,11 +23,13 @@ set(CMAKE_AUTORCC ON)
 set(SRC     src/main.cpp
             src/MainWindow.cpp
             src/WindowController.cpp
-            src/ProtobufModel.cpp)
+            src/ProtobufModel.cpp
+            src/prototreeitem.cpp)
 
 set(HEADERS src/MainWindow.h
             src/WindowController.h
-            src/ProtobufModel.h)
+            src/ProtobufModel.h
+            src/prototreeitem.h)
 
 set(QML rsc/qml.qrc)
 

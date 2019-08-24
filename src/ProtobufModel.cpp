@@ -9,6 +9,12 @@ ProtobufModel::ProtobufModel(const google::protobuf::Descriptor *pclass) :
     mRoleMapping[ProtoValueRole] = "value";
 }
 
+void ProtobufModel::setProtoClass(const google::protobuf::Descriptor *protoclass)
+{
+    mProtoClass = protoclass;
+    setData(QModelIndex(), mProtoClass->name().c_str(), ProtoNameRole);
+}
+
 QModelIndex ProtobufModel::index(int row, int column, const QModelIndex &parent) const
 {
     return QModelIndex();

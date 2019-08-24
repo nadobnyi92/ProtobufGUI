@@ -55,8 +55,7 @@ void WindowController::setCurClass(const QString& className)
         [this](const ProtobufData& p) {return p.packageName == mCurPackage && p.className == mCurClass;});
     if(it != mProtoPackages.end())
     {
-        delete mProtoTreeModel;
-        mProtoTreeModel = new ProtobufModel(it->fDesc);
+        mProtoTreeModel->setProtoClass(it->fDesc);
         emit protoTreeModelChange();
     }
 }
