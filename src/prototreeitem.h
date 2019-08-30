@@ -4,24 +4,44 @@
 #include <QVector>
 #include <QVariant>
 
+#include <vector>
+#include <bits/unique_ptr.h>
+
+#include <google/protobuf/dynamic_message.h>
+
+namespace proto = google::protobuf;
+
 class ProtoTreeItem
 {
 public:
-    ProtoTreeItem(const QVector<QVariant> &data, ProtoTreeItem *parentItem = nullptr);
-    ~ProtoTreeItem();
 
-    void appendChild(ProtoTreeItem *child);
+    struct ProtoData
+    {
+        ProtoData(const google::protobuf::Descriptor *protoclass);
+        ProtoData(const google::protobuf::FieldDescriptor * field);
+        ProtoData(const std::string& n) : name(n) {}
 
-    ProtoTreeItem *child(int row);
-    int childCount() const;
-    int columnCount() const;
+        std::string name;
+        proto::FieldDescriptor::Type type;
+        proto::FieldDescriptor::Label label;
+        std::string value;
+    };
+
+    ProtoTreeItem(const ProtoData &data, ProtoTreeItem *parentItem = nullptr);
+
+    size_t childCount() const;
+    size_t columnCount() const;
     QVariant data(int column) const;
-    int row() const;
+    size_t row() const;
     ProtoTreeItem *parentItem();
 
+    void appendChild(const ProtoData& data);
+    ProtoTreeItem *child(size_t row);
+
+
 private:
-    QVector<ProtoTreeItem*> mChildItems;
-    QVector<QVariant> mItemData;
+    std::vector< std::unique_ptr<ProtoTreeItem> > mChildItems;
+    ProtoData mItemData;
     ProtoTreeItem *mParentItem;
 };
 

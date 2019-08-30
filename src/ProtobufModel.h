@@ -5,6 +5,8 @@
 
 #include <google/protobuf/dynamic_message.h>
 
+class ProtoTreeItem;
+
 namespace proto = google::protobuf;
 
 class ProtobufModel : public QAbstractItemModel
@@ -14,11 +16,12 @@ public:
     {
         ProtoNameRole = Qt::UserRole + 1,
         ProtoTypeRole,
-        ProtoRequirementsRole,
+        ProtoRoleRole,
         ProtoValueRole
     };
 
     ProtobufModel(const google::protobuf::Descriptor *pclass = nullptr);
+    ~ProtobufModel() override;
 
     void setProtoClass(proto::Descriptor const * protoclass);
 
@@ -34,6 +37,7 @@ public:
 private:
     QHash<int, QByteArray> mRoleMapping;
     proto::Descriptor const * mProtoClass;
+    std::unique_ptr<ProtoTreeItem> mRootItem;
 };
 
 #endif // PROTOBUFMODEL_H

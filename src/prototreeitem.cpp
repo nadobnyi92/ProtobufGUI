@@ -2,44 +2,67 @@
 
 #include<algorithm>
 
-ProtoTreeItem::ProtoTreeItem(const QVector<QVariant> &data, ProtoTreeItem *parentItem)
+ProtoTreeItem::ProtoData::ProtoData(const google::protobuf::Descriptor *protoclass)
+{
+    name = protoclass->name();
+    label = proto::FieldDescriptor::LABEL_REQUIRED;
+    type = proto::FieldDescriptor::TYPE_MESSAGE;
+}
+
+ProtoTreeItem::ProtoData::ProtoData(const google::protobuf::FieldDescriptor * field)
+{
+    name = field->name();
+    label = field->label();
+    type = field->type();
+}
+
+ProtoTreeItem::ProtoTreeItem(const ProtoData &data, ProtoTreeItem *parentItem)
     : mItemData(data), mParentItem(parentItem) {}
 
-ProtoTreeItem::~ProtoTreeItem()
+void ProtoTreeItem::appendChild(const ProtoData& data)
 {
-    qDeleteAll(mChildItems);
+    mChildItems.push_back(std::make_unique<ProtoTreeItem>(data, this));
 }
 
-void ProtoTreeItem::appendChild(ProtoTreeItem *child)
+ProtoTreeItem* ProtoTreeItem::child(size_t row)
 {
-    mChildItems.push_back(child);
+    return row < mChildItems.size() ? mChildItems.at(row).get() : nullptr;
 }
 
-ProtoTreeItem* ProtoTreeItem::child(int row)
-{
-    return row >= 0 && row < mChildItems.size() ? mChildItems.at(row) : nullptr;
-}
-
-int ProtoTreeItem::childCount() const
+size_t ProtoTreeItem::childCount() const
 {
     return mChildItems.size();
 }
 
-int ProtoTreeItem::columnCount() const
+size_t ProtoTreeItem::columnCount() const
 {
-    return mItemData.size();
+    return 4;
 }
 
 QVariant ProtoTreeItem::data(int column) const
 {
-    return column >= 0 && column < mItemData.size() ? mItemData.at(column) : QVariant();
+    switch(column)
+    {
+        case 0:
+            return mItemData.name.c_str();
+        case 1:
+            return mItemData.type;
+        case 2:
+            return mItemData.label;
+        case 3:
+            return mItemData.value.c_str();
+    }
+    return QVariant();
 }
 
-int ProtoTreeItem::row() const
+size_t ProtoTreeItem::row() const
 {
     if(mParentItem == nullptr)
         return 0;
-    return mParentItem->mChildItems.indexOf(const_cast<ProtoTreeItem*>(this));
+
+    auto it = std::find_if(mParentItem->mChildItems.begin(), mParentItem->mChildItems.end(),
+                           [this](auto&& val) { return val.get() == this; });
+    return std::distance(mParentItem->mChildItems.begin(), it);
 }
 
 ProtoTreeItem *ProtoTreeItem::parentItem()

@@ -81,7 +81,7 @@ Window {
             title: "Тип"
         }
         TableViewColumn {
-            role: "requirment"
+            role: "role"
             title: "Признак обязаельности"
         }
         TableViewColumn {
