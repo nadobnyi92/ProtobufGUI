@@ -71,7 +71,22 @@ Window {
         anchors.top: tbTop.bottom
         headerVisible: true
         model: controller.model
+        itemDelegate: Rectangle {
+            color: (styleData.row%2 == 0) ? "white" : "lightBlue"
+            Text {
+                text: styleData.value
+            }
+        }
 
+        TableViewColumn {
+            role: "role"
+            title: ""
+            delegate: Image {
+                source: "icons/" + model.role + ".png"
+            }
+            width: 32
+            resizable: false
+        }
         TableViewColumn {
             role: "name"
             title: "Поле"
@@ -79,10 +94,6 @@ Window {
         TableViewColumn {
             role: "type"
             title: "Тип"
-        }
-        TableViewColumn {
-            role: "role"
-            title: "Признак обязаельности"
         }
         TableViewColumn {
             role: "value"
