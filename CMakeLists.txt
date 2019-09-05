@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.1)
 
 project(ProtobufGUI)
 
-message("here ----> ${CMAKE_SOURCE_DIR}")
-
 include(${CMAKE_SOURCE_DIR}/conan.cmake)
 conan_cmake_run(
     CONANFILE conanfile.txt
@@ -24,17 +22,16 @@ set(SRC     src/main.cpp
             src/MainWindow.cpp
             src/WindowController.cpp
             src/ProtobufModel.cpp
-            src/prototreeitem.cpp)
+            src/prototreeitem.cpp
+            src/protodata.cpp)
 
 set(HEADERS src/MainWindow.h
             src/WindowController.h
             src/ProtobufModel.h
-            src/prototreeitem.h)
+            src/prototreeitem.h
+            src/protodata.h)
 
 set(QML rsc/qml.qrc)
-
-#link_directories()
-message("here ----> ${Protobuf_PROTOC_LIBRARY}")
 
 add_executable(${PROJECT_NAME} ${SRC} ${HEADERS} ${QML})
 include_directories(${PROJECT_NAME} ${Protobuf_INCLUDE_DIRS})

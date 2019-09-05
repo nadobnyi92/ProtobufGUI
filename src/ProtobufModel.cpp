@@ -19,10 +19,10 @@ void ProtobufModel::setProtoClass(const google::protobuf::Descriptor *protoclass
     mProtoClass = protoclass;
     if(mProtoClass != nullptr)
     {
-        mRootItem = std::make_unique<ProtoTreeItem>(ProtoTreeItem::ProtoData(protoclass));
+        mRootItem = std::make_unique<ProtoTreeItem>(ProtoData(protoclass));
         for(int i = 0; i < protoclass->field_count(); ++i)
         {
-            mRootItem->appendChild(ProtoTreeItem::ProtoData(protoclass->field(i)));
+            mRootItem->appendChild(ProtoData(protoclass->field(i)));
         }
     }
     emit endResetModel();

@@ -2,19 +2,8 @@
 
 #include<algorithm>
 
-ProtoTreeItem::ProtoData::ProtoData(const google::protobuf::Descriptor *protoclass)
-{
-    name = protoclass->name();
-    label = proto::FieldDescriptor::LABEL_REQUIRED;
-    type = proto::FieldDescriptor::TYPE_MESSAGE;
-}
-
-ProtoTreeItem::ProtoData::ProtoData(const google::protobuf::FieldDescriptor * field)
-{
-    name = field->name();
-    label = field->label();
-    type = field->type();
-}
+#include <QImage>
+#include <QPainter>
 
 ProtoTreeItem::ProtoTreeItem(const ProtoData &data, ProtoTreeItem *parentItem)
     : mItemData(data), mParentItem(parentItem) {}
@@ -44,13 +33,13 @@ QVariant ProtoTreeItem::data(int column) const
     switch(column)
     {
         case 0:
-            return mItemData.name.c_str();
+            return mItemData.getName().c_str();
         case 1:
-            return mItemData.type;
+            return mItemData.getType().c_str();
         case 2:
-            return mItemData.label;
+            return mItemData.getLabel().c_str();
         case 3:
-            return mItemData.value.c_str();
+            return mItemData.getValue().c_str();
     }
     return QVariant();
 }
@@ -69,6 +58,3 @@ ProtoTreeItem *ProtoTreeItem::parentItem()
 {
     return mParentItem;
 }
-
-
-
