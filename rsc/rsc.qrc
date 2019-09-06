@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>main.qml</file>
         <file>icons/optional.png</file>
         <file>icons/repeated.png</file>
         <file>icons/required.png</file>
