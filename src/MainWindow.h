@@ -2,16 +2,30 @@
 #define PROTOBUFGUI_MAINWINDOW_H
 
 #include <QObject>
-#include <QtQml/QQmlApplicationEngine>
+#include <QMainWindow>
 
-class MainWindow : public QObject{
+#include "ProtoManager.h"
+#include "ProtobufModel.h"
+
+namespace Ui {
+    class MainWindow;
+}
+
+class MainWindow : public QMainWindow{
     Q_OBJECT
 
 public:
-    MainWindow(QObject * parent = nullptr) noexcept;
+    MainWindow(QWidget * parent = nullptr) noexcept;
+
+public slots:
+    void onLoadClasses();
+    void onSetPackages(const QStringList&);
+    void onSetClasses(const QStringList&);
 
 private:
-    QQmlApplicationEngine mEngine;
+    Ui::MainWindow * ui;
+    ProtoManager mProtoManager;
+    ProtobufModel mModel;
 };
 
 
