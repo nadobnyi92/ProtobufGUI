@@ -5,25 +5,22 @@
 
 #include <google/protobuf/dynamic_message.h>
 
+#include "prototreeitem.h"
+
 class ProtoTreeItem;
 
 namespace proto = google::protobuf;
 
 class ProtobufModel : public QAbstractItemModel
 {
+    Q_OBJECT
 public:
-    enum ProtobufModelRoles
-    {
-        ProtoNameRole = Qt::UserRole + 1,
-        ProtoTypeRole,
-        ProtoRoleRole,
-        ProtoValueRole
-    };
+    ProtobufModel(QObject * parent = nullptr) : QAbstractItemModel(parent) {}
+    ~ProtobufModel() override {}
 
-    ProtobufModel(const google::protobuf::Descriptor *pclass = nullptr);
-    ~ProtobufModel() override;
-
-    void setProtoClass(proto::Descriptor const * protoclass);
+public slots:
+    void setProtoClass(const proto::Descriptor * protoclass);
+    void onDoubleClick(const QModelIndex& index);
 
     // QAbstractItemModel interface
 public:
@@ -32,10 +29,9 @@ public:
     int rowCount(const QModelIndex &parent) const override;
     int columnCount(const QModelIndex &parent) const override;
     QVariant data(const QModelIndex &index, int role) const override;
-    QHash<int, QByteArray> roleNames() const override;
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
 private:
-    QHash<int, QByteArray> mRoleMapping;
     proto::Descriptor const * mProtoClass;
     std::unique_ptr<ProtoTreeItem> mRootItem;
 };

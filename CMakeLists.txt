@@ -20,16 +20,15 @@ set(CMAKE_AUTORCC ON)
 
 set(SRC     src/main.cpp
             src/MainWindow.cpp
-            src/WindowController.cpp
+            src/ProtoManager.cpp
             src/ProtobufModel.cpp
-            src/prototreeitem.cpp
-            src/protodata.cpp)
+            src/prototreeitem.cpp)
 
 set(HEADERS src/MainWindow.h
-            src/WindowController.h
+            src/ProtoManager.h
             src/ProtobufModel.h
-            src/prototreeitem.h
-            src/protodata.h)
+            src/prototreeitem.h)
+
 set(RSC rsc/rsc.qrc)
 qt5_wrap_ui(UI ui/mainwindow.ui)
 

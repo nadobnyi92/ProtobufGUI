@@ -1,32 +1,28 @@
 #include "ProtobufModel.h"
 #include "prototreeitem.h"
 
-ProtobufModel::ProtobufModel(const google::protobuf::Descriptor *pclass)
-{
-    mRoleMapping[ProtoNameRole] = "name";
-    mRoleMapping[ProtoTypeRole] = "type";
-    mRoleMapping[ProtoRoleRole] = "role";
-    mRoleMapping[ProtoValueRole] = "value";
-
-    setProtoClass(pclass);
-}
-
-ProtobufModel::~ProtobufModel() {}
-
 void ProtobufModel::setProtoClass(const google::protobuf::Descriptor *protoclass)
 {
-    emit beginResetModel();
     mProtoClass = protoclass;
     if(mProtoClass != nullptr)
     {
-        mRootItem = std::make_unique<ProtoTreeItem>(ProtoData(protoclass));
-        for(int i = 0; i < protoclass->field_count(); ++i)
-        {
-            mRootItem->appendChild(ProtoData(protoclass->field(i)));
-        }
+        emit beginResetModel();
+        mRootItem = std::make_unique<ProtoTreeItem>(protoclass);
+        mRootItem->expand();
+        emit endResetModel();
     }
-    emit endResetModel();
+}
 
+void ProtobufModel::onDoubleClick(const QModelIndex &index)
+{
+    if (!mRootItem || !index.isValid())
+        return;
+
+    ProtoTreeItem *item = static_cast<ProtoTreeItem*>(index.internalPointer());
+
+    beginInsertRows(index, 0, item->fieldCount());
+    item->expand();
+    endInsertRows();
 }
 
 QModelIndex ProtobufModel::index(int row, int column, const QModelIndex &parent) const
@@ -79,7 +75,7 @@ int ProtobufModel::rowCount(const QModelIndex &parent) const
 
 int ProtobufModel::columnCount(const QModelIndex &parent) const
 {
-    return mRoleMapping.size();
+    return ProtoTreeItem::columnCount();
 }
 
 QVariant ProtobufModel::data(const QModelIndex &index, int role) const
@@ -91,19 +87,32 @@ QVariant ProtobufModel::data(const QModelIndex &index, int role) const
 
     switch (role)
     {
-        case ProtoNameRole:
-            return item->data(0);
-        case ProtoTypeRole:
-            return item->data(1);
-        case ProtoRoleRole:
-            return item->data(2);
-        case ProtoValueRole:
-            return item->data(3);
+        case Qt::DisplayRole:
+            return item->data(index.column());
+        case Qt::BackgroundRole:
+            return index.column() > 0 ? item->color() : QVariant();
+        case Qt::DecorationRole:
+            return index.column() == 0 ? item->icon() : QVariant();
+
     }
     return QVariant();
 }
 
-QHash<int, QByteArray> ProtobufModel::roleNames() const
+QVariant ProtobufModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    return mRoleMapping;
+    if(role == Qt::DisplayRole && orientation == Qt::Horizontal)
+    {
+        switch (section)
+        {
+            case 0:
+                return "";
+            case 1:
+                return "Поле";
+            case 2:
+                return "Тип данных";
+            case 3:
+                return "Значение";
+        }
+    }
+    return QVariant();
 }
