@@ -22,12 +22,18 @@ set(SRC     src/main.cpp
             src/MainWindow.cpp
             src/ProtoManager.cpp
             src/ProtobufModel.cpp
-            src/prototreeitem.cpp)
+            src/prototreeitem.cpp
+            src/fielddelegate.cpp
+            src/numericprotoitem.cpp
+            src/stringprotoitem.cpp)
 
 set(HEADERS src/MainWindow.h
             src/ProtoManager.h
             src/ProtobufModel.h
-            src/prototreeitem.h)
+            src/prototreeitem.h
+            src/fielddelegate.h
+            src/numericprotoitem.h
+            src/stringprotoitem.h)
 
 set(RSC rsc/rsc.qrc)
 qt5_wrap_ui(UI ui/mainwindow.ui)

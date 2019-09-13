@@ -5,6 +5,7 @@
 
 #include "MainWindow.h"
 #include "ProtoManager.h"
+#include "fielddelegate.h"
 
 #include "ui_mainwindow.h"
 
@@ -31,8 +32,10 @@ MainWindow::MainWindow(QWidget * parent) noexcept
             SLOT(onSetClasses(const QStringList&)));
     connect(&mProtoManager, SIGNAL(onClassChange(const proto::Descriptor*)),
             &mModel, SLOT(setProtoClass(const proto::Descriptor *)));
-    connect(ui->tvProtoTree, SIGNAL(doubleClicked(const QModelIndex&)),
-            &mModel, SLOT(onDoubleClick(const QModelIndex&)));
+    connect(ui->tvProtoTree, SIGNAL(expanded(const QModelIndex&)),
+            &mModel, SLOT(onExpand(const QModelIndex&)));
+
+    ui->tvProtoTree->setItemDelegateForColumn(ProtobufModel::DATA_COLUMN, new FieldDelegate(this));
 }
 
 void MainWindow::onLoadClasses()

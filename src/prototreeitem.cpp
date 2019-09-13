@@ -5,6 +5,9 @@
 #include <QIcon>
 #include <QPainter>
 
+#include "numericprotoitem.h"
+#include "stringprotoitem.h"
+
 ProtoTreeItem::ProtoTreeItem(const google::protobuf::Descriptor *pclass, ProtoTreeItem *parentItem)
     : mName(pclass->name().c_str())
     , mType(proto::FieldDescriptor::TYPE_MESSAGE)
@@ -33,13 +36,68 @@ ProtoTreeItem* ProtoTreeItem::child(size_t row)
 
 void ProtoTreeItem::expand()
 {
+    expandChildren();
+    for(auto& child: mChildItems) {
+        child->expandChildren();
+    }
+}
+
+void ProtoTreeItem::expandChildren()
+{
     if(mDesc != nullptr && mChildItems.empty())
     {
         for(int i = 0; i < mDesc->field_count(); ++i)
         {
-            mChildItems.push_back(std::make_unique<ProtoTreeItem>(mDesc->field(i), this));
+            createNode(mDesc->field(i));
         }
     }
+}
+
+void ProtoTreeItem::createNode(const google::protobuf::FieldDescriptor *field)
+{
+    switch(field->type())
+    {
+        case proto::FieldDescriptor::TYPE_DOUBLE:
+        case proto::FieldDescriptor::TYPE_FLOAT:
+            mChildItems.push_back(std::make_unique<ProtoTreeItem>(field, this));
+            break;
+        case proto::FieldDescriptor::TYPE_INT64:
+        case proto::FieldDescriptor::TYPE_UINT64:
+        case proto::FieldDescriptor::TYPE_INT32:
+        case proto::FieldDescriptor::TYPE_FIXED64:
+        case proto::FieldDescriptor::TYPE_FIXED32:
+        case proto::FieldDescriptor::TYPE_SFIXED32:
+        case proto::FieldDescriptor::TYPE_SFIXED64:
+        case proto::FieldDescriptor::TYPE_SINT32:
+        case proto::FieldDescriptor::TYPE_SINT64:
+        case proto::FieldDescriptor::TYPE_UINT32:
+            mChildItems.push_back(std::make_unique<NumericProtoItem>(field, this));
+            break;
+        case proto::FieldDescriptor::TYPE_BOOL:
+            mChildItems.push_back(std::make_unique<ProtoTreeItem>(field, this));
+            break;
+        case proto::FieldDescriptor::TYPE_STRING:
+            mChildItems.push_back(std::make_unique<StringProtoItem>(field, this));
+            break;
+        case proto::FieldDescriptor::TYPE_GROUP:
+        case proto::FieldDescriptor::TYPE_MESSAGE:
+        case proto::FieldDescriptor::TYPE_BYTES:
+            mChildItems.push_back(std::make_unique<ProtoTreeItem>(field, this));
+            break;
+        case proto::FieldDescriptor::TYPE_ENUM:
+            mChildItems.push_back(std::make_unique<ProtoTreeItem>(field, this));
+            break;
+    }
+}
+
+void ProtoTreeItem::setData(const QVariant &data)
+{
+    mValue = data;
+}
+
+QItemDelegate *ProtoTreeItem::getDelegate() const
+{
+    return nullptr;
 }
 
 int ProtoTreeItem::fieldCount() const
@@ -75,26 +133,14 @@ QVariant ProtoTreeItem::data(int column) const
 
 QBrush ProtoTreeItem::color() const
 {
+    /*
     switch(mType)
     {
         case proto::FieldDescriptor::TYPE_DOUBLE:
         case proto::FieldDescriptor::TYPE_FLOAT:
             return QBrush(QColor(0, 0, 255, 90));
-        case proto::FieldDescriptor::TYPE_INT64:
-        case proto::FieldDescriptor::TYPE_UINT64:
-        case proto::FieldDescriptor::TYPE_INT32:
-        case proto::FieldDescriptor::TYPE_FIXED64:
-        case proto::FieldDescriptor::TYPE_FIXED32:
-        case proto::FieldDescriptor::TYPE_SFIXED32:
-        case proto::FieldDescriptor::TYPE_SFIXED64:
-        case proto::FieldDescriptor::TYPE_SINT32:
-        case proto::FieldDescriptor::TYPE_SINT64:
-        case proto::FieldDescriptor::TYPE_UINT32:
-            return QBrush(QColor(0, 255, 0, 90));
         case proto::FieldDescriptor::TYPE_BOOL:
-            return QBrush(QColor(255, 0, 255, 90));
-        case proto::FieldDescriptor::TYPE_STRING:
-            return QBrush(QColor(255, 255, 0, 90));
+            return QBrush(QColor(255, 0, 255, 90));            
         case proto::FieldDescriptor::TYPE_GROUP:
         case proto::FieldDescriptor::TYPE_MESSAGE:
         case proto::FieldDescriptor::TYPE_BYTES:
@@ -102,11 +148,24 @@ QBrush ProtoTreeItem::color() const
         case proto::FieldDescriptor::TYPE_ENUM:
             return QBrush(QColor(0, 255, 255, 90));
     }
+    */
     return Qt::white;
+}
+
+Qt::ItemFlags ProtoTreeItem::flags() const
+{
+    return getDelegate() != nullptr ? Qt::ItemIsEditable : Qt::NoItemFlags;
+}
+
+google::protobuf::FieldDescriptor::Type ProtoTreeItem::type() const
+{
+    return mType;
 }
 
 QString ProtoTreeItem::getTypeName() const
 {
+    return "";
+    /*
     switch(mType)
     {
         case proto::FieldDescriptor::TYPE_DOUBLE:
@@ -146,8 +205,9 @@ QString ProtoTreeItem::getTypeName() const
         case proto::FieldDescriptor::TYPE_SINT64:
             return "SInt64";
     }
-    return "";
+    */
 }
+
 
 QIcon ProtoTreeItem::icon() const
 {

@@ -8,32 +8,44 @@
 #include <vector>
 #include <bits/unique_ptr.h>
 
-#include "protodata.h"
+#include <google/protobuf/dynamic_message.h>
+
+namespace proto = google::protobuf;
+
+class QItemDelegate;
 
 class ProtoTreeItem
 {
 public:
-    ProtoTreeItem(const google::protobuf::Descriptor *protoclass, ProtoTreeItem *parentItem = nullptr);
-    ProtoTreeItem(const google::protobuf::FieldDescriptor * field, ProtoTreeItem *parentItem = nullptr);
-    ProtoTreeItem(const QString& name, ProtoTreeItem *parentItem = nullptr); // : name(n), mDesc(nullptr) {}
+    ProtoTreeItem(const proto::Descriptor *protoclass, ProtoTreeItem *parentItem = nullptr);
+    ProtoTreeItem(const proto::FieldDescriptor * field, ProtoTreeItem *parentItem = nullptr);
+    ProtoTreeItem(const QString& name, ProtoTreeItem *parentItem = nullptr);
 
-    //ProtoTreeItem(const ProtoData &data, ProtoTreeItem *parentItem = nullptr);
+    virtual ~ProtoTreeItem() {}
 
     size_t childCount() const;
     int fieldCount() const;
     static int columnCount();
     QVariant data(int column) const;
-    QBrush color() const;
     QIcon icon() const;
     size_t row() const;
     ProtoTreeItem *parentItem();
-
     ProtoTreeItem *child(size_t row);
+    Qt::ItemFlags flags() const;
 
     void expand();
+    void setData(const QVariant& data);
+
+    virtual QItemDelegate* getDelegate() const;
+    virtual QBrush color() const;
+
+protected:
+    proto::FieldDescriptor::Type type() const;
+    virtual QString getTypeName() const;
 
 private:
-    QString getTypeName() const;
+    void expandChildren();
+    void createNode(const proto::FieldDescriptor * field);
 
 private:
     QString mName;

@@ -9,11 +9,12 @@ void ProtobufModel::setProtoClass(const google::protobuf::Descriptor *protoclass
         emit beginResetModel();
         mRootItem = std::make_unique<ProtoTreeItem>(protoclass);
         mRootItem->expand();
+
         emit endResetModel();
     }
 }
 
-void ProtobufModel::onDoubleClick(const QModelIndex &index)
+void ProtobufModel::onExpand(const QModelIndex &index)
 {
     if (!mRootItem || !index.isValid())
         return;
@@ -115,4 +116,27 @@ QVariant ProtobufModel::headerData(int section, Qt::Orientation orientation, int
         }
     }
     return QVariant();
+}
+
+
+bool ProtobufModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if(index.isValid() && role == Qt::EditRole && index.column() == DATA_COLUMN)
+    {
+        ProtoTreeItem *item = static_cast<ProtoTreeItem*>(index.internalPointer());
+        item->setData(value);
+        return true;
+    }
+    return false;
+}
+
+
+Qt::ItemFlags ProtobufModel::flags(const QModelIndex &index) const
+{
+    if (!index.isValid())
+        return Qt::ItemIsEnabled;
+    Qt::ItemFlags flags = QAbstractItemModel::flags(index);
+    if(index.column() == DATA_COLUMN)
+        return flags | static_cast<ProtoTreeItem*>(index.internalPointer())->flags();
+    return flags;
 }

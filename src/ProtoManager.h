@@ -4,8 +4,6 @@
 #include <QObject>
 #include <QHash>
 
-#include "protodata.h"
-
 namespace google
 {
     namespace protobuf
@@ -13,6 +11,8 @@ namespace google
         class Descriptor;
     }
 }
+
+namespace proto = google::protobuf;
 
 class ProtoContext;
 
@@ -34,7 +34,7 @@ signals:
     void onClassChange(const proto::Descriptor* desc);
 
 private:
-    QHash< QString, QHash<QString, const google::protobuf::Descriptor* > > mProtoPackages;
+    QHash< QString, QHash<QString, const proto::Descriptor* > > mProtoPackages;
 
     QString mCurPackage;
     QString mCurClass;

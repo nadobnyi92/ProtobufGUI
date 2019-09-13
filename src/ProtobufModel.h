@@ -15,12 +15,14 @@ class ProtobufModel : public QAbstractItemModel
 {
     Q_OBJECT
 public:
+    static const int DATA_COLUMN = 3;
+
     ProtobufModel(QObject * parent = nullptr) : QAbstractItemModel(parent) {}
     ~ProtobufModel() override {}
 
 public slots:
     void setProtoClass(const proto::Descriptor * protoclass);
-    void onDoubleClick(const QModelIndex& index);
+    void onExpand(const QModelIndex& index);
 
     // QAbstractItemModel interface
 public:
@@ -34,6 +36,14 @@ public:
 private:
     proto::Descriptor const * mProtoClass;
     std::unique_ptr<ProtoTreeItem> mRootItem;
+
+    // QAbstractItemModel interface
+public:
+    bool setData(const QModelIndex &index, const QVariant &value, int role) override;
+
+    // QAbstractItemModel interface
+public:
+    Qt::ItemFlags flags(const QModelIndex &index) const override;
 };
 
 #endif // PROTOBUFMODEL_H
