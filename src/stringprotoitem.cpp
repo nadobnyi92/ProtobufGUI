@@ -40,8 +40,3 @@ QBrush StringProtoItem::color() const
 {
     return QBrush(QColor(255, 255, 0, 90));
 }
-
-QString StringProtoItem::getTypeName() const
-{
-    return "String";
-}

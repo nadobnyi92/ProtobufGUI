@@ -41,7 +41,6 @@ public:
 
 protected:
     proto::FieldDescriptor::Type type() const;
-    virtual QString getTypeName() const;
 
 private:
     void expandChildren();
@@ -49,6 +48,7 @@ private:
 
 private:
     QString mName;
+    QString mTypeName;
     proto::FieldDescriptor::Type mType;
     proto::FieldDescriptor::Label mLabel;
     QVariant mValue;

@@ -10,6 +10,7 @@
 
 ProtoTreeItem::ProtoTreeItem(const google::protobuf::Descriptor *pclass, ProtoTreeItem *parentItem)
     : mName(pclass->name().c_str())
+    , mTypeName("Message")
     , mType(proto::FieldDescriptor::TYPE_MESSAGE)
     , mLabel(proto::FieldDescriptor::LABEL_REQUIRED)
     , mDesc(pclass)
@@ -17,13 +18,17 @@ ProtoTreeItem::ProtoTreeItem(const google::protobuf::Descriptor *pclass, ProtoTr
 
 ProtoTreeItem::ProtoTreeItem(const google::protobuf::FieldDescriptor * field, ProtoTreeItem *parentItem)
     : mName(field->name().c_str())
+    , mTypeName(field->type_name())
     , mType(field->type())
     , mLabel(field->label())
     , mDesc(field->message_type())
-    , mParentItem(parentItem) {}
+    , mParentItem(parentItem)
+
+{}
 
 ProtoTreeItem::ProtoTreeItem(const QString& name, ProtoTreeItem *parentItem)
     : mName(name)
+    , mTypeName("Message")
     , mType(proto::FieldDescriptor::TYPE_MESSAGE)
     , mLabel(proto::FieldDescriptor::LABEL_REQUIRED)
     , mDesc(nullptr)
@@ -124,7 +129,7 @@ QVariant ProtoTreeItem::data(int column) const
         case 1:
             return mName;
         case 2:
-            return getTypeName();
+            return mTypeName;
         case 3:
             return mValue;
     }
@@ -136,9 +141,6 @@ QBrush ProtoTreeItem::color() const
     /*
     switch(mType)
     {
-        case proto::FieldDescriptor::TYPE_DOUBLE:
-        case proto::FieldDescriptor::TYPE_FLOAT:
-            return QBrush(QColor(0, 0, 255, 90));
         case proto::FieldDescriptor::TYPE_BOOL:
             return QBrush(QColor(255, 0, 255, 90));            
         case proto::FieldDescriptor::TYPE_GROUP:
@@ -161,17 +163,12 @@ google::protobuf::FieldDescriptor::Type ProtoTreeItem::type() const
 {
     return mType;
 }
-
+/*
 QString ProtoTreeItem::getTypeName() const
 {
     return "";
-    /*
     switch(mType)
     {
-        case proto::FieldDescriptor::TYPE_DOUBLE:
-            return "Double";
-        case proto::FieldDescriptor::TYPE_FLOAT:
-            return "Float";
         case proto::FieldDescriptor::TYPE_INT64:
             return "Int64";
         case proto::FieldDescriptor::TYPE_UINT64:
@@ -205,8 +202,9 @@ QString ProtoTreeItem::getTypeName() const
         case proto::FieldDescriptor::TYPE_SINT64:
             return "SInt64";
     }
-    */
+
 }
+*/
 
 
 QIcon ProtoTreeItem::icon() const

@@ -26,8 +26,6 @@ public:
     QItemDelegate *getDelegate() const override;
 
 private:
-    QString getTypeName() const override;
-
     ItemDelegate* mDelegate;
 };
 

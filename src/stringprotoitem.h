@@ -27,7 +27,6 @@ public:
     QBrush color() const override;
 
 private:
-    QString getTypeName() const override;
     ItemDelegate *mDelegate;
 };
 
