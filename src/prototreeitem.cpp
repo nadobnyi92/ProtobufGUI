@@ -140,9 +140,7 @@ QBrush ProtoTreeItem::color() const
 {
     /*
     switch(mType)
-    {
-        case proto::FieldDescriptor::TYPE_BOOL:
-            return QBrush(QColor(255, 0, 255, 90));            
+    {         
         case proto::FieldDescriptor::TYPE_GROUP:
         case proto::FieldDescriptor::TYPE_MESSAGE:
         case proto::FieldDescriptor::TYPE_BYTES:
@@ -163,49 +161,6 @@ google::protobuf::FieldDescriptor::Type ProtoTreeItem::type() const
 {
     return mType;
 }
-/*
-QString ProtoTreeItem::getTypeName() const
-{
-    return "";
-    switch(mType)
-    {
-        case proto::FieldDescriptor::TYPE_INT64:
-            return "Int64";
-        case proto::FieldDescriptor::TYPE_UINT64:
-            return "Uint64";
-        case proto::FieldDescriptor::TYPE_INT32:
-            return "Int32";
-        case proto::FieldDescriptor::TYPE_FIXED64:
-            return "Fixed64";
-        case proto::FieldDescriptor::TYPE_FIXED32:
-            return "Fixed32";
-        case proto::FieldDescriptor::TYPE_BOOL:
-            return "Boolean";
-        case proto::FieldDescriptor::TYPE_STRING:
-            return "String";
-        case proto::FieldDescriptor::TYPE_GROUP:
-            return "Group";
-        case proto::FieldDescriptor::TYPE_MESSAGE:
-            return "Message";
-        case proto::FieldDescriptor::TYPE_BYTES:
-            return "Bytes";
-        case proto::FieldDescriptor::TYPE_UINT32:
-            return "Uint32";
-        case proto::FieldDescriptor::TYPE_ENUM:
-            return "Enum";
-        case proto::FieldDescriptor::TYPE_SFIXED32:
-            return "SFixed32";
-        case proto::FieldDescriptor::TYPE_SFIXED64:
-            return "SFixed64";
-        case proto::FieldDescriptor::TYPE_SINT32:
-            return "SInt32";
-        case proto::FieldDescriptor::TYPE_SINT64:
-            return "SInt64";
-    }
-
-}
-*/
-
 
 QIcon ProtoTreeItem::icon() const
 {
