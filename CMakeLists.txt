@@ -26,7 +26,8 @@ set(SRC     src/main.cpp
             src/fielddelegate.cpp
             src/numericprotoitem.cpp
             src/stringprotoitem.cpp
-            src/floatprotoitem.cpp)
+            src/floatprotoitem.cpp
+            src/boolprotoitem.cpp)
 
 set(HEADERS src/MainWindow.h
             src/ProtoManager.h
@@ -35,7 +36,8 @@ set(HEADERS src/MainWindow.h
             src/fielddelegate.h
             src/numericprotoitem.h
             src/stringprotoitem.h
-            src/floatprotoitem.h)
+            src/floatprotoitem.h
+            src/boolprotoitem.h)
 
 set(RSC rsc/rsc.qrc)
 qt5_wrap_ui(UI ui/mainwindow.ui)
