@@ -21,6 +21,8 @@ MainWindow::MainWindow(QWidget * parent) noexcept
 
     header->setSectionResizeMode(QHeaderView::ResizeToContents);
 
+    ui->tvProtoTree->installEventFilter(this);
+
     connect(ui->tbLoad, SIGNAL(clicked()), SLOT(onLoadClasses()));
     connect(ui->cbPackage, SIGNAL(currentTextChanged(const QString&)),
             &mProtoManager, SLOT(setPackage(const QString&)));
@@ -57,4 +59,18 @@ void MainWindow::onSetClasses(const QStringList& classes)
 {
     ui->cbClass->clear();
     ui->cbClass->addItems(classes);
+}
+
+bool MainWindow::eventFilter(QObject *watched, QEvent *event)
+{
+    if( watched == ui->tvProtoTree &&
+        event->type() == QEvent::KeyPress )
+    {
+        QKeyEvent * kEvent = static_cast<QKeyEvent*>(event);
+        if(kEvent->key() == Qt::Key_Delete)
+        {
+            mModel.setData(ui->tvProtoTree->currentIndex().siblingAtColumn(ProtobufModel::DATA_COLUMN), QVariant(), Qt::EditRole);
+        }
+    }
+    return QMainWindow::eventFilter(watched, event);
 }

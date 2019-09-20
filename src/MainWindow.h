@@ -21,11 +21,19 @@ public slots:
     void onLoadClasses();
     void onSetPackages(const QStringList&);
     void onSetClasses(const QStringList&);
+    void onPrepareMenu( const QPoint& p );
+
+    void onAddItem();
+    //void onReplaceType();
 
 private:
     Ui::MainWindow * ui;
     ProtoManager mProtoManager;
     ProtobufModel mModel;
+
+    // QObject interface
+public:
+    bool eventFilter(QObject *watched, QEvent *event) override;
 };
 
 
