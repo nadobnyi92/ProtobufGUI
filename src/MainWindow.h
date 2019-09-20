@@ -24,7 +24,7 @@ public slots:
     void onPrepareMenu( const QPoint& p );
 
     void onAddItem();
-    //void onReplaceType();
+    void onReplaceType();
 
 private:
     Ui::MainWindow * ui;

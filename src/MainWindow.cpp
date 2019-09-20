@@ -2,6 +2,7 @@
 
 #include <QFileDialog>
 #include <QMap>
+#include <QKeyEvent>
 
 #include "MainWindow.h"
 #include "ProtoManager.h"
@@ -18,8 +19,10 @@ MainWindow::MainWindow(QWidget * parent) noexcept
     ui->tvProtoTree->setModel(&mModel);
 
     auto header = ui->tvProtoTree->header();
-
     header->setSectionResizeMode(QHeaderView::ResizeToContents);
+
+    ui->tvProtoTree->setItemDelegateForColumn(ProtobufModel::DATA_COLUMN, new FieldDelegate(this));
+    ui->tvProtoTree->setContextMenuPolicy(Qt::CustomContextMenu);
 
     ui->tvProtoTree->installEventFilter(this);
 
@@ -37,7 +40,8 @@ MainWindow::MainWindow(QWidget * parent) noexcept
     connect(ui->tvProtoTree, SIGNAL(expanded(const QModelIndex&)),
             &mModel, SLOT(onExpand(const QModelIndex&)));
 
-    ui->tvProtoTree->setItemDelegateForColumn(ProtobufModel::DATA_COLUMN, new FieldDelegate(this));
+    connect(ui->tvProtoTree, SIGNAL(customContextMenuRequested(const QPoint&)),
+            this, SLOT(onPrepareMenu(const QPoint&)));
 }
 
 void MainWindow::onLoadClasses()
@@ -59,6 +63,55 @@ void MainWindow::onSetClasses(const QStringList& classes)
 {
     ui->cbClass->clear();
     ui->cbClass->addItems(classes);
+}
+
+void MainWindow::onPrepareMenu(const QPoint &p)
+{
+    QModelIndex idx = ui->tvProtoTree->indexAt(p);
+    ProtoTreeItem *item = static_cast<ProtoTreeItem*>(idx.internalPointer());
+
+    QMenu menu;
+
+    if(item->label() == proto::FieldDescriptor::LABEL_REPEATED)
+    {
+        QAction * actAddItem = new QAction("Добавить элемент");
+        actAddItem->setData(idx);
+        //connect(actAddItem, SIGNAL(clicked()), SLOT(onAddItem()));
+        menu.addAction(actAddItem);
+    }
+    else
+    {
+        if(item->type() == proto::FieldDescriptor::TYPE_BYTES)
+        {
+            QAction * actTransform = new QAction("Преобразовать тип");
+            actTransform->setData(idx);
+            //connect(actTransform, SIGNAL(clicked()), SLOT(onReplaceType()));
+            menu.addAction(actTransform);
+        }
+        if(item->parentItem()->label() == proto::FieldDescriptor::LABEL_REPEATED)
+        {
+            QAction * actRemove = new QAction("Удалить элемент");
+            actRemove->setData(idx);
+            //connect(actTransform, SIGNAL(clicked()), SLOT(onReplaceType()));
+            menu.addAction(actRemove);
+        }
+    }
+
+
+    if(menu.actions().size() > 0)
+    {
+        menu.exec( ui->tvProtoTree->mapToGlobal(p) );
+    }
+}
+
+void MainWindow::onAddItem()
+{
+
+}
+
+void MainWindow::onReplaceType()
+{
+
 }
 
 bool MainWindow::eventFilter(QObject *watched, QEvent *event)
