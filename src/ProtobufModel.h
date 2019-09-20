@@ -16,6 +16,7 @@ class ProtobufModel : public QAbstractItemModel
     Q_OBJECT
 public:
     static const int DATA_COLUMN = 3;
+    static const int COLUMN_COUNT = 4;
 
     ProtobufModel(QObject * parent = nullptr) : QAbstractItemModel(parent) {}
     ~ProtobufModel() override {}
@@ -23,6 +24,8 @@ public:
 public slots:
     void setProtoClass(const proto::Descriptor * protoclass);
     void onExpand(const QModelIndex& index);
+    //void onAddItem(const QModelIndex& index);
+    //void onReplaceType(const QModelIndex& index);
 
     // QAbstractItemModel interface
 public:
@@ -32,18 +35,15 @@ public:
     int columnCount(const QModelIndex &parent) const override;
     QVariant data(const QModelIndex &index, int role) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+    bool setData(const QModelIndex &index, const QVariant &value, int role) override;
+    Qt::ItemFlags flags(const QModelIndex &index) const override;
 
 private:
-    proto::Descriptor const * mProtoClass;
+    QIcon icon(ProtoTreeItem* item) const;
+
+private:
     std::unique_ptr<ProtoTreeItem> mRootItem;
 
-    // QAbstractItemModel interface
-public:
-    bool setData(const QModelIndex &index, const QVariant &value, int role) override;
-
-    // QAbstractItemModel interface
-public:
-    Qt::ItemFlags flags(const QModelIndex &index) const override;
 };
 
 #endif // PROTOBUFMODEL_H

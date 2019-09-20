@@ -6,10 +6,15 @@
 #include <QPainter>
 
 #include "numericprotoitem.h"
+#include "floatprotoitem.h"
 #include "stringprotoitem.h"
+#include "boolprotoitem.h"
+#include "enumprotoitem.h"
+#include "repeatedprotoitem.h"
 
 ProtoTreeItem::ProtoTreeItem(const google::protobuf::Descriptor *pclass, ProtoTreeItem *parentItem)
-    : mName(pclass->name().c_str())
+    : QObject(nullptr)
+    , mName(pclass->name().c_str())
     , mTypeName("Message")
     , mType(proto::FieldDescriptor::TYPE_MESSAGE)
     , mLabel(proto::FieldDescriptor::LABEL_REQUIRED)
@@ -17,7 +22,8 @@ ProtoTreeItem::ProtoTreeItem(const google::protobuf::Descriptor *pclass, ProtoTr
     , mParentItem(parentItem) {}
 
 ProtoTreeItem::ProtoTreeItem(const google::protobuf::FieldDescriptor * field, ProtoTreeItem *parentItem)
-    : mName(field->name().c_str())
+    : QObject(nullptr)
+    , mName(field->name().c_str())
     , mTypeName(field->type_name())
     , mType(field->type())
     , mLabel(field->label())
@@ -27,7 +33,8 @@ ProtoTreeItem::ProtoTreeItem(const google::protobuf::FieldDescriptor * field, Pr
 {}
 
 ProtoTreeItem::ProtoTreeItem(const QString& name, ProtoTreeItem *parentItem)
-    : mName(name)
+    : QObject(nullptr)
+    , mName(name)
     , mTypeName("Message")
     , mType(proto::FieldDescriptor::TYPE_MESSAGE)
     , mLabel(proto::FieldDescriptor::LABEL_REQUIRED)
@@ -49,22 +56,36 @@ void ProtoTreeItem::expand()
 
 void ProtoTreeItem::expandChildren()
 {
-    if(mDesc != nullptr && mChildItems.empty())
+    if( mLabel != proto::FieldDescriptor::LABEL_REPEATED &&
+        mDesc != nullptr &&
+        mChildItems.empty() )
     {
         for(int i = 0; i < mDesc->field_count(); ++i)
         {
             createNode(mDesc->field(i));
         }
-    }
+     }
 }
 
 void ProtoTreeItem::createNode(const google::protobuf::FieldDescriptor *field)
+{
+    if(field->label() == proto::FieldDescriptor::LABEL_REPEATED)
+    {
+        mChildItems.push_back(std::make_unique<RepeatedProtoItem>(field, this));
+    }
+    else
+    {
+       createSingleNode(field);
+    }
+}
+
+void ProtoTreeItem::createSingleNode(const google::protobuf::FieldDescriptor *field)
 {
     switch(field->type())
     {
         case proto::FieldDescriptor::TYPE_DOUBLE:
         case proto::FieldDescriptor::TYPE_FLOAT:
-            mChildItems.push_back(std::make_unique<ProtoTreeItem>(field, this));
+            mChildItems.push_back(std::make_unique<FloatProtoItem>(field, this));
             break;
         case proto::FieldDescriptor::TYPE_INT64:
         case proto::FieldDescriptor::TYPE_UINT64:
@@ -79,18 +100,18 @@ void ProtoTreeItem::createNode(const google::protobuf::FieldDescriptor *field)
             mChildItems.push_back(std::make_unique<NumericProtoItem>(field, this));
             break;
         case proto::FieldDescriptor::TYPE_BOOL:
-            mChildItems.push_back(std::make_unique<ProtoTreeItem>(field, this));
+            mChildItems.push_back(std::make_unique<BoolProtoItem>(field, this));
             break;
+        case proto::FieldDescriptor::TYPE_BYTES:
         case proto::FieldDescriptor::TYPE_STRING:
             mChildItems.push_back(std::make_unique<StringProtoItem>(field, this));
             break;
         case proto::FieldDescriptor::TYPE_GROUP:
         case proto::FieldDescriptor::TYPE_MESSAGE:
-        case proto::FieldDescriptor::TYPE_BYTES:
             mChildItems.push_back(std::make_unique<ProtoTreeItem>(field, this));
             break;
         case proto::FieldDescriptor::TYPE_ENUM:
-            mChildItems.push_back(std::make_unique<ProtoTreeItem>(field, this));
+            mChildItems.push_back(std::make_unique<EnumProtoItem>(field, this));
             break;
     }
 }
@@ -107,17 +128,12 @@ QItemDelegate *ProtoTreeItem::getDelegate() const
 
 int ProtoTreeItem::fieldCount() const
 {
-    return mDesc->field_count();
+    return mDesc != nullptr ? mDesc->field_count() : 0;
 }
 
-size_t ProtoTreeItem::childCount() const
+int ProtoTreeItem::rowCount() const
 {
     return mChildItems.size();
-}
-
-int ProtoTreeItem::columnCount()
-{
-    return 4;
 }
 
 QVariant ProtoTreeItem::data(int column) const
@@ -138,23 +154,18 @@ QVariant ProtoTreeItem::data(int column) const
 
 QBrush ProtoTreeItem::color() const
 {
-    /*
-    switch(mType)
-    {         
-        case proto::FieldDescriptor::TYPE_GROUP:
-        case proto::FieldDescriptor::TYPE_MESSAGE:
-        case proto::FieldDescriptor::TYPE_BYTES:
-            return QBrush(QColor(255, 0, 0, 90));
-        case proto::FieldDescriptor::TYPE_ENUM:
-            return QBrush(QColor(0, 255, 255, 90));
-    }
-    */
-    return Qt::white;
+    return mType == proto::FieldDescriptor::TYPE_GROUP || mType == proto::FieldDescriptor::TYPE_MESSAGE ?
+        QBrush(QColor(255, 0, 0, 90)) : Qt::white;
 }
 
-Qt::ItemFlags ProtoTreeItem::flags() const
+QString ProtoTreeItem::name() const
 {
-    return getDelegate() != nullptr ? Qt::ItemIsEditable : Qt::NoItemFlags;
+    return mName;
+}
+
+QVariant ProtoTreeItem::value() const
+{
+    return mValue;
 }
 
 google::protobuf::FieldDescriptor::Type ProtoTreeItem::type() const
@@ -162,18 +173,14 @@ google::protobuf::FieldDescriptor::Type ProtoTreeItem::type() const
     return mType;
 }
 
-QIcon ProtoTreeItem::icon() const
+QString ProtoTreeItem::typeName() const
 {
-    switch (mLabel)
-    {
-        case proto::FieldDescriptor::LABEL_OPTIONAL:
-            return QIcon(":/icons/optional.png");
-        case proto::FieldDescriptor::LABEL_REPEATED:
-            return QIcon(":/icons/repeated.png");
-        case proto::FieldDescriptor::LABEL_REQUIRED:
-            return QIcon(":/icons/required.png");
-    }
-    return QIcon();
+    return mTypeName;
+}
+
+google::protobuf::FieldDescriptor::Label ProtoTreeItem::label() const
+{
+    return mLabel;
 }
 
 size_t ProtoTreeItem::row() const
