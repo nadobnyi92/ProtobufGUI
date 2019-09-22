@@ -76,7 +76,7 @@ void MainWindow::onPrepareMenu(const QPoint &p)
     {
         QAction * actAddItem = new QAction("Добавить элемент");
         actAddItem->setData(idx);
-        //connect(actAddItem, SIGNAL(clicked()), SLOT(onAddItem()));
+        connect(actAddItem, SIGNAL(triggered()), SLOT(onAddItem()));
         menu.addAction(actAddItem);
     }
     else
@@ -106,7 +106,9 @@ void MainWindow::onPrepareMenu(const QPoint &p)
 
 void MainWindow::onAddItem()
 {
-
+    QAction * act = static_cast<QAction*>(sender());
+    QModelIndex idx = qvariant_cast<QModelIndex>(act->data());
+    mModel.onAddItem(idx);
 }
 
 void MainWindow::onReplaceType()

@@ -26,11 +26,19 @@ ProtoTreeItem::ProtoTreeItem(const google::protobuf::FieldDescriptor * field, Pr
     , mName(field->name().c_str())
     , mTypeName(field->type_name())
     , mType(field->type())
-    , mLabel(field->label())
     , mDesc(field->message_type())
     , mParentItem(parentItem)
+{
+    if(parentItem != nullptr && parentItem->label() == proto::FieldDescriptor::LABEL_REPEATED)
+    {
+        mLabel = proto::FieldDescriptor::LABEL_OPTIONAL;
+    }
+    else
+    {
+        mLabel = field->label();
+    }
 
-{}
+}
 
 ProtoTreeItem::ProtoTreeItem(const QString& name, ProtoTreeItem *parentItem)
     : QObject(nullptr)

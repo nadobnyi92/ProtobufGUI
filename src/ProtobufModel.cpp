@@ -1,5 +1,6 @@
 #include "ProtobufModel.h"
 #include "prototreeitem.h"
+#include "repeatedprotoitem.h"
 
 void ProtobufModel::setProtoClass(const google::protobuf::Descriptor *protoclass)
 {
@@ -22,6 +23,18 @@ void ProtobufModel::onExpand(const QModelIndex &index)
     item->expand();
     beginInsertRows(index, 0, item->rowCount());
     endInsertRows();
+}
+
+void ProtobufModel::onAddItem(const QModelIndex &index)
+{
+    ProtoTreeItem *item = static_cast<ProtoTreeItem*>(index.internalPointer());
+    RepeatedProtoItem *rItem = dynamic_cast<RepeatedProtoItem*>(item);
+    if(rItem != nullptr)
+    {
+        beginInsertRows(index, item->rowCount()-1, item->rowCount()-1);
+        rItem->addItem();
+        endInsertRows();
+    }
 }
 
 QModelIndex ProtobufModel::index(int row, int column, const QModelIndex &parent) const

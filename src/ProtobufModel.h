@@ -24,7 +24,7 @@ public:
 public slots:
     void setProtoClass(const proto::Descriptor * protoclass);
     void onExpand(const QModelIndex& index);
-    //void onAddItem(const QModelIndex& index);
+    void onAddItem(const QModelIndex& index);
     //void onReplaceType(const QModelIndex& index);
 
     // QAbstractItemModel interface
