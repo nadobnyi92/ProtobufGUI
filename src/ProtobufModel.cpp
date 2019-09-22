@@ -37,6 +37,18 @@ void ProtobufModel::onAddItem(const QModelIndex &index)
     }
 }
 
+void ProtobufModel::onRemoveItem(const QModelIndex &index)
+{
+    if(index.parent().isValid())
+    {
+        int row = static_cast<ProtoTreeItem*>(index.internalPointer())->row();
+        ProtoTreeItem *pItem = static_cast<ProtoTreeItem*>(index.parent().internalPointer());
+        beginRemoveRows(index.parent(), row, row);
+        pItem->removeRow(row);
+        endRemoveRows();
+    }
+}
+
 QModelIndex ProtobufModel::index(int row, int column, const QModelIndex &parent) const
 {
     if(!mRootItem || !hasIndex(row,column,parent))

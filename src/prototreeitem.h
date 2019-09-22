@@ -43,6 +43,7 @@ public:
 
     virtual void expand();
     void setData(const QVariant& data);
+    void removeRow(int row);
 
     virtual QItemDelegate* getDelegate() const;
     virtual QBrush color() const;

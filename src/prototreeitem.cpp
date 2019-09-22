@@ -129,6 +129,11 @@ void ProtoTreeItem::setData(const QVariant &data)
     mValue = data;
 }
 
+void ProtoTreeItem::removeRow(int row)
+{
+    mChildItems.erase(mChildItems.begin() + row);
+}
+
 QItemDelegate *ProtoTreeItem::getDelegate() const
 {
     return nullptr;

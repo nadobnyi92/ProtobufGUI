@@ -24,6 +24,7 @@ public slots:
     void onPrepareMenu( const QPoint& p );
 
     void onAddItem();
+    void onRemoveItem();
     void onReplaceType();
 
 private:

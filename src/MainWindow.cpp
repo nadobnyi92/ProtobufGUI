@@ -85,14 +85,14 @@ void MainWindow::onPrepareMenu(const QPoint &p)
         {
             QAction * actTransform = new QAction("Преобразовать тип");
             actTransform->setData(idx);
-            //connect(actTransform, SIGNAL(clicked()), SLOT(onReplaceType()));
+            //connect(actTransform, SIGNAL(triggered()), SLOT(onReplaceType()));
             menu.addAction(actTransform);
         }
         if(item->parentItem()->label() == proto::FieldDescriptor::LABEL_REPEATED)
         {
             QAction * actRemove = new QAction("Удалить элемент");
             actRemove->setData(idx);
-            //connect(actTransform, SIGNAL(clicked()), SLOT(onReplaceType()));
+            connect(actRemove, SIGNAL(triggered()), SLOT(onRemoveItem()));
             menu.addAction(actRemove);
         }
     }
@@ -109,6 +109,13 @@ void MainWindow::onAddItem()
     QAction * act = static_cast<QAction*>(sender());
     QModelIndex idx = qvariant_cast<QModelIndex>(act->data());
     mModel.onAddItem(idx);
+}
+
+void MainWindow::onRemoveItem()
+{
+    QAction * act = static_cast<QAction*>(sender());
+    QModelIndex idx = qvariant_cast<QModelIndex>(act->data());
+    mModel.onRemoveItem(idx);
 }
 
 void MainWindow::onReplaceType()
