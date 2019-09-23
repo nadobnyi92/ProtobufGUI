@@ -57,7 +57,8 @@ ProtoTreeItem* ProtoTreeItem::child(size_t row)
 void ProtoTreeItem::expand()
 {
     expandChildren();
-    for(auto& child: mChildItems) {
+    for(auto& child: mChildItems)
+    {
         child->expandChildren();
     }
 }

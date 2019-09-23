@@ -54,18 +54,11 @@ QModelIndex ProtobufModel::index(int row, int column, const QModelIndex &parent)
     if(!mRootItem || !hasIndex(row,column,parent))
         return QModelIndex();
 
-    ProtoTreeItem *parentItem;
-
-    if (!parent.isValid())
-            parentItem = mRootItem.get();
-        else
-            parentItem = static_cast<ProtoTreeItem*>(parent.internalPointer());
+    ProtoTreeItem *parentItem = parent.isValid() ?
+        static_cast<ProtoTreeItem*>(parent.internalPointer()) : mRootItem.get();
 
     ProtoTreeItem *childItem = parentItem->child(row);
-    if (childItem)
-        return createIndex(row, column, childItem);
-
-    return QModelIndex();
+    return childItem != nullptr ? createIndex(row, column, childItem) : QModelIndex();
 }
 
 QModelIndex ProtobufModel::parent(const QModelIndex &index) const
@@ -76,23 +69,17 @@ QModelIndex ProtobufModel::parent(const QModelIndex &index) const
     ProtoTreeItem *childItem = static_cast<ProtoTreeItem*>(index.internalPointer());
     ProtoTreeItem *parentItem = childItem->parentItem();
 
-    if (parentItem == mRootItem.get())
-        return QModelIndex();
-
-    return createIndex(parentItem->row(), 0, parentItem);
+    return parentItem == mRootItem.get() ?
+        QModelIndex() : createIndex(parentItem->row(), 0, parentItem);
 }
 
 int ProtobufModel::rowCount(const QModelIndex &parent) const
 {
-    ProtoTreeItem *parentItem;
-
     if (!mRootItem || parent.column() > 0)
         return 0;
 
-    if (!parent.isValid())
-        parentItem = mRootItem.get();
-    else
-        parentItem = static_cast<ProtoTreeItem*>(parent.internalPointer());
+    ProtoTreeItem *parentItem = parent.isValid() ?
+        static_cast<ProtoTreeItem*>(parent.internalPointer()) : mRootItem.get();
 
     return parentItem->rowCount();
 }
