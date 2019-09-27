@@ -98,3 +98,8 @@ void ProtoManager::load(const QUrl& path)
     }
     emit onProtoChange(mProtoPackages.keys());
 }
+
+QStringList ProtoManager::getPackages() const
+{
+    return mProtoPackages.keys();
+}

@@ -31,8 +31,8 @@ void ProtobufModel::onAddItem(const QModelIndex &index)
     RepeatedProtoItem *rItem = dynamic_cast<RepeatedProtoItem*>(item);
     if(rItem != nullptr)
     {
-        beginInsertRows(index, item->rowCount()-1, item->rowCount()-1);
         rItem->addItem();
+        beginInsertRows(index, rowCount(index), rowCount(index));
         endInsertRows();
     }
 }

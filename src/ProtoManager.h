@@ -24,6 +24,8 @@ public:
     ~ProtoManager();
     void load(const QUrl &path);
 
+    QStringList getPackages() const;
+
 public slots:
     void setPackage(const QString& pPackage);
     void setClass(const QString& pClass);

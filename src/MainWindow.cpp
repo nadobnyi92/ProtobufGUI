@@ -4,9 +4,11 @@
 #include <QMap>
 #include <QKeyEvent>
 
-#include "MainWindow.h"
-#include "ProtoManager.h"
+#include "mainwindow.h"
+#include "protomanager.h"
 #include "fielddelegate.h"
+
+#include "prototypedialog.h"
 
 #include "ui_mainwindow.h"
 
@@ -85,7 +87,7 @@ void MainWindow::onPrepareMenu(const QPoint &p)
         {
             QAction * actTransform = new QAction("Преобразовать тип");
             actTransform->setData(idx);
-            //connect(actTransform, SIGNAL(triggered()), SLOT(onReplaceType()));
+            connect(actTransform, SIGNAL(triggered()), SLOT(onReplaceType()));
             menu.addAction(actTransform);
         }
         if(item->parentItem()->label() == proto::FieldDescriptor::LABEL_REPEATED)
@@ -120,7 +122,11 @@ void MainWindow::onRemoveItem()
 
 void MainWindow::onReplaceType()
 {
+    ProtoTypeDialog dlg(mProtoManager, this);
+    dlg.exec();
 
+    QAction * act = static_cast<QAction*>(sender());
+    QModelIndex idx = qvariant_cast<QModelIndex>(act->data());
 }
 
 bool MainWindow::eventFilter(QObject *watched, QEvent *event)
