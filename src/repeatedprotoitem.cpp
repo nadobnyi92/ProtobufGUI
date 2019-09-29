@@ -1,7 +1,5 @@
 #include "repeatedprotoitem.h"
 
-#include "ProtobufModel.h"
-
 RepeatedProtoItem::RepeatedProtoItem(const proto::FieldDescriptor * field, ProtoTreeItem *parentItem)
     : ProtoTreeItem(field, parentItem), mField(field) {}
 

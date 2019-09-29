@@ -2,8 +2,6 @@
 
 #include <QComboBox>
 
-#include "ProtobufModel.h"
-
 EnumProtoItem::ItemDelegate::ItemDelegate(const QStringList& items,QObject *parent)
     : QItemDelegate(parent), mItems(items) {}
 

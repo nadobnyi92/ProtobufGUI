@@ -4,8 +4,8 @@
 #include <QObject>
 #include <QMainWindow>
 
-#include "ProtoManager.h"
-#include "ProtobufModel.h"
+#include "protomanager.h"
+#include "protobufmodel.h"
 
 namespace Ui {
     class MainWindow;

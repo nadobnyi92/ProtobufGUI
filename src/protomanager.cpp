@@ -5,7 +5,7 @@
 #include <google/protobuf/compiler/importer.h>
 #include <google/protobuf/dynamic_message.h>
 
-#include "ProtoManager.h"
+#include "protomanager.h"
 
 namespace protoc = google::protobuf::compiler;
 namespace proto = google::protobuf;

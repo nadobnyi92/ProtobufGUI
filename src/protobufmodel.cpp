@@ -1,4 +1,4 @@
-#include "ProtobufModel.h"
+#include "protobufmodel.h"
 #include "prototreeitem.h"
 #include "repeatedprotoitem.h"
 
