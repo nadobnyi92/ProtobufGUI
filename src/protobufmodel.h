@@ -26,7 +26,7 @@ public slots:
     void onExpand(const QModelIndex& index);
     void onAddItem(const QModelIndex& index);
     void onRemoveItem(const QModelIndex& index);
-    //void onReplaceType(const QModelIndex& index);
+    void onReplaceType(const QModelIndex& index, const proto::Descriptor * desc);
 
     // QAbstractItemModel interface
 public:

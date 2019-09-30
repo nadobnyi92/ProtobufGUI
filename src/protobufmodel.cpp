@@ -31,8 +31,8 @@ void ProtobufModel::onAddItem(const QModelIndex &index)
     RepeatedProtoItem *rItem = dynamic_cast<RepeatedProtoItem*>(item);
     if(rItem != nullptr)
     {
-        rItem->addItem();
         beginInsertRows(index, rowCount(index), rowCount(index));
+        rItem->addItem();
         endInsertRows();
     }
 }
@@ -49,9 +49,17 @@ void ProtobufModel::onRemoveItem(const QModelIndex &index)
     }
 }
 
+void ProtobufModel::onReplaceType(const QModelIndex &index, const proto::Descriptor* desc)
+{
+    ProtoTreeItem *pItem = static_cast<ProtoTreeItem*>(index.internalPointer());
+    pItem->setDesc(desc);
+    beginInsertRows(index, rowCount(index), rowCount(index));
+    endInsertRows();
+}
+
 QModelIndex ProtobufModel::index(int row, int column, const QModelIndex &parent) const
 {
-    if(!mRootItem || !hasIndex(row,column,parent))
+    if(!mRootItem)
         return QModelIndex();
 
     ProtoTreeItem *parentItem = parent.isValid() ?
@@ -75,7 +83,7 @@ QModelIndex ProtobufModel::parent(const QModelIndex &index) const
 
 int ProtobufModel::rowCount(const QModelIndex &parent) const
 {
-    if (!mRootItem || parent.column() > 0)
+    if (!mRootItem)
         return 0;
 
     ProtoTreeItem *parentItem = parent.isValid() ?

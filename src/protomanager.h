@@ -24,7 +24,8 @@ public:
     ~ProtoManager();
     void load(const QUrl &path);
 
-    QStringList getPackages() const;
+    QMultiHash <QString, QString> getProtoClasses() const;
+    const proto::Descriptor * getClassDescriptor(const QString& pPackage, const QString& pClass) const;
 
 public slots:
     void setPackage(const QString& pPackage);

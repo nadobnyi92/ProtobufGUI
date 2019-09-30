@@ -99,7 +99,6 @@ void MainWindow::onPrepareMenu(const QPoint &p)
         }
     }
 
-
     if(menu.actions().size() > 0)
     {
         menu.exec( ui->tvProtoTree->mapToGlobal(p) );
@@ -123,10 +122,13 @@ void MainWindow::onRemoveItem()
 void MainWindow::onReplaceType()
 {
     ProtoTypeDialog dlg(mProtoManager, this);
-    dlg.exec();
-
-    QAction * act = static_cast<QAction*>(sender());
-    QModelIndex idx = qvariant_cast<QModelIndex>(act->data());
+    if(dlg.exec() == QDialog::Accepted)
+    {
+        QAction * act = static_cast<QAction*>(sender());
+        QModelIndex idx = qvariant_cast<QModelIndex>(act->data());
+        mModel.onReplaceType(idx,
+            mProtoManager.getClassDescriptor(dlg.pPackage(), dlg.pClass()));
+    }
 }
 
 bool MainWindow::eventFilter(QObject *watched, QEvent *event)

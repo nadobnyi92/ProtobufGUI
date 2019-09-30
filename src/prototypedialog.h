@@ -16,13 +16,16 @@ class ProtoTypeDialog : public QDialog
 public:
     ProtoTypeDialog(const ProtoManager& manager, QWidget * parent = nullptr);
 
+    QString pPackage() const;
+    QString pClass() const;
+
 public slots:
-    void onSetPackages(const QStringList&);
-    void onSetClasses(const QStringList&);
+    void onSetPackage(const QString& package);
 
 private:
     Ui::ProtoTypeDialog * ui;
-    const ProtoManager& mManger;
+
+    QMultiHash<QString, QString> mClasses;
 
 };
 

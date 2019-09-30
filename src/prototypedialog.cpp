@@ -4,24 +4,30 @@
 #include "ui_prototypedialog.h"
 
 ProtoTypeDialog::ProtoTypeDialog(const ProtoManager& manager, QWidget * parent)
-    : QDialog(parent), ui(new Ui::ProtoTypeDialog), mManger(manager)
+    : QDialog(parent)
+    , ui(new Ui::ProtoTypeDialog)
 {
+    ui->setupUi(this);
+
+    mClasses = manager.getProtoClasses();
+    ui->cbPackage->addItems(mClasses.keys());
+
     connect(ui->cbPackage, SIGNAL(currentTextChanged(const QString&)),
-            &mManger, SLOT(setPackage(const QString&)));
-    connect(&mManger, SIGNAL(onPackageChange(const QStringList&)),
-            SLOT(onSetClasses(const QStringList&)));
-
-    ui->cbPackage->addItems(mManger.getPackages());
+            SLOT(onSetPackage(const QString&)));
 }
 
-void ProtoTypeDialog::onSetPackages(const QStringList & items)
-{
-    ui->cbPackage->clear();
-    ui->cbPackage->addItems(items);
-}
-
-void ProtoTypeDialog::onSetClasses(const QStringList &items)
+void ProtoTypeDialog::onSetPackage(const QString &package)
 {
     ui->cbClass->clear();
-    ui->cbClass->addItems(items);
+    ui->cbClass->addItems(mClasses.values(package));
+}
+
+QString ProtoTypeDialog::pPackage() const
+{
+    return ui->cbPackage->currentText();
+}
+
+QString ProtoTypeDialog::pClass() const
+{
+    return ui->cbClass->currentText();
 }

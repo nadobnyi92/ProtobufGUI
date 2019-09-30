@@ -130,6 +130,13 @@ void ProtoTreeItem::setData(const QVariant &data)
     mValue = data;
 }
 
+void ProtoTreeItem::setDesc(const google::protobuf::Descriptor *desc)
+{
+    mChildItems.clear();
+    mDesc = desc;
+    expand();
+}
+
 void ProtoTreeItem::removeRow(int row)
 {
     mChildItems.erase(mChildItems.begin() + row);
@@ -159,7 +166,7 @@ QVariant ProtoTreeItem::data(int column) const
         case 1:
             return mName;
         case 2:
-            return mTypeName;
+            return typeName();
         case 3:
             return mValue;
     }
@@ -189,7 +196,10 @@ google::protobuf::FieldDescriptor::Type ProtoTreeItem::type() const
 
 QString ProtoTreeItem::typeName() const
 {
-    return mTypeName;
+    QString tName = mTypeName;
+    if(mDesc != nullptr && mType != proto::FieldDescriptor::TYPE_MESSAGE)
+        tName.append("(").append(mDesc->name().c_str()).append(")");
+    return tName;
 }
 
 google::protobuf::FieldDescriptor::Label ProtoTreeItem::label() const

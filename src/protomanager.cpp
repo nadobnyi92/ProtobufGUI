@@ -99,7 +99,24 @@ void ProtoManager::load(const QUrl& path)
     emit onProtoChange(mProtoPackages.keys());
 }
 
-QStringList ProtoManager::getPackages() const
+QMultiHash<QString, QString> ProtoManager::getProtoClasses() const
 {
-    return mProtoPackages.keys();
+    QMultiHash<QString, QString> protoClasses;
+    for(auto itPkg = mProtoPackages.begin(), itPkg_end = mProtoPackages.end();
+        itPkg != itPkg_end; ++itPkg)
+    {
+        for(auto itCls = itPkg.value().begin(), itCls_end = itPkg.value().end();
+            itCls != itCls_end; ++itCls)
+        {
+            protoClasses.insert(itPkg.key(), itCls.key());
+        }
+    }
+    return protoClasses;
+}
+
+const proto::Descriptor *ProtoManager::getClassDescriptor(const QString &pPackage, const QString &pClass) const
+{
+    return mProtoPackages
+        .value(pPackage, QHash<QString, const proto::Descriptor*>())
+        .value(pClass, nullptr);
 }
