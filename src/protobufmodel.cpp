@@ -21,7 +21,7 @@ void ProtobufModel::onExpand(const QModelIndex &index)
     ProtoTreeItem *item = static_cast<ProtoTreeItem*>(index.internalPointer());
 
     item->expand();
-    beginInsertRows(index, 0, item->rowCount());
+    beginInsertRows(index.siblingAtColumn(0), 0, item->rowCount());
     endInsertRows();
 }
 
@@ -31,7 +31,9 @@ void ProtobufModel::onAddItem(const QModelIndex &index)
     RepeatedProtoItem *rItem = dynamic_cast<RepeatedProtoItem*>(item);
     if(rItem != nullptr)
     {
+        beginInsertRows(index.siblingAtColumn(0), item->rowCount(), item->rowCount());
         rItem->addItem();
+        endInsertRows();
     }
 }
 
@@ -55,14 +57,12 @@ void ProtobufModel::onReplaceType(const QModelIndex &index, const proto::Descrip
 
 QModelIndex ProtobufModel::index(int row, int column, const QModelIndex &parent) const
 {
-    if(!mRootItem)
+    if(!mRootItem || !hasIndex(row, column, parent))
         return QModelIndex();
 
     ProtoTreeItem *parentItem = parent.isValid() ?
         static_cast<ProtoTreeItem*>(parent.internalPointer()) : mRootItem.get();
-
-    ProtoTreeItem *childItem = parentItem->child(row);
-    return childItem != nullptr ? createIndex(row, column, childItem) : QModelIndex();
+    return createIndex(row, column, parentItem->child(row));
 }
 
 QModelIndex ProtobufModel::parent(const QModelIndex &index) const
@@ -74,7 +74,7 @@ QModelIndex ProtobufModel::parent(const QModelIndex &index) const
     ProtoTreeItem *parentItem = childItem->parentItem();
 
     return parentItem == mRootItem.get() ?
-        QModelIndex() : createIndex(parentItem->row(), 0, parentItem);
+        QModelIndex() : createIndex(parentItem->row(), index.column(), parentItem);
 }
 
 int ProtobufModel::rowCount(const QModelIndex &parent) const
@@ -119,7 +119,7 @@ QVariant ProtobufModel::data(const QModelIndex &index, int role) const
         case Qt::BackgroundRole:
             return item->color();
         case Qt::DecorationRole:
-            return index.column() == 2 ? icon(item) : QVariant();
+            return index.column() == COL_VALUE ? icon(item) : QVariant();
     }
     return QVariant();
 }
@@ -144,8 +144,6 @@ QVariant ProtobufModel::headerData(int section, Qt::Orientation orientation, int
     {
         switch (section)
         {
-            case COL_OPTION:
-                return "";
             case COL_NAME:
                 return "Поле";
             case COL_TYPE:
@@ -173,10 +171,9 @@ bool ProtobufModel::setData(const QModelIndex &index, const QVariant &value, int
 Qt::ItemFlags ProtobufModel::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
-        return Qt::ItemIsEnabled;
-    Qt::ItemFlags flags = QAbstractItemModel::flags(index);
+        return Qt::ItemIsEnabled;;
     if(index.column() == COL_VALUE &&
         static_cast<ProtoTreeItem*>(index.internalPointer())->getDelegate() != nullptr)
-        flags = flags | Qt::ItemIsEditable;
-    return flags;
+        return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
+    return QAbstractItemModel::flags(index) | Qt::ItemIsEnabled;
 }

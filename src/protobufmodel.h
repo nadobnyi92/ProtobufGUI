@@ -23,7 +23,6 @@ public:
     {
         COL_NAME = 0,
         COL_TYPE,
-        COL_OPTION,
         COL_VALUE,
         COL_COUNT
     };
@@ -51,7 +50,7 @@ private:
 
 private:
     std::unique_ptr<ProtoTreeItem> mRootItem;
-
 };
+
 
 #endif // PROTOBUFMODEL_H

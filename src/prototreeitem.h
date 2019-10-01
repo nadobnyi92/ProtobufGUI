@@ -49,9 +49,9 @@ public:
 
 protected:
     void createSingleNode(const proto::FieldDescriptor * field);
+    void expandChildren();
 
 private:
-    void expandChildren();
     void createNode(const proto::FieldDescriptor * field);
 
 private:
