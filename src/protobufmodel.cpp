@@ -31,9 +31,7 @@ void ProtobufModel::onAddItem(const QModelIndex &index)
     RepeatedProtoItem *rItem = dynamic_cast<RepeatedProtoItem*>(item);
     if(rItem != nullptr)
     {
-        beginInsertRows(index, rowCount(index), rowCount(index));
         rItem->addItem();
-        endInsertRows();
     }
 }
 
@@ -53,8 +51,6 @@ void ProtobufModel::onReplaceType(const QModelIndex &index, const proto::Descrip
 {
     ProtoTreeItem *pItem = static_cast<ProtoTreeItem*>(index.internalPointer());
     pItem->setDesc(desc);
-    beginInsertRows(index, rowCount(index), rowCount(index));
-    endInsertRows();
 }
 
 QModelIndex ProtobufModel::index(int row, int column, const QModelIndex &parent) const

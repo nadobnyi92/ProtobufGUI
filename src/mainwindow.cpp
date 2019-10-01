@@ -110,6 +110,7 @@ void MainWindow::onAddItem()
     QAction * act = static_cast<QAction*>(sender());
     QModelIndex idx = qvariant_cast<QModelIndex>(act->data());
     mModel.onAddItem(idx);
+    ui->tvProtoTree->expand(idx);
 }
 
 void MainWindow::onRemoveItem()
@@ -128,6 +129,7 @@ void MainWindow::onReplaceType()
         QModelIndex idx = qvariant_cast<QModelIndex>(act->data());
         mModel.onReplaceType(idx,
             mProtoManager.getClassDescriptor(dlg.pPackage(), dlg.pClass()));
+        ui->tvProtoTree->expand(idx);
     }
 }
 
