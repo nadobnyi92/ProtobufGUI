@@ -13,13 +13,9 @@ QBrush RepeatedProtoItem::color() const
     return QBrush(QColor(255, 0, 0, 90));
 }
 
-QVariant RepeatedProtoItem::data(int column) const
+QString RepeatedProtoItem::name() const
 {
-    QVariant data = ProtoTreeItem::data(column);
-    if(column == 1)
-    {
-        data = data.toString().append("[").append(QString::number(rowCount())).append("]");
-    }
-    return data;
+    return ProtoTreeItem::name()
+        .append("[").append(QString::number(rowCount())).append("]");
 }
 

@@ -157,22 +157,6 @@ int ProtoTreeItem::rowCount() const
     return mChildItems.size();
 }
 
-QVariant ProtoTreeItem::data(int column) const
-{
-    switch(column)
-    {
-        case 0:
-            return QVariant();
-        case 1:
-            return mName;
-        case 2:
-            return typeName();
-        case 3:
-            return mValue;
-    }
-    return QVariant();
-}
-
 QBrush ProtoTreeItem::color() const
 {
     return mType == proto::FieldDescriptor::TYPE_GROUP || mType == proto::FieldDescriptor::TYPE_MESSAGE ?

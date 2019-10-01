@@ -19,11 +19,10 @@ signals:
     // ProtoTreeItem interface
 public:
     QBrush color() const override;
-    QVariant data(int column) const override;
+    QString name() const override;
 
 private:
     const proto::FieldDescriptor * mField;
 };
-
 
 #endif // REPEATEDPROTOITEM_H

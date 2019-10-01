@@ -33,9 +33,7 @@ public:
     ProtoTreeItem *child(size_t row);
     size_t row() const;
 
-    virtual QVariant data(int column) const;
-
-    QString name() const;
+    virtual QString name() const;
     QVariant value() const;
     proto::FieldDescriptor::Type type() const;
     QString typeName() const;

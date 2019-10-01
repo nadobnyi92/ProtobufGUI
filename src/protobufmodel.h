@@ -14,12 +14,19 @@ namespace proto = google::protobuf;
 class ProtobufModel : public QAbstractItemModel
 {
     Q_OBJECT
-public:
-    static const int DATA_COLUMN = 3;
-    static const int COLUMN_COUNT = 4;
 
+public:
     ProtobufModel(QObject * parent = nullptr) : QAbstractItemModel(parent) {}
     ~ProtobufModel() override {}
+
+    enum ColumnTypes
+    {
+        COL_NAME = 0,
+        COL_TYPE,
+        COL_OPTION,
+        COL_VALUE,
+        COL_COUNT
+    };
 
 public slots:
     void setProtoClass(const proto::Descriptor * protoclass);

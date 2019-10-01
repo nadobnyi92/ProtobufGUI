@@ -23,7 +23,7 @@ MainWindow::MainWindow(QWidget * parent) noexcept
     auto header = ui->tvProtoTree->header();
     header->setSectionResizeMode(QHeaderView::ResizeToContents);
 
-    ui->tvProtoTree->setItemDelegateForColumn(ProtobufModel::DATA_COLUMN, new FieldDelegate(this));
+    ui->tvProtoTree->setItemDelegateForColumn(ProtobufModel::COL_VALUE, new FieldDelegate(this));
     ui->tvProtoTree->setContextMenuPolicy(Qt::CustomContextMenu);
 
     ui->tvProtoTree->installEventFilter(this);
@@ -141,7 +141,7 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
         QKeyEvent * kEvent = static_cast<QKeyEvent*>(event);
         if(kEvent->key() == Qt::Key_Delete)
         {
-            mModel.setData(ui->tvProtoTree->currentIndex().siblingAtColumn(ProtobufModel::DATA_COLUMN), QVariant(), Qt::EditRole);
+            mModel.setData(ui->tvProtoTree->currentIndex().siblingAtColumn(ProtobufModel::COL_VALUE), QVariant(), Qt::EditRole);
         }
     }
     return QMainWindow::eventFilter(watched, event);

@@ -90,7 +90,7 @@ int ProtobufModel::rowCount(const QModelIndex &parent) const
 
 int ProtobufModel::columnCount(const QModelIndex &parent) const
 {
-    return COLUMN_COUNT;
+    return COL_COUNT;
 }
 
 QVariant ProtobufModel::data(const QModelIndex &index, int role) const
@@ -103,12 +103,23 @@ QVariant ProtobufModel::data(const QModelIndex &index, int role) const
     switch (role)
     {
         case Qt::DisplayRole:
-            return item->data(index.column());
+        {
+            switch(index.column())
+            {
+                case COL_NAME:
+                    return item->name();
+                case COL_TYPE:
+                    return item->typeName();
+                case COL_VALUE:
+                    return item->value();
+                default:
+                    return QVariant();
+            }
+        }
         case Qt::BackgroundRole:
-            return index.column() > 0 ? item->color() : QVariant();
+            return item->color();
         case Qt::DecorationRole:
-            return index.column() == 0 ? icon(item) : QVariant();
-
+            return index.column() == 2 ? icon(item) : QVariant();
     }
     return QVariant();
 }
@@ -133,13 +144,13 @@ QVariant ProtobufModel::headerData(int section, Qt::Orientation orientation, int
     {
         switch (section)
         {
-            case 0:
+            case COL_OPTION:
                 return "";
-            case 1:
+            case COL_NAME:
                 return "Поле";
-            case 2:
+            case COL_TYPE:
                 return "Тип данных";
-            case 3:
+            case COL_VALUE:
                 return "Значение";
         }
     }
@@ -149,7 +160,7 @@ QVariant ProtobufModel::headerData(int section, Qt::Orientation orientation, int
 
 bool ProtobufModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if(index.isValid() && role == Qt::EditRole && index.column() == DATA_COLUMN)
+    if(index.isValid() && role == Qt::EditRole && index.column() == COL_VALUE)
     {
         ProtoTreeItem *item = static_cast<ProtoTreeItem*>(index.internalPointer());
         item->setData(value);
@@ -164,7 +175,7 @@ Qt::ItemFlags ProtobufModel::flags(const QModelIndex &index) const
     if (!index.isValid())
         return Qt::ItemIsEnabled;
     Qt::ItemFlags flags = QAbstractItemModel::flags(index);
-    if(index.column() == DATA_COLUMN &&
+    if(index.column() == COL_VALUE &&
         static_cast<ProtoTreeItem*>(index.internalPointer())->getDelegate() != nullptr)
         flags = flags | Qt::ItemIsEditable;
     return flags;
