@@ -10,7 +10,7 @@ ProtoTypeDialog::ProtoTypeDialog(const ProtoManager& manager, QWidget * parent)
     ui->setupUi(this);
 
     mClasses = manager.getProtoClasses();
-    ui->cbPackage->addItems(mClasses.keys());
+    ui->cbPackage->addItems(removeEmptyOrDupl(mClasses.keys()));
 
     connect(ui->cbPackage, SIGNAL(currentTextChanged(const QString&)),
             SLOT(onSetPackage(const QString&)));
@@ -19,7 +19,7 @@ ProtoTypeDialog::ProtoTypeDialog(const ProtoManager& manager, QWidget * parent)
 void ProtoTypeDialog::onSetPackage(const QString &package)
 {
     ui->cbClass->clear();
-    ui->cbClass->addItems(mClasses.values(package));
+    ui->cbClass->addItems(removeEmptyOrDupl(mClasses.values(package)));
 }
 
 QString ProtoTypeDialog::pPackage() const

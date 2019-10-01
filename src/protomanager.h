@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QHash>
 
+QStringList removeEmptyOrDupl(const QStringList& src);
+
 namespace google
 {
     namespace protobuf

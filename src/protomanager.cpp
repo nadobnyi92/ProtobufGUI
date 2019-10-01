@@ -10,6 +10,16 @@
 namespace protoc = google::protobuf::compiler;
 namespace proto = google::protobuf;
 
+QStringList removeEmptyOrDupl(const QStringList& src)
+{
+    QStringList res;
+    std::copy_if(src.begin(), src.end(),
+                 std::back_inserter(res),
+                 [&](const QString& val) {return !res.contains(val) && !val.trimmed().isEmpty();});
+    res.sort();
+    return res;
+}
+
 class ProtoContext
 {
 private:
@@ -61,13 +71,15 @@ ProtoManager::~ProtoManager()
 void ProtoManager::setPackage(const QString& pPackage)
 {
     mCurPackage = pPackage;
-    emit onPackageChange(mProtoPackages[mCurPackage].keys());
+    emit onPackageChange(removeEmptyOrDupl(mProtoPackages[mCurPackage].keys()));
 }
 
 void ProtoManager::setClass(const QString& pClass)
 {
     mCurClass = pClass;
-    emit onClassChange(mProtoPackages[mCurPackage][mCurClass]);
+    emit onClassChange(mProtoPackages
+        .value(mCurPackage, QHash<QString, const proto::Descriptor*>())
+        .value(mCurClass, nullptr));
 }
 
 void ProtoManager::load(const QUrl& path)
@@ -96,7 +108,7 @@ void ProtoManager::load(const QUrl& path)
             mProtoPackages[fDesc->package().c_str()][desc->name().c_str()] = desc;
         }
     }
-    emit onProtoChange(mProtoPackages.keys());
+    emit onProtoChange(removeEmptyOrDupl(mProtoPackages.keys()));
 }
 
 QMultiHash<QString, QString> ProtoManager::getProtoClasses() const
