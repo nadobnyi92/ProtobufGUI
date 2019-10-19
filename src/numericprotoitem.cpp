@@ -40,3 +40,31 @@ QItemDelegate *NumericProtoItem::getDelegate() const
 {
     return mDelegate;
 }
+
+
+void NumericProtoItem::setFieldValue(google::protobuf::Message *message)
+{
+    switch (mField->type())
+    {
+        case proto::FieldDescriptor::TYPE_SINT64:
+        case proto::FieldDescriptor::TYPE_SFIXED64:
+        case proto::FieldDescriptor::TYPE_FIXED64:
+        case proto::FieldDescriptor::TYPE_INT64:
+                message->GetReflection()->SetInt64(message, mField, value().toInt());
+        break;
+        case proto::FieldDescriptor::TYPE_UINT64:
+            message->GetReflection()->SetUInt64(message, mField, value().toInt());
+        break;
+        case proto::FieldDescriptor::TYPE_SINT32:
+        case proto::FieldDescriptor::TYPE_SFIXED32:
+        case proto::FieldDescriptor::TYPE_FIXED32:
+        case proto::FieldDescriptor::TYPE_INT32:
+            message->GetReflection()->SetInt32(message, mField, value().toInt());
+        break;
+        case proto::FieldDescriptor::TYPE_UINT32:
+            message->GetReflection()->SetUInt32(message, mField, value().toInt());
+        break;
+        default:
+            std::cout << "unsopported type\n";
+    }
+}

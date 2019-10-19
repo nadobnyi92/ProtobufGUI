@@ -27,6 +27,8 @@ public slots:
     void onRemoveItem();
     void onReplaceType();
 
+    void onSaveProtoData();
+
 private:
     Ui::MainWindow * ui;
     ProtoManager mProtoManager;

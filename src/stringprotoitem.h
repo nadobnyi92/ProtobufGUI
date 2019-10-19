@@ -28,6 +28,10 @@ public:
 
 private:
     ItemDelegate *mDelegate;
+
+    // ProtoTreeItem interface
+protected:
+    void setFieldValue(google::protobuf::Message *message) override;
 };
 
 #endif // STRINGPROTOITEM_H

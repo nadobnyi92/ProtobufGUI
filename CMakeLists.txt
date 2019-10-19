@@ -32,7 +32,9 @@ set(SRC     src/main.cpp
             src/floatprotoitem.cpp
             src/boolprotoitem.cpp
             src/enumprotoitem.cpp
-            src/repeatedprotoitem.cpp)
+            src/repeatedprotoitem.cpp
+            src/messageprotoitem.cpp
+            src/rootprotoitem.cpp)
 
 set(HEADERS src/mainwindow.h
             src/prototypedialog.h
@@ -45,7 +47,9 @@ set(HEADERS src/mainwindow.h
             src/floatprotoitem.h
             src/boolprotoitem.h
             src/enumprotoitem.h
-            src/repeatedprotoitem.h)
+            src/repeatedprotoitem.h
+            src/messageprotoitem.h
+            src/rootprotoitem.h)
 
 set(RSC rsc/rsc.qrc)
 qt5_wrap_ui(UI ui/mainwindow.ui

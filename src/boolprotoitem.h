@@ -27,6 +27,10 @@ public:
     QBrush color() const override;
 
     ItemDelegate *mDelegate;
+
+    // ProtoTreeItem interface
+protected:
+    void setFieldValue(google::protobuf::Message *message) override;
 };
 
 #endif // BOOLPROTOITEM_H

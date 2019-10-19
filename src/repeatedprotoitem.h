@@ -20,9 +20,6 @@ signals:
 public:
     QBrush color() const override;
     QString name() const override;
-
-private:
-    const proto::FieldDescriptor * mField;
 };
 
 #endif // REPEATEDPROTOITEM_H

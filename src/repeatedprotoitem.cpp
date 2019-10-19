@@ -1,7 +1,7 @@
 #include "repeatedprotoitem.h"
 
 RepeatedProtoItem::RepeatedProtoItem(const proto::FieldDescriptor * field, ProtoTreeItem *parentItem)
-    : ProtoTreeItem(field, parentItem), mField(field) {}
+    : ProtoTreeItem(field, parentItem) {}
 
 void RepeatedProtoItem::addItem()
 {

@@ -2,12 +2,18 @@
 #include "prototreeitem.h"
 #include "repeatedprotoitem.h"
 
+QString ProtobufModel::getMessage() const
+{
+    return mRootItem != nullptr ?
+        QString::fromStdString(mRootItem.get()->getStringMessage()) : QString();
+}
+
 void ProtobufModel::setProtoClass(const google::protobuf::Descriptor *protoclass)
 {
     if(protoclass != nullptr)
     {
         emit beginResetModel();
-        mRootItem = std::make_unique<ProtoTreeItem>(protoclass);
+        mRootItem = std::make_unique<RootProtoItem>(protoclass);
         mRootItem->expand();
         emit endResetModel();
     }
@@ -31,7 +37,7 @@ void ProtobufModel::onAddItem(const QModelIndex &index)
     RepeatedProtoItem *rItem = dynamic_cast<RepeatedProtoItem*>(item);
     if(rItem != nullptr)
     {
-        beginInsertRows(index.siblingAtColumn(0), item->rowCount(), item->rowCount());
+        beginInsertRows(index, item->rowCount(), item->rowCount());
         rItem->addItem();
         endInsertRows();
     }

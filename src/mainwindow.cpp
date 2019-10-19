@@ -3,6 +3,7 @@
 #include <QFileDialog>
 #include <QMap>
 #include <QKeyEvent>
+#include <QDebug>
 
 #include "mainwindow.h"
 #include "protomanager.h"
@@ -41,6 +42,7 @@ MainWindow::MainWindow(QWidget * parent) noexcept
             &mModel, SLOT(setProtoClass(const proto::Descriptor *)));
     connect(ui->tvProtoTree, SIGNAL(expanded(const QModelIndex&)),
             &mModel, SLOT(onExpand(const QModelIndex&)));
+    connect(ui->pbSaveData, SIGNAL(clicked()), SLOT(onSaveProtoData()));
 
     connect(ui->tvProtoTree, SIGNAL(customContextMenuRequested(const QPoint&)),
             this, SLOT(onPrepareMenu(const QPoint&)));
@@ -130,6 +132,20 @@ void MainWindow::onReplaceType()
         mModel.onReplaceType(idx,
             mProtoManager.getClassDescriptor(dlg.pPackage(), dlg.pClass()));
         ui->tvProtoTree->expand(idx);
+    }
+}
+
+void MainWindow::onSaveProtoData()
+{
+    QString message = mModel.getMessage();
+    if(!message.isEmpty())
+    {
+        QFile f(QFileDialog::getSaveFileName());
+        if(f.open(QIODevice::WriteOnly))
+        {
+            QTextStream stream(&f);
+            stream << message;
+        }
     }
 }
 

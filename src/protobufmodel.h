@@ -5,7 +5,7 @@
 
 #include <google/protobuf/dynamic_message.h>
 
-#include "prototreeitem.h"
+#include "rootprotoitem.h"
 
 class ProtoTreeItem;
 
@@ -26,6 +26,8 @@ public:
         COL_VALUE,
         COL_COUNT
     };
+
+    QString getMessage() const;
 
 public slots:
     void setProtoClass(const proto::Descriptor * protoclass);
@@ -49,7 +51,7 @@ private:
     QIcon icon(ProtoTreeItem* item) const;
 
 private:
-    std::unique_ptr<ProtoTreeItem> mRootItem;
+    std::unique_ptr<RootProtoItem> mRootItem;
 };
 
 

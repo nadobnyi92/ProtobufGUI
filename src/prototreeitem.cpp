@@ -11,9 +11,11 @@
 #include "boolprotoitem.h"
 #include "enumprotoitem.h"
 #include "repeatedprotoitem.h"
+#include "messageprotoitem.h"
 
 ProtoTreeItem::ProtoTreeItem(const google::protobuf::Descriptor *pclass, ProtoTreeItem *parentItem)
     : QObject(nullptr)
+    , mField(nullptr)
     , mName(pclass->name().c_str())
     , mTypeName("Message")
     , mType(proto::FieldDescriptor::TYPE_MESSAGE)
@@ -23,6 +25,7 @@ ProtoTreeItem::ProtoTreeItem(const google::protobuf::Descriptor *pclass, ProtoTr
 
 ProtoTreeItem::ProtoTreeItem(const google::protobuf::FieldDescriptor * field, ProtoTreeItem *parentItem)
     : QObject(nullptr)
+    , mField(field)
     , mName(field->name().c_str())
     , mTypeName(field->type_name())
     , mType(field->type())
@@ -39,15 +42,6 @@ ProtoTreeItem::ProtoTreeItem(const google::protobuf::FieldDescriptor * field, Pr
     }
 
 }
-
-ProtoTreeItem::ProtoTreeItem(const QString& name, ProtoTreeItem *parentItem)
-    : QObject(nullptr)
-    , mName(name)
-    , mTypeName("Message")
-    , mType(proto::FieldDescriptor::TYPE_MESSAGE)
-    , mLabel(proto::FieldDescriptor::LABEL_REQUIRED)
-    , mDesc(nullptr)
-    , mParentItem(parentItem) {}
 
 ProtoTreeItem* ProtoTreeItem::child(size_t row)
 {
@@ -88,6 +82,18 @@ void ProtoTreeItem::createNode(const google::protobuf::FieldDescriptor *field)
     }
 }
 
+void ProtoTreeItem::setFieldValue(google::protobuf::Message *message) {}
+
+const google::protobuf::Descriptor *ProtoTreeItem::descriptor() const
+{
+    return mDesc;
+}
+
+const std::vector<std::unique_ptr<ProtoTreeItem> > &ProtoTreeItem::childItems() const
+{
+    return mChildItems;
+}
+
 void ProtoTreeItem::createSingleNode(const google::protobuf::FieldDescriptor *field)
 {
     switch(field->type())
@@ -117,7 +123,7 @@ void ProtoTreeItem::createSingleNode(const google::protobuf::FieldDescriptor *fi
             break;
         case proto::FieldDescriptor::TYPE_GROUP:
         case proto::FieldDescriptor::TYPE_MESSAGE:
-            mChildItems.push_back(std::make_unique<ProtoTreeItem>(field, this));
+            mChildItems.push_back(std::make_unique<MessageProtoItem>(field, this));
             break;
         case proto::FieldDescriptor::TYPE_ENUM:
             mChildItems.push_back(std::make_unique<EnumProtoItem>(field, this));
@@ -159,8 +165,7 @@ int ProtoTreeItem::rowCount() const
 
 QBrush ProtoTreeItem::color() const
 {
-    return mType == proto::FieldDescriptor::TYPE_GROUP || mType == proto::FieldDescriptor::TYPE_MESSAGE ?
-        QBrush(QColor(255, 0, 0, 90)) : Qt::white;
+    return Qt::white;
 }
 
 QString ProtoTreeItem::name() const

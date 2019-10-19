@@ -23,7 +23,6 @@ class ProtoTreeItem : public QObject
 public:
     ProtoTreeItem(const proto::Descriptor *protoclass, ProtoTreeItem *parentItem = nullptr);
     ProtoTreeItem(const proto::FieldDescriptor * field, ProtoTreeItem *parentItem = nullptr);
-    ProtoTreeItem(const QString& name, ProtoTreeItem *parentItem = nullptr);
 
     virtual ~ProtoTreeItem() {}
 
@@ -50,6 +49,13 @@ public:
 protected:
     void createSingleNode(const proto::FieldDescriptor * field);
     void expandChildren();
+    virtual void setFieldValue(proto::Message* message);
+    const google::protobuf::Descriptor * descriptor() const;
+    const std::vector< std::unique_ptr<ProtoTreeItem> >& childItems() const;
+
+protected:
+    const proto::FieldDescriptor * mField;
+
 
 private:
     void createNode(const proto::FieldDescriptor * field);
@@ -60,11 +66,10 @@ private:
     proto::FieldDescriptor::Type mType;
     proto::FieldDescriptor::Label mLabel;
     QVariant mValue;
-    const google::protobuf::Descriptor * mDesc;
+    const proto::Descriptor * mDesc;
 
     std::vector< std::unique_ptr<ProtoTreeItem> > mChildItems;
     ProtoTreeItem *mParentItem;
-
 };
 
 #endif // PROTOTREEITEM_H
