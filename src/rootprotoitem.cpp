@@ -13,8 +13,7 @@ std::string RootProtoItem::getStringMessage()
     if(m != nullptr)
     {
         std::cout << "MESSAGE:\n" << m->Utf8DebugString() <<std::endl;
-        //sMessage = m->SerializeAsString();
-        //delete m;
+        sMessage = m->SerializeAsString();
     }
     return sMessage;
 }
