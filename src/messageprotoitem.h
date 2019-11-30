@@ -13,12 +13,14 @@ public:
     // ProtoTreeItem interface
 public:
     QBrush color() const override;
+    QItemDelegate *getDelegate() const override;
 
 protected:
     void setFieldValue(google::protobuf::Message *message) override;
     proto::Message *getMessage();
 
 private:
+    proto::DynamicMessageFactory mFactory;
 
 };
 

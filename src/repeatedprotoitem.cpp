@@ -20,3 +20,11 @@ QString RepeatedProtoItem::name() const
         .append("[").append(QString::number(rowCount())).append("]");
 }
 
+QItemDelegate *RepeatedProtoItem::getDelegate() const
+{
+    return nullptr;
+}
+
+void RepeatedProtoItem::setFieldValue(google::protobuf::Message *message)
+{
+}

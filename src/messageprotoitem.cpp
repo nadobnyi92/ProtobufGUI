@@ -13,6 +13,11 @@ QBrush MessageProtoItem::color() const
     return QBrush(QColor(255, 0, 0, 90));
 }
 
+QItemDelegate *MessageProtoItem::getDelegate() const
+{
+    return nullptr;
+}
+
 void MessageProtoItem::setFieldValue(google::protobuf::Message *message)
 {
     message->GetReflection()->SetAllocatedMessage(message, getMessage(), mField);

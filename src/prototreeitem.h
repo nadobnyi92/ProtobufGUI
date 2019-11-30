@@ -43,13 +43,14 @@ public:
     void setDesc(const proto::Descriptor * desc);
     void removeRow(int row);
 
-    virtual QItemDelegate* getDelegate() const;
-    virtual QBrush color() const;
+    virtual QItemDelegate* getDelegate() const = 0;
+    virtual QBrush color() const = 0;
+    virtual void setFieldValue(proto::Message* message) = 0;
 
 protected:
     void createSingleNode(const proto::FieldDescriptor * field);
     void expandChildren();
-    virtual void setFieldValue(proto::Message* message);
+
     const google::protobuf::Descriptor * descriptor() const;
     const std::vector< std::unique_ptr<ProtoTreeItem> >& childItems() const;
 

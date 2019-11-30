@@ -20,6 +20,10 @@ signals:
 public:
     QBrush color() const override;
     QString name() const override;
+    QItemDelegate *getDelegate() const override;
+
+protected:
+    void setFieldValue(google::protobuf::Message *message) override;
 };
 
 #endif // REPEATEDPROTOITEM_H

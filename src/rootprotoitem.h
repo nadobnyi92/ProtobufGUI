@@ -7,7 +7,7 @@ class RootProtoItem : public MessageProtoItem
 {
 public:
     RootProtoItem(const proto::Descriptor *protoclass, ProtoTreeItem *parentItem = nullptr);
-    std::string RootProtoItem::getStringMessage();
+    std::string getStringMessage();
 };
 
 #endif // ROOTPROTOITEM_H

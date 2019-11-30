@@ -82,8 +82,6 @@ void ProtoTreeItem::createNode(const google::protobuf::FieldDescriptor *field)
     }
 }
 
-void ProtoTreeItem::setFieldValue(google::protobuf::Message *message) {}
-
 const google::protobuf::Descriptor *ProtoTreeItem::descriptor() const
 {
     return mDesc;
@@ -148,11 +146,6 @@ void ProtoTreeItem::removeRow(int row)
     mChildItems.erase(mChildItems.begin() + row);
 }
 
-QItemDelegate *ProtoTreeItem::getDelegate() const
-{
-    return nullptr;
-}
-
 int ProtoTreeItem::fieldCount() const
 {
     return mDesc != nullptr ? mDesc->field_count() : 0;
@@ -161,11 +154,6 @@ int ProtoTreeItem::fieldCount() const
 int ProtoTreeItem::rowCount() const
 {
     return mChildItems.size();
-}
-
-QBrush ProtoTreeItem::color() const
-{
-    return Qt::white;
 }
 
 QString ProtoTreeItem::name() const
