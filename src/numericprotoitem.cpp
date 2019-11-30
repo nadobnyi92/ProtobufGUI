@@ -68,3 +68,31 @@ void NumericProtoItem::setFieldValue(google::protobuf::Message *message)
             std::cout << "unsopported type\n";
     }
 }
+
+
+void NumericProtoItem::addFieldValue(google::protobuf::Message * message, const google::protobuf::FieldDescriptor * desk)
+{
+    switch (mField->type())
+    {
+        case proto::FieldDescriptor::TYPE_SINT64:
+        case proto::FieldDescriptor::TYPE_SFIXED64:
+        case proto::FieldDescriptor::TYPE_FIXED64:
+        case proto::FieldDescriptor::TYPE_INT64:
+                message->GetReflection()->AddInt64(message, desk, value().toInt());
+        break;
+        case proto::FieldDescriptor::TYPE_UINT64:
+            message->GetReflection()->AddUInt64(message, desk, value().toInt());
+        break;
+        case proto::FieldDescriptor::TYPE_SINT32:
+        case proto::FieldDescriptor::TYPE_SFIXED32:
+        case proto::FieldDescriptor::TYPE_FIXED32:
+        case proto::FieldDescriptor::TYPE_INT32:
+            message->GetReflection()->AddInt32(message, desk, value().toInt());
+        break;
+        case proto::FieldDescriptor::TYPE_UINT32:
+            message->GetReflection()->AddUInt32(message, desk, value().toInt());
+        break;
+        default:
+            std::cout << "unsopported type\n";
+    }
+}

@@ -48,3 +48,9 @@ void StringProtoItem::setFieldValue(google::protobuf::Message *message)
 
     message->GetReflection()->SetString(message, mField, sData);
 }
+
+
+void StringProtoItem::addFieldValue(google::protobuf::Message * message, const google::protobuf::FieldDescriptor * desc)
+{
+    message->GetReflection()->AddString(message, desc, value().toString().toStdString());
+}

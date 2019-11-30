@@ -45,7 +45,8 @@ public:
 
     virtual QItemDelegate* getDelegate() const = 0;
     virtual QBrush color() const = 0;
-    virtual void setFieldValue(proto::Message* message) = 0;
+    virtual void setFieldValue(proto::Message*) = 0;
+    virtual void addFieldValue(proto::Message*, const proto::FieldDescriptor*) = 0;
 
 protected:
     void createSingleNode(const proto::FieldDescriptor * field);

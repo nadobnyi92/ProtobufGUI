@@ -17,11 +17,11 @@ public:
 
 protected:
     void setFieldValue(google::protobuf::Message *message) override;
+    void addFieldValue(google::protobuf::Message *, const google::protobuf::FieldDescriptor *) override;
     proto::Message *getMessage();
 
 private:
     proto::DynamicMessageFactory mFactory;
-
 };
 
 #endif // MESSAGEPROTOITEM_H

@@ -27,12 +27,13 @@ public:
     QItemDelegate *getDelegate() const override;
     QBrush color() const override;
 
-    // ProtoTreeItem interface
 protected:
+    void addFieldValue(google::protobuf::Message *message, const google::protobuf::FieldDescriptor *desc) override;
     void setFieldValue(google::protobuf::Message *message) override;
 
 private:
     ItemDelegate *mDelegate;
+
 };
 
 #endif // ENUMPROTOITEM_H

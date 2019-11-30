@@ -27,4 +27,8 @@ QItemDelegate *RepeatedProtoItem::getDelegate() const
 
 void RepeatedProtoItem::setFieldValue(google::protobuf::Message *message)
 {
+    for(auto& child: childItems())
+    {
+        child->addFieldValue(message, mField);
+    }
 }

@@ -45,3 +45,9 @@ void FloatProtoItem::setFieldValue(google::protobuf::Message *message)
 {
     message->GetReflection()->SetFloat(message, mField, value().toFloat());
 }
+
+
+void FloatProtoItem::addFieldValue(google::protobuf::Message * message, const google::protobuf::FieldDescriptor * desc)
+{
+    message->GetReflection()->AddFloat(message, desc, value().toFloat());
+}

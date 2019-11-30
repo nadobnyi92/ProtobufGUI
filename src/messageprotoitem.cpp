@@ -34,6 +34,11 @@ proto::Message * MessageProtoItem::getMessage()
     {
         child->setFieldValue(m);
     }
-
     return m;
+}
+
+
+void MessageProtoItem::addFieldValue(google::protobuf::Message * message, const google::protobuf::FieldDescriptor * desk)
+{
+    message->GetReflection()->AddAllocatedMessage(message, desk, getMessage());
 }
