@@ -44,17 +44,17 @@ QBrush BoolProtoItem::color() const
 
 void BoolProtoItem::setFieldValue(google::protobuf::Message *message)
 {
-    message->GetReflection()->SetBool(message, mField, value().toString() == "True");
+    message->GetReflection()->SetBool(message, field(), value().toString() == "True");
 }
 
 
 void BoolProtoItem::addFieldValue(google::protobuf::Message * message, const google::protobuf::FieldDescriptor * desc)
 {
-    message->GetReflection()->AddBool(message, mField, value().toString() == "True");
+    message->GetReflection()->AddBool(message, field(), value().toString() == "True");
 }
 
 
 void BoolProtoItem::initFieldValue(const google::protobuf::Message * message)
 {
-    setData(message->GetReflection()->GetBool(*message, mField));
+    setValue(message->GetReflection()->GetBool(*message, field()));
 }

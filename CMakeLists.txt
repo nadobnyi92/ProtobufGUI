@@ -25,31 +25,31 @@ set(SRC     src/main.cpp
             src/prototypedialog.cpp
             src/protomanager.cpp
             src/protobufmodel.cpp
-            src/prototreeitem.cpp
             src/fielddelegate.cpp
-            src/numericprotoitem.cpp
-            src/stringprotoitem.cpp
-            src/floatprotoitem.cpp
-            src/boolprotoitem.cpp
-            src/enumprotoitem.cpp
-            src/repeatedprotoitem.cpp
-            src/messageprotoitem.cpp
-            src/rootprotoitem.cpp)
+            src/tree_items/prototreeitem.cpp
+            src/tree_items/numericprotoitem.cpp
+            src/tree_items/stringprotoitem.cpp
+            src/tree_items/floatprotoitem.cpp
+            src/tree_items/boolprotoitem.cpp
+            src/tree_items/enumprotoitem.cpp
+            src/tree_items/repeatedprotoitem.cpp
+            src/tree_items/messageprotoitem.cpp
+            src/tree_items/rootprotoitem.cpp)
 
 set(HEADERS src/mainwindow.h
             src/prototypedialog.h
             src/protomanager.h
             src/protobufmodel.h
-            src/prototreeitem.h
             src/fielddelegate.h
-            src/numericprotoitem.h
-            src/stringprotoitem.h
-            src/floatprotoitem.h
-            src/boolprotoitem.h
-            src/enumprotoitem.h
-            src/repeatedprotoitem.h
-            src/messageprotoitem.h
-            src/rootprotoitem.h)
+            src/tree_items/prototreeitem.h
+            src/tree_items/numericprotoitem.h
+            src/tree_items/stringprotoitem.h
+            src/tree_items/floatprotoitem.h
+            src/tree_items/boolprotoitem.h
+            src/tree_items/enumprotoitem.h
+            src/tree_items/repeatedprotoitem.h
+            src/tree_items/messageprotoitem.h
+            src/tree_items/rootprotoitem.h)
 
 set(RSC rsc/rsc.qrc)
 qt5_wrap_ui(UI ui/mainwindow.ui

@@ -44,25 +44,25 @@ QItemDelegate *NumericProtoItem::getDelegate() const
 
 void NumericProtoItem::setFieldValue(google::protobuf::Message *message)
 {
-    switch (mField->type())
+    switch (field()->type())
     {
         case proto::FieldDescriptor::TYPE_SINT64:
         case proto::FieldDescriptor::TYPE_SFIXED64:
         case proto::FieldDescriptor::TYPE_FIXED64:
         case proto::FieldDescriptor::TYPE_INT64:
-                message->GetReflection()->SetInt64(message, mField, value().toInt());
+                message->GetReflection()->SetInt64(message, field(), value().toInt());
         break;
         case proto::FieldDescriptor::TYPE_UINT64:
-            message->GetReflection()->SetUInt64(message, mField, value().toInt());
+            message->GetReflection()->SetUInt64(message, field(), value().toUInt());
         break;
         case proto::FieldDescriptor::TYPE_SINT32:
         case proto::FieldDescriptor::TYPE_SFIXED32:
         case proto::FieldDescriptor::TYPE_FIXED32:
         case proto::FieldDescriptor::TYPE_INT32:
-            message->GetReflection()->SetInt32(message, mField, value().toInt());
+            message->GetReflection()->SetInt32(message, field(), value().toInt());
         break;
         case proto::FieldDescriptor::TYPE_UINT32:
-            message->GetReflection()->SetUInt32(message, mField, value().toInt());
+            message->GetReflection()->SetUInt32(message, field(), value().toUInt());
         break;
         default:
             std::cout << "unsopported type\n";
@@ -72,7 +72,7 @@ void NumericProtoItem::setFieldValue(google::protobuf::Message *message)
 
 void NumericProtoItem::addFieldValue(google::protobuf::Message * message, const google::protobuf::FieldDescriptor * desk)
 {
-    switch (mField->type())
+    switch (field()->type())
     {
         case proto::FieldDescriptor::TYPE_SINT64:
         case proto::FieldDescriptor::TYPE_SFIXED64:
@@ -100,25 +100,25 @@ void NumericProtoItem::addFieldValue(google::protobuf::Message * message, const 
 
 void NumericProtoItem::initFieldValue(const google::protobuf::Message * message)
 {
-    switch (mField->type())
+    switch (field()->type())
     {
         case proto::FieldDescriptor::TYPE_SINT64:
         case proto::FieldDescriptor::TYPE_SFIXED64:
         case proto::FieldDescriptor::TYPE_FIXED64:
         case proto::FieldDescriptor::TYPE_INT64:
-            setData(static_cast<int>(message->GetReflection()->GetInt64(*message, mField)));
+            setValue(static_cast<int>(message->GetReflection()->GetInt64(*message, field())));
         break;
         case proto::FieldDescriptor::TYPE_UINT64:
-            setData(static_cast<int>(message->GetReflection()->GetUInt64(*message, mField)));
+            setValue(static_cast<int>(message->GetReflection()->GetUInt64(*message, field())));
         break;
         case proto::FieldDescriptor::TYPE_SINT32:
         case proto::FieldDescriptor::TYPE_SFIXED32:
         case proto::FieldDescriptor::TYPE_FIXED32:
         case proto::FieldDescriptor::TYPE_INT32:
-            setData(message->GetReflection()->GetInt32(*message, mField));
+            setValue(message->GetReflection()->GetInt32(*message, field()));
         break;
         case proto::FieldDescriptor::TYPE_UINT32:
-            setData(message->GetReflection()->GetUInt32(*message, mField));
+            setValue(message->GetReflection()->GetUInt32(*message, field()));
         break;
         default:
             std::cout << "unsopported type\n";

@@ -2,7 +2,7 @@
 
 #include <QLineEdit>
 
-#include "prototreeitem.h"
+#include "tree_items/prototreeitem.h"
 
 FieldDelegate::FieldDelegate(QObject * parent)
     : QItemDelegate(parent) {}

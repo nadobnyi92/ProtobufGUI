@@ -43,7 +43,7 @@ QBrush FloatProtoItem::color() const
 
 void FloatProtoItem::setFieldValue(google::protobuf::Message *message)
 {
-    message->GetReflection()->SetFloat(message, mField, value().toFloat());
+    message->GetReflection()->SetFloat(message, field(), value().toFloat());
 }
 
 
@@ -55,5 +55,5 @@ void FloatProtoItem::addFieldValue(google::protobuf::Message * message, const go
 
 void FloatProtoItem::initFieldValue(const google::protobuf::Message * message)
 {
-    setData(message->GetReflection()->GetFloat(*message, mField));
+    setValue(message->GetReflection()->GetFloat(*message, field()));
 }

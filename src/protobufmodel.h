@@ -5,7 +5,7 @@
 
 #include <google/protobuf/dynamic_message.h>
 
-#include "rootprotoitem.h"
+#include "tree_items/rootprotoitem.h"
 
 class ProtoTreeItem;
 

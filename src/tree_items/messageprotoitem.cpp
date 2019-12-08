@@ -20,7 +20,7 @@ QItemDelegate *MessageProtoItem::getDelegate() const
 
 void MessageProtoItem::setFieldValue(google::protobuf::Message *message)
 {
-    message->GetReflection()->SetAllocatedMessage(message, getMessage(), mField);
+    message->GetReflection()->SetAllocatedMessage(message, getMessage(), field());
 }
 
 
@@ -46,7 +46,7 @@ void MessageProtoItem::addFieldValue(google::protobuf::Message * message, const 
 
 void MessageProtoItem::initFieldValue(const google::protobuf::Message * message)
 {
-    const proto::Message& m = message->GetReflection()->GetMessage(*message, mField);
+    const proto::Message& m = message->GetReflection()->GetMessage(*message, field());
     expandChildren();
     for(auto& child: childItems())
     {

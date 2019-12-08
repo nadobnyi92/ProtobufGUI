@@ -70,18 +70,6 @@ void ProtoTreeItem::expandChildren()
      }
 }
 
-void ProtoTreeItem::createNode(const google::protobuf::FieldDescriptor *field)
-{
-    if(field->label() == proto::FieldDescriptor::LABEL_REPEATED)
-    {
-        mChildItems.push_back(std::make_unique<RepeatedProtoItem>(field, this));
-    }
-    else
-    {
-       createSingleNode(field);
-    }
-}
-
 const google::protobuf::Descriptor *ProtoTreeItem::descriptor() const
 {
     return mDesc;
@@ -92,44 +80,56 @@ const std::vector<std::unique_ptr<ProtoTreeItem> > &ProtoTreeItem::childItems() 
     return mChildItems;
 }
 
-void ProtoTreeItem::createSingleNode(const google::protobuf::FieldDescriptor *field)
+const google::protobuf::FieldDescriptor *ProtoTreeItem::field() const
 {
-    switch(field->type())
+    return mField;
+}
+
+void ProtoTreeItem::createNode(const google::protobuf::FieldDescriptor *field, bool isRepeat)
+{
+    if(field->label() == proto::FieldDescriptor::LABEL_REPEATED && isRepeat)
     {
-        case proto::FieldDescriptor::TYPE_DOUBLE:
-        case proto::FieldDescriptor::TYPE_FLOAT:
-            mChildItems.push_back(std::make_unique<FloatProtoItem>(field, this));
-            break;
-        case proto::FieldDescriptor::TYPE_INT64:
-        case proto::FieldDescriptor::TYPE_UINT64:
-        case proto::FieldDescriptor::TYPE_INT32:
-        case proto::FieldDescriptor::TYPE_FIXED64:
-        case proto::FieldDescriptor::TYPE_FIXED32:
-        case proto::FieldDescriptor::TYPE_SFIXED32:
-        case proto::FieldDescriptor::TYPE_SFIXED64:
-        case proto::FieldDescriptor::TYPE_SINT32:
-        case proto::FieldDescriptor::TYPE_SINT64:
-        case proto::FieldDescriptor::TYPE_UINT32:
-            mChildItems.push_back(std::make_unique<NumericProtoItem>(field, this));
-            break;
-        case proto::FieldDescriptor::TYPE_BOOL:
-            mChildItems.push_back(std::make_unique<BoolProtoItem>(field, this));
-            break;
-        case proto::FieldDescriptor::TYPE_BYTES:
-        case proto::FieldDescriptor::TYPE_STRING:
-            mChildItems.push_back(std::make_unique<StringProtoItem>(field, this));
-            break;
-        case proto::FieldDescriptor::TYPE_GROUP:
-        case proto::FieldDescriptor::TYPE_MESSAGE:
-            mChildItems.push_back(std::make_unique<MessageProtoItem>(field, this));
-            break;
-        case proto::FieldDescriptor::TYPE_ENUM:
-            mChildItems.push_back(std::make_unique<EnumProtoItem>(field, this));
-            break;
+        mChildItems.push_back(std::make_unique<RepeatedProtoItem>(field, this));
+    }
+    else
+    {
+        switch(field->type())
+        {
+            case proto::FieldDescriptor::TYPE_DOUBLE:
+            case proto::FieldDescriptor::TYPE_FLOAT:
+                mChildItems.push_back(std::make_unique<FloatProtoItem>(field, this));
+                break;
+            case proto::FieldDescriptor::TYPE_INT64:
+            case proto::FieldDescriptor::TYPE_UINT64:
+            case proto::FieldDescriptor::TYPE_INT32:
+            case proto::FieldDescriptor::TYPE_FIXED64:
+            case proto::FieldDescriptor::TYPE_FIXED32:
+            case proto::FieldDescriptor::TYPE_SFIXED32:
+            case proto::FieldDescriptor::TYPE_SFIXED64:
+            case proto::FieldDescriptor::TYPE_SINT32:
+            case proto::FieldDescriptor::TYPE_SINT64:
+            case proto::FieldDescriptor::TYPE_UINT32:
+                mChildItems.push_back(std::make_unique<NumericProtoItem>(field, this));
+                break;
+            case proto::FieldDescriptor::TYPE_BOOL:
+                mChildItems.push_back(std::make_unique<BoolProtoItem>(field, this));
+                break;
+            case proto::FieldDescriptor::TYPE_BYTES:
+            case proto::FieldDescriptor::TYPE_STRING:
+                mChildItems.push_back(std::make_unique<StringProtoItem>(field, this));
+                break;
+            case proto::FieldDescriptor::TYPE_GROUP:
+            case proto::FieldDescriptor::TYPE_MESSAGE:
+                mChildItems.push_back(std::make_unique<MessageProtoItem>(field, this));
+                break;
+            case proto::FieldDescriptor::TYPE_ENUM:
+                mChildItems.push_back(std::make_unique<EnumProtoItem>(field, this));
+                break;
+        }
     }
 }
 
-void ProtoTreeItem::setData(const QVariant &data)
+void ProtoTreeItem::setValue(const QVariant &data)
 {
     mValue = data;
 }
@@ -146,19 +146,15 @@ void ProtoTreeItem::removeRow(int row)
     mChildItems.erase(mChildItems.begin() + row);
 }
 
-int ProtoTreeItem::fieldCount() const
-{
-    return mDesc != nullptr ? mDesc->field_count() : 0;
-}
-
 int ProtoTreeItem::rowCount() const
 {
-    return mChildItems.size();
+    return static_cast<int>(mChildItems.size());
 }
 
 QString ProtoTreeItem::name() const
 {
-    return mName;
+    return label() == proto::FieldDescriptor::LABEL_REPEATED ?
+        QString("%1 [%2]").arg(mName).arg(mChildItems.size()) : mName;
 }
 
 QVariant ProtoTreeItem::value() const
@@ -184,14 +180,13 @@ google::protobuf::FieldDescriptor::Label ProtoTreeItem::label() const
     return mLabel;
 }
 
-size_t ProtoTreeItem::row() const
+int ProtoTreeItem::row() const
 {
     if(mParentItem == nullptr)
         return 0;
-
     auto it = std::find_if(mParentItem->mChildItems.begin(), mParentItem->mChildItems.end(),
-                           [this](auto&& val) { return val.get() == this; });
-    return std::distance(mParentItem->mChildItems.begin(), it);
+        [this](auto&& val) { return val.get() == this; });
+    return static_cast<int>(std::distance(mParentItem->mChildItems.begin(), it));
 }
 
 ProtoTreeItem *ProtoTreeItem::parentItem()

@@ -26,20 +26,19 @@ public:
 
     virtual ~ProtoTreeItem() {}
 
-    int fieldCount() const;
     int rowCount() const;
     ProtoTreeItem *parentItem();
     ProtoTreeItem *child(size_t row);
-    size_t row() const;
+    int row() const;
 
-    virtual QString name() const;
+    QString name() const;
     QVariant value() const;
     proto::FieldDescriptor::Type type() const;
     QString typeName() const;
     proto::FieldDescriptor::Label label() const;
 
-    virtual void expand();
-    void setData(const QVariant& data);
+    void expand();
+    void setValue(const QVariant& data);
     void setDesc(const proto::Descriptor * desc);
     void removeRow(int row);
 
@@ -50,20 +49,19 @@ public:
     virtual void addFieldValue(proto::Message*, const proto::FieldDescriptor*) = 0;
 
 protected:
-    void createSingleNode(const proto::FieldDescriptor * field);
+    void createNode(const proto::FieldDescriptor * field, bool isRepeated = true);
     void expandChildren();
 
     const google::protobuf::Descriptor * descriptor() const;
     const std::vector< std::unique_ptr<ProtoTreeItem> >& childItems() const;
+    const proto::FieldDescriptor * field() const;
 
-protected:
+
+private:
+    bool isRepeated(const google::protobuf::FieldDescriptor *field) const;
+
+private:
     const proto::FieldDescriptor * mField;
-
-
-private:
-    void createNode(const proto::FieldDescriptor * field);
-
-private:
     QString mName;
     QString mTypeName;
     proto::FieldDescriptor::Type mType;

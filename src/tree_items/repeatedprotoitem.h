@@ -13,13 +13,9 @@ public:
 public slots:
     void addItem();
 
-signals:
-    void onItemsAdded(const QModelIndex&);
-
     // ProtoTreeItem interface
 public:
     QBrush color() const override;
-    QString name() const override;
     QItemDelegate *getDelegate() const override;
     void initFieldValue(const google::protobuf::Message *) override;
 

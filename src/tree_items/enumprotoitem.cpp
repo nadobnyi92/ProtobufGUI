@@ -51,19 +51,19 @@ QBrush EnumProtoItem::color() const
 
 void EnumProtoItem::setFieldValue(google::protobuf::Message *message)
 {
-    message->GetReflection()->SetEnumValue(message, mField,
-                                           mField->enum_type()->FindValueByName(value().toString().toStdString())->number());
+    message->GetReflection()->SetEnumValue(message, field(),
+        field()->enum_type()->FindValueByName(value().toString().toStdString())->number());
 }
 
 void EnumProtoItem::addFieldValue(google::protobuf::Message *message, const google::protobuf::FieldDescriptor *desc)
 {
     message->GetReflection()->AddEnumValue(message, desc,
-        mField->enum_type()->FindValueByName(value().toString().toStdString())->number());
+        field()->enum_type()->FindValueByName(value().toString().toStdString())->number());
 }
 
 
 void EnumProtoItem::initFieldValue(const google::protobuf::Message * message)
 {
-    setData(QString::fromStdString(message->GetReflection()->GetEnum(*message, mField)->name()));
+    setValue(QString::fromStdString(message->GetReflection()->GetEnum(*message, field())->name()));
 }
 

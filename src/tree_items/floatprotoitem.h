@@ -1,11 +1,11 @@
-#ifndef BOOLPROTOITEM_H
-#define BOOLPROTOITEM_H
+#ifndef FLOATPROTOITEM_H
+#define FLOATPROTOITEM_H
 
 #include <QItemDelegate>
 
 #include "prototreeitem.h"
 
-class BoolProtoItem : public ProtoTreeItem
+class FloatProtoItem : public ProtoTreeItem
 {
     class ItemDelegate : public QItemDelegate
     {
@@ -18,8 +18,8 @@ class BoolProtoItem : public ProtoTreeItem
     };
 
 public:
-    BoolProtoItem(const proto::FieldDescriptor * field, ProtoTreeItem *parentItem = nullptr);
-    ~BoolProtoItem() override;
+    FloatProtoItem(const proto::FieldDescriptor * field, ProtoTreeItem *parentItem = nullptr);
+    ~FloatProtoItem() override;
 
     // ProtoTreeItem interface
 public:
@@ -27,13 +27,14 @@ public:
     QBrush color() const override;
     void initFieldValue(const google::protobuf::Message *) override;
 
-    ItemDelegate *mDelegate;
-
     // ProtoTreeItem interface
 protected:
     void setFieldValue(google::protobuf::Message *message) override;
     void addFieldValue(google::protobuf::Message *, const google::protobuf::FieldDescriptor *) override;
 
+private:
+    ItemDelegate *mDelegate;
+
 };
 
-#endif // BOOLPROTOITEM_H
+#endif // FLOATPROTOITEM_H

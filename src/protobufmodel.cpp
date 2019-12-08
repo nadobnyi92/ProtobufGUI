@@ -1,6 +1,6 @@
 #include "protobufmodel.h"
-#include "prototreeitem.h"
-#include "repeatedprotoitem.h"
+#include "tree_items/prototreeitem.h"
+#include "tree_items/repeatedprotoitem.h"
 
 #include <QFileDialog>
 
@@ -177,7 +177,7 @@ bool ProtobufModel::setData(const QModelIndex &index, const QVariant &value, int
     if(index.isValid() && role == Qt::EditRole && index.column() == COL_VALUE)
     {
         ProtoTreeItem *item = static_cast<ProtoTreeItem*>(index.internalPointer());
-        item->setData(value);
+        item->setValue(value);
         return true;
     }
     return false;
