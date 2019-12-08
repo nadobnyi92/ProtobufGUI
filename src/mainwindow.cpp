@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <QFileDialog>
+#include <QMessageBox>
 #include <QMap>
 #include <QKeyEvent>
 #include <QDebug>
@@ -43,6 +44,7 @@ MainWindow::MainWindow(QWidget * parent) noexcept
     connect(ui->tvProtoTree, SIGNAL(expanded(const QModelIndex&)),
             &mModel, SLOT(onExpand(const QModelIndex&)));
     connect(ui->pbSaveData, SIGNAL(clicked()), SLOT(onSaveProtoData()));
+    connect(ui->pbLoadData, SIGNAL(clicked()), SLOT(onLoadProtoData()));
 
     connect(ui->tvProtoTree, SIGNAL(customContextMenuRequested(const QPoint&)),
             this, SLOT(onPrepareMenu(const QPoint&)));
@@ -146,6 +148,18 @@ void MainWindow::onSaveProtoData()
             QTextStream stream(&f);
             stream << message;
         }
+    }
+}
+
+void MainWindow::onLoadProtoData()
+{
+    try
+    {
+        mModel.loadProtoData();
+    }
+    catch (const ProtobufModel::ProtoInitException& e)
+    {
+        QMessageBox::critical(this, "Ошибка", e.what());
     }
 }
 

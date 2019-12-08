@@ -2,10 +2,20 @@
 #include "prototreeitem.h"
 #include "repeatedprotoitem.h"
 
+#include <QFileDialog>
+
 QString ProtobufModel::getMessage() const
 {
     return mRootItem != nullptr ?
-        QString::fromStdString(mRootItem.get()->getStringMessage()) : QString();
+                QString::fromStdString(mRootItem.get()->getStringMessage()) : QString();
+}
+
+void ProtobufModel::loadProtoData()
+{
+    if(!mRootItem)
+        throw ProtoInitException("Не определен proto-класс");
+    if(!mRootItem->initMessage(QFileDialog::getOpenFileName().toStdString()))
+        throw ProtoInitException("Ошибка разбора proto-класса");
 }
 
 void ProtobufModel::setProtoClass(const google::protobuf::Descriptor *protoclass)
@@ -177,9 +187,13 @@ bool ProtobufModel::setData(const QModelIndex &index, const QVariant &value, int
 Qt::ItemFlags ProtobufModel::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
-        return Qt::ItemIsEnabled;;
+        return Qt::ItemIsEnabled;
     if(index.column() == COL_VALUE &&
         static_cast<ProtoTreeItem*>(index.internalPointer())->getDelegate() != nullptr)
         return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
     return QAbstractItemModel::flags(index) | Qt::ItemIsEnabled;
 }
+
+
+ProtobufModel::ProtoInitException::ProtoInitException(const char * msg) noexcept : msg(msg) {}
+const char *ProtobufModel::ProtoInitException::what() const noexcept { return msg.c_str(); }

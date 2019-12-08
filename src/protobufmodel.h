@@ -16,6 +16,16 @@ class ProtobufModel : public QAbstractItemModel
     Q_OBJECT
 
 public:
+    class ProtoInitException : public std::exception
+    {
+        public:
+            ProtoInitException(const char * msg) noexcept;
+            const char *what() const noexcept override;
+        private:
+            std::string msg;
+    };
+
+public:
     ProtobufModel(QObject * parent = nullptr) : QAbstractItemModel(parent) {}
     ~ProtobufModel() override {}
 
@@ -28,6 +38,7 @@ public:
     };
 
     QString getMessage() const;
+    void loadProtoData();
 
 public slots:
     void setProtoClass(const proto::Descriptor * protoclass);

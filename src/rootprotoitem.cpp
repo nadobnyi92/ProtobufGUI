@@ -1,5 +1,7 @@
 #include "rootprotoitem.h"
 
+#include <fstream>
+
 RootProtoItem::RootProtoItem(const proto::Descriptor *protoclass, ProtoTreeItem *parentItem)
     : MessageProtoItem(protoclass, parentItem)
 {
@@ -16,4 +18,15 @@ std::string RootProtoItem::getStringMessage()
         sMessage = m->SerializeAsString();
     }
     return sMessage;
+}
+
+bool RootProtoItem::initMessage(const std::string& fp)
+{
+    std::ifstream is;
+    is.open(fp.c_str(), std::ios::binary);
+
+    proto::Message * m = mFactory.GetPrototype(descriptor())->New();
+    if(!m->ParseFromIstream(&is))
+        return false;
+    return true;
 }

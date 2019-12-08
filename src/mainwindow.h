@@ -28,6 +28,7 @@ public slots:
     void onReplaceType();
 
     void onSaveProtoData();
+    void onLoadProtoData();
 
 private:
     Ui::MainWindow * ui;

@@ -20,7 +20,7 @@ protected:
     void addFieldValue(google::protobuf::Message *, const google::protobuf::FieldDescriptor *) override;
     proto::Message *getMessage();
 
-private:
+protected:
     proto::DynamicMessageFactory mFactory;
 };
 
