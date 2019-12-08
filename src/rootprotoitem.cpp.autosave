@@ -26,7 +26,7 @@ bool RootProtoItem::initMessage(const std::string& fp)
     if(!m->ParseFromIstream(&is))
         return false;
     initFieldValue(m);
-    std::cout << m->DebugString() << std::endl;
+    std::cout << m->Utf8DebugString() << std::endl;
     return true;
 }
 

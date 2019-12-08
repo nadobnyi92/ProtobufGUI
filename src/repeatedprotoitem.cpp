@@ -32,3 +32,9 @@ void RepeatedProtoItem::setFieldValue(google::protobuf::Message *message)
         child->addFieldValue(message, mField);
     }
 }
+
+
+void RepeatedProtoItem::initFieldValue(const google::protobuf::Message *)
+{
+
+}

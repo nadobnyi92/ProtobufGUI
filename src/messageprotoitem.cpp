@@ -42,3 +42,14 @@ void MessageProtoItem::addFieldValue(google::protobuf::Message * message, const 
 {
     message->GetReflection()->AddAllocatedMessage(message, desk, getMessage());
 }
+
+
+void MessageProtoItem::initFieldValue(const google::protobuf::Message * message)
+{
+    const proto::Message& m = message->GetReflection()->GetMessage(*message, mField);
+    expandChildren();
+    for(auto& child: childItems())
+    {
+        child->initFieldValue(&m);
+    }
+}

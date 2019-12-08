@@ -52,3 +52,9 @@ void BoolProtoItem::addFieldValue(google::protobuf::Message * message, const goo
 {
     message->GetReflection()->AddBool(message, mField, value().toString() == "True");
 }
+
+
+void BoolProtoItem::initFieldValue(const google::protobuf::Message * message)
+{
+    setData(message->GetReflection()->GetBool(*message, mField));
+}

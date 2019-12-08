@@ -52,7 +52,7 @@ QBrush EnumProtoItem::color() const
 void EnumProtoItem::setFieldValue(google::protobuf::Message *message)
 {
     message->GetReflection()->SetEnumValue(message, mField,
-        mField->enum_type()->FindValueByName(value().toString().toStdString())->number());
+                                           mField->enum_type()->FindValueByName(value().toString().toStdString())->number());
 }
 
 void EnumProtoItem::addFieldValue(google::protobuf::Message *message, const google::protobuf::FieldDescriptor *desc)
@@ -60,3 +60,10 @@ void EnumProtoItem::addFieldValue(google::protobuf::Message *message, const goog
     message->GetReflection()->AddEnumValue(message, desc,
         mField->enum_type()->FindValueByName(value().toString().toStdString())->number());
 }
+
+
+void EnumProtoItem::initFieldValue(const google::protobuf::Message * message)
+{
+    setData(QString::fromStdString(message->GetReflection()->GetEnum(*message, mField)->name()));
+}
+

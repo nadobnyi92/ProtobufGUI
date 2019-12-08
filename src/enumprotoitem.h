@@ -26,6 +26,7 @@ public:
 public:
     QItemDelegate *getDelegate() const override;
     QBrush color() const override;
+    void initFieldValue(const google::protobuf::Message *) override;
 
 protected:
     void addFieldValue(google::protobuf::Message *message, const google::protobuf::FieldDescriptor *desc) override;
@@ -33,7 +34,6 @@ protected:
 
 private:
     ItemDelegate *mDelegate;
-
 };
 
 #endif // ENUMPROTOITEM_H

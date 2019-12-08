@@ -9,6 +9,10 @@ public:
     RootProtoItem(const proto::Descriptor *protoclass, ProtoTreeItem *parentItem = nullptr);
     std::string getStringMessage();
     bool initMessage(const std::string& fp);
+
+    // ProtoTreeItem interface
+public:
+    void initFieldValue(const google::protobuf::Message *) override;
 };
 
 #endif // ROOTPROTOITEM_H

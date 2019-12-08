@@ -25,6 +25,7 @@ public:
 public:
     QItemDelegate *getDelegate() const override;
     QBrush color() const override;
+    void initFieldValue(const google::protobuf::Message *) override;
 
     ItemDelegate *mDelegate;
 
@@ -32,6 +33,7 @@ public:
 protected:
     void setFieldValue(google::protobuf::Message *message) override;
     void addFieldValue(google::protobuf::Message *, const google::protobuf::FieldDescriptor *) override;
+
 };
 
 #endif // BOOLPROTOITEM_H

@@ -78,10 +78,10 @@ void NumericProtoItem::addFieldValue(google::protobuf::Message * message, const 
         case proto::FieldDescriptor::TYPE_SFIXED64:
         case proto::FieldDescriptor::TYPE_FIXED64:
         case proto::FieldDescriptor::TYPE_INT64:
-                message->GetReflection()->AddInt64(message, desk, value().toInt());
+            message->GetReflection()->AddInt64(message, desk, value().toInt());
         break;
         case proto::FieldDescriptor::TYPE_UINT64:
-            message->GetReflection()->AddUInt64(message, desk, value().toInt());
+            message->GetReflection()->AddUInt64(message, desk, value().toUInt());
         break;
         case proto::FieldDescriptor::TYPE_SINT32:
         case proto::FieldDescriptor::TYPE_SFIXED32:
@@ -90,7 +90,35 @@ void NumericProtoItem::addFieldValue(google::protobuf::Message * message, const 
             message->GetReflection()->AddInt32(message, desk, value().toInt());
         break;
         case proto::FieldDescriptor::TYPE_UINT32:
-            message->GetReflection()->AddUInt32(message, desk, value().toInt());
+            message->GetReflection()->AddUInt32(message, desk, value().toUInt());
+        break;
+        default:
+            std::cout << "unsopported type\n";
+    }
+}
+
+
+void NumericProtoItem::initFieldValue(const google::protobuf::Message * message)
+{
+    switch (mField->type())
+    {
+        case proto::FieldDescriptor::TYPE_SINT64:
+        case proto::FieldDescriptor::TYPE_SFIXED64:
+        case proto::FieldDescriptor::TYPE_FIXED64:
+        case proto::FieldDescriptor::TYPE_INT64:
+            setData(static_cast<int>(message->GetReflection()->GetInt64(*message, mField)));
+        break;
+        case proto::FieldDescriptor::TYPE_UINT64:
+            setData(static_cast<int>(message->GetReflection()->GetUInt64(*message, mField)));
+        break;
+        case proto::FieldDescriptor::TYPE_SINT32:
+        case proto::FieldDescriptor::TYPE_SFIXED32:
+        case proto::FieldDescriptor::TYPE_FIXED32:
+        case proto::FieldDescriptor::TYPE_INT32:
+            setData(message->GetReflection()->GetInt32(*message, mField));
+        break;
+        case proto::FieldDescriptor::TYPE_UINT32:
+            setData(message->GetReflection()->GetUInt32(*message, mField));
         break;
         default:
             std::cout << "unsopported type\n";

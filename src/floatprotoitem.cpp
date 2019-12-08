@@ -51,3 +51,9 @@ void FloatProtoItem::addFieldValue(google::protobuf::Message * message, const go
 {
     message->GetReflection()->AddFloat(message, desc, value().toFloat());
 }
+
+
+void FloatProtoItem::initFieldValue(const google::protobuf::Message * message)
+{
+    setData(message->GetReflection()->GetFloat(*message, mField));
+}

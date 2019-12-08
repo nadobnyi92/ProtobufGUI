@@ -43,9 +43,7 @@ QBrush StringProtoItem::color() const
 
 void StringProtoItem::setFieldValue(google::protobuf::Message *message)
 {
-    std::string sData = /*descriptor() != nullptr ?
-        getStringMessage() : */value().toString().toStdString();
-
+    std::string sData = value().toString().toStdString();
     message->GetReflection()->SetString(message, mField, sData);
 }
 
@@ -53,4 +51,10 @@ void StringProtoItem::setFieldValue(google::protobuf::Message *message)
 void StringProtoItem::addFieldValue(google::protobuf::Message * message, const google::protobuf::FieldDescriptor * desc)
 {
     message->GetReflection()->AddString(message, desc, value().toString().toStdString());
+}
+
+
+void StringProtoItem::initFieldValue(const google::protobuf::Message * message)
+{
+    setData(QString::fromStdString(message->GetReflection()->GetString(*message, mField)));
 }

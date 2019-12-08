@@ -14,6 +14,7 @@ public:
 public:
     QBrush color() const override;
     QItemDelegate *getDelegate() const override;
+    void initFieldValue(const google::protobuf::Message *) override;
 
 protected:
     void setFieldValue(google::protobuf::Message *message) override;
@@ -22,6 +23,7 @@ protected:
 
 protected:
     proto::DynamicMessageFactory mFactory;
+
 };
 
 #endif // MESSAGEPROTOITEM_H

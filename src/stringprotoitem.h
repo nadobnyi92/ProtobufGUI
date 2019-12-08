@@ -25,6 +25,7 @@ public:
 public:
     QItemDelegate *getDelegate() const override;
     QBrush color() const override;
+    void initFieldValue(const google::protobuf::Message *) override;
 
 private:
     ItemDelegate *mDelegate;
