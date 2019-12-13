@@ -58,3 +58,9 @@ void BoolProtoItem::initFieldValue(const google::protobuf::Message * message)
 {
     setValue(message->GetReflection()->GetBool(*message, field()));
 }
+
+
+void BoolProtoItem::initRepeatedFieldValue(const google::protobuf::Message * message, int idx)
+{
+     setValue(message->GetReflection()->GetRepeatedBool(*message, field(), idx));
+}

@@ -37,6 +37,13 @@ proto::Message * MessageProtoItem::getMessage()
     return m;
 }
 
+void MessageProtoItem::initChildValues(const google::protobuf::Message &m)
+{
+    for(auto& child: childItems())
+    {
+        child->initFieldValue(&m);
+    }
+}
 
 void MessageProtoItem::addFieldValue(google::protobuf::Message * message, const google::protobuf::FieldDescriptor * desk)
 {
@@ -46,10 +53,45 @@ void MessageProtoItem::addFieldValue(google::protobuf::Message * message, const 
 
 void MessageProtoItem::initFieldValue(const google::protobuf::Message * message)
 {
-    const proto::Message& m = message->GetReflection()->GetMessage(*message, field());
     expandChildren();
+    const proto::Message& m = message->GetReflection()->GetMessage(*message, field());
     for(auto& child: childItems())
     {
-        child->initFieldValue(&m);
+        if( child->label() == proto::FieldDescriptor::LABEL_REPEATED ||
+            message->GetReflection()->HasField(m, child->field()))
+        {
+            child->initFieldValue(&m);
+        }
+        else
+        {
+            child->clearValue();
+        }
+    }
+}
+
+
+void MessageProtoItem::initRepeatedFieldValue(const google::protobuf::Message * message, int idx)
+{
+    const proto::Message& m = message->GetReflection()->GetRepeatedMessage(*message, field(), idx);
+    for(int i = 0; i < descriptor()->field_count(); ++i)
+    {
+        createNode(descriptor()->field(i))->initFieldValue(&m);
+    }
+}
+
+
+void MessageProtoItem::clearValue()
+{
+    for(auto& child: childItems())
+    {
+        if( child->label() != proto::FieldDescriptor::LABEL_REPEATED &&
+            child->type() == proto::FieldDescriptor::TYPE_MESSAGE )
+        {
+            clearChildren();
+        }
+        else
+        {
+            child->clearValue();
+        }
     }
 }

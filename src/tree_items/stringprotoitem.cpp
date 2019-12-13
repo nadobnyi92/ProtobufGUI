@@ -58,3 +58,9 @@ void StringProtoItem::initFieldValue(const google::protobuf::Message * message)
 {
     setValue(QString::fromStdString(message->GetReflection()->GetString(*message, field())));
 }
+
+
+void StringProtoItem::initRepeatedFieldValue(const google::protobuf::Message * message, int idx)
+{
+    setValue(QString::fromStdString(message->GetReflection()->GetRepeatedString(*message, field(), idx)));
+}

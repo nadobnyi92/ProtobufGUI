@@ -28,7 +28,16 @@ void RepeatedProtoItem::setFieldValue(google::protobuf::Message *message)
 }
 
 
-void RepeatedProtoItem::initFieldValue(const google::protobuf::Message *)
+void RepeatedProtoItem::initFieldValue(const google::protobuf::Message * message)
 {
+    clearChildren();
+    for(int i = 0, size = message->GetReflection()->FieldSize(*message, field()); i < size; ++i)
+    {
+        createNode(field(), false)->initFieldValue(message);
+    }
+}
 
+void RepeatedProtoItem::clearValue()
+{
+    clearChildren();
 }

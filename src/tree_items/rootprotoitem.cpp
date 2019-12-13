@@ -26,16 +26,23 @@ bool RootProtoItem::initMessage(const std::string& fp)
     if(!m->ParseFromIstream(&is))
         return false;
     initFieldValue(m);
-    std::cout << m->DebugString() << std::endl;
+    std::cout << "MESSAGE:\n" << m->Utf8DebugString() << std::endl;
     return true;
 }
 
 
 void RootProtoItem::initFieldValue(const google::protobuf::Message * message)
 {
-    expandChildren();
     for(auto& child: childItems())
     {
-        child->initFieldValue(message);
+        if( child->label() == proto::FieldDescriptor::LABEL_REPEATED ||
+            message->GetReflection()->HasField(*message, child->field()))
+        {
+            child->initFieldValue(message);
+        }
+        else
+        {
+            child->clearValue();
+        }
     }
 }

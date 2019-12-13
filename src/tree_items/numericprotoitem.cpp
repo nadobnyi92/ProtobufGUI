@@ -124,3 +124,31 @@ void NumericProtoItem::initFieldValue(const google::protobuf::Message * message)
             std::cout << "unsopported type\n";
     }
 }
+
+
+void NumericProtoItem::initRepeatedFieldValue(const google::protobuf::Message * message, int idx)
+{
+    switch (field()->type())
+    {
+        case proto::FieldDescriptor::TYPE_SINT64:
+        case proto::FieldDescriptor::TYPE_SFIXED64:
+        case proto::FieldDescriptor::TYPE_FIXED64:
+        case proto::FieldDescriptor::TYPE_INT64:
+            setValue(static_cast<int>(message->GetReflection()->GetRepeatedInt64(*message, field(), idx)));
+        break;
+        case proto::FieldDescriptor::TYPE_UINT64:
+            setValue(static_cast<int>(message->GetReflection()->GetRepeatedUInt64(*message, field(),idx)));
+        break;
+        case proto::FieldDescriptor::TYPE_SINT32:
+        case proto::FieldDescriptor::TYPE_SFIXED32:
+        case proto::FieldDescriptor::TYPE_FIXED32:
+        case proto::FieldDescriptor::TYPE_INT32:
+            setValue(message->GetReflection()->GetRepeatedInt32(*message, field(), idx));
+        break;
+        case proto::FieldDescriptor::TYPE_UINT32:
+            setValue(message->GetReflection()->GetRepeatedUInt32(*message, field(), idx));
+        break;
+        default:
+            std::cout << "unsopported type\n";
+    }
+}

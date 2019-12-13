@@ -25,7 +25,6 @@ public:
 public:
     QItemDelegate *getDelegate() const override;
     QBrush color() const override;
-    void initFieldValue(const google::protobuf::Message *) override;
 
 private:
     ItemDelegate *mDelegate;
@@ -34,6 +33,8 @@ private:
 protected:
     void setFieldValue(google::protobuf::Message *message) override;
     void addFieldValue(google::protobuf::Message *, const google::protobuf::FieldDescriptor *) override;
+    void initFieldValue(const google::protobuf::Message *) override;
+    void initRepeatedFieldValue(const google::protobuf::Message *, int idx) override;
 };
 
 #endif // STRINGPROTOITEM_H

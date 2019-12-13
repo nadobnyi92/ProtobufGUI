@@ -57,3 +57,9 @@ void FloatProtoItem::initFieldValue(const google::protobuf::Message * message)
 {
     setValue(message->GetReflection()->GetFloat(*message, field()));
 }
+
+
+void FloatProtoItem::initRepeatedFieldValue(const google::protobuf::Message *message, int idx)
+{
+    setValue(message->GetReflection()->GetRepeatedFloat(*message, field(), idx));
+}

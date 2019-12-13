@@ -67,7 +67,12 @@ void ProtoTreeItem::expandChildren()
         {
             createNode(mDesc->field(i));
         }
-     }
+    }
+}
+
+void ProtoTreeItem::clearChildren()
+{
+    mChildItems.clear();
 }
 
 const google::protobuf::Descriptor *ProtoTreeItem::descriptor() const
@@ -85,7 +90,7 @@ const google::protobuf::FieldDescriptor *ProtoTreeItem::field() const
     return mField;
 }
 
-void ProtoTreeItem::createNode(const google::protobuf::FieldDescriptor *field, bool isRepeat)
+std::unique_ptr<ProtoTreeItem>& ProtoTreeItem::createNode(const google::protobuf::FieldDescriptor *field, bool isRepeat)
 {
     if(field->label() == proto::FieldDescriptor::LABEL_REPEATED && isRepeat)
     {
@@ -127,6 +132,7 @@ void ProtoTreeItem::createNode(const google::protobuf::FieldDescriptor *field, b
                 break;
         }
     }
+    return mChildItems.back();
 }
 
 void ProtoTreeItem::setValue(const QVariant &data)
@@ -144,6 +150,11 @@ void ProtoTreeItem::setDesc(const google::protobuf::Descriptor *desc)
 void ProtoTreeItem::removeRow(int row)
 {
     mChildItems.erase(mChildItems.begin() + row);
+}
+
+void ProtoTreeItem::clearValue()
+{
+    mValue = QVariant();
 }
 
 int ProtoTreeItem::rowCount() const

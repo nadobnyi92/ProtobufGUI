@@ -17,11 +17,16 @@ public slots:
 public:
     QBrush color() const override;
     QItemDelegate *getDelegate() const override;
-    void initFieldValue(const google::protobuf::Message *) override;
 
 protected:
     void setFieldValue(google::protobuf::Message *message) override;
     void addFieldValue(google::protobuf::Message *, const google::protobuf::FieldDescriptor *) override {}
+    void initFieldValue(const google::protobuf::Message *) override;
+    void initRepeatedFieldValue(const google::protobuf::Message *, int) override {}
+
+    // ProtoTreeItem interface
+public:
+    void clearValue() override;
 };
 
 #endif // REPEATEDPROTOITEM_H

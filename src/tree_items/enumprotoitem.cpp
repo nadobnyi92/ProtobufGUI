@@ -61,9 +61,12 @@ void EnumProtoItem::addFieldValue(google::protobuf::Message *message, const goog
         field()->enum_type()->FindValueByName(value().toString().toStdString())->number());
 }
 
-
 void EnumProtoItem::initFieldValue(const google::protobuf::Message * message)
 {
     setValue(QString::fromStdString(message->GetReflection()->GetEnum(*message, field())->name()));
 }
 
+void EnumProtoItem::initRepeatedFieldValue(const google::protobuf::Message * message, int idx)
+{
+    setValue(QString::fromStdString(message->GetReflection()->GetRepeatedEnum(*message, field(), idx)->name()));
+}

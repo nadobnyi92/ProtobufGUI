@@ -11,7 +11,7 @@ public:
     bool initMessage(const std::string& fp);
 
     // ProtoTreeItem interface
-public:
+protected:
     void initFieldValue(const google::protobuf::Message *) override;
 };
 
