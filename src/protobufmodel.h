@@ -46,6 +46,7 @@ public slots:
     void onAddItem(const QModelIndex& index);
     void onRemoveItem(const QModelIndex& index);
     void onReplaceType(const QModelIndex& index, const proto::Descriptor * desc);
+    void onClearData();
 
     // QAbstractItemModel interface
 public:
@@ -60,6 +61,8 @@ public:
 
 private:
     QIcon icon(ProtoTreeItem* item) const;
+    std::string mDataFilePath;
+
 
 private:
     std::unique_ptr<RootProtoItem> mRootItem;

@@ -14,7 +14,8 @@ void ProtobufModel::loadProtoData()
 {
     if(!mRootItem)
         throw ProtoInitException("Не определен proto-класс");
-    if(!mRootItem->initMessage(QFileDialog::getOpenFileName().toStdString()))
+    mDataFilePath = QFileDialog::getOpenFileName().toStdString();
+    if(!mRootItem->initMessage(mDataFilePath))
         throw ProtoInitException("Ошибка разбора proto-класса");
 }
 
@@ -69,6 +70,14 @@ void ProtobufModel::onReplaceType(const QModelIndex &index, const proto::Descrip
 {
     ProtoTreeItem *pItem = static_cast<ProtoTreeItem*>(index.internalPointer());
     pItem->setDesc(desc);
+}
+
+void ProtobufModel::onClearData()
+{
+    beginResetModel();
+    if(mDataFilePath.empty() || !mRootItem->initMessage(mDataFilePath))
+        mRootItem->clearValue();
+    endResetModel();
 }
 
 QModelIndex ProtobufModel::index(int row, int column, const QModelIndex &parent) const

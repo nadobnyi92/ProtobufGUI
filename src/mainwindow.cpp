@@ -45,6 +45,7 @@ MainWindow::MainWindow(QWidget * parent) noexcept
             &mModel, SLOT(onExpand(const QModelIndex&)));
     connect(ui->pbSaveData, SIGNAL(clicked()), SLOT(onSaveProtoData()));
     connect(ui->pbLoadData, SIGNAL(clicked()), SLOT(onLoadProtoData()));
+    connect(ui->pbReject, SIGNAL(clicked()), &mModel, SLOT(onClearData()));
 
     connect(ui->tvProtoTree, SIGNAL(customContextMenuRequested(const QPoint&)),
             this, SLOT(onPrepareMenu(const QPoint&)));
