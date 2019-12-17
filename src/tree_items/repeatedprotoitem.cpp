@@ -6,7 +6,7 @@ RepeatedProtoItem::RepeatedProtoItem(const proto::FieldDescriptor * field, Proto
 void RepeatedProtoItem::addItem()
 {
     createNode(field(), false);
-    expandChildren();
+    expand();
 }
 
 QBrush RepeatedProtoItem::color() const
