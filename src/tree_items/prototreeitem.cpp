@@ -12,6 +12,7 @@
 #include "enumprotoitem.h"
 #include "repeatedprotoitem.h"
 #include "messageprotoitem.h"
+#include "bytestprotoitem.h"
 
 ProtoTreeItem::ProtoTreeItem(const google::protobuf::Descriptor *pclass, ProtoTreeItem *parentItem)
     : QObject(nullptr)
@@ -40,7 +41,6 @@ ProtoTreeItem::ProtoTreeItem(const google::protobuf::FieldDescriptor * field, Pr
     {
         mLabel = field->label();
     }
-
 }
 
 ProtoTreeItem* ProtoTreeItem::child(size_t row)
@@ -120,6 +120,8 @@ std::unique_ptr<ProtoTreeItem>& ProtoTreeItem::createNode(const google::protobuf
                 mChildItems.push_back(std::make_unique<BoolProtoItem>(field, this));
                 break;
             case proto::FieldDescriptor::TYPE_BYTES:
+                mChildItems.push_back(std::make_unique<BytesProtoItem>(field, this));
+            break;
             case proto::FieldDescriptor::TYPE_STRING:
                 mChildItems.push_back(std::make_unique<StringProtoItem>(field, this));
                 break;
@@ -140,6 +142,11 @@ void ProtoTreeItem::setValue(const QVariant &data)
     mValue = data;
 }
 
+void ProtoTreeItem::setName(const QString &name)
+{
+    mName = name;
+}
+
 void ProtoTreeItem::setDesc(const google::protobuf::Descriptor *desc)
 {
     mChildItems.clear();
@@ -155,6 +162,17 @@ void ProtoTreeItem::removeRow(int row)
 void ProtoTreeItem::clearValue()
 {
     mValue = QVariant();
+}
+
+QList<QAction *> ProtoTreeItem::getActions()
+{
+    QList<QAction*> actions;
+    if(parentItem() && parentItem()->label() == proto::FieldDescriptor::LABEL_REPEATED)
+    {
+        QAction * actRemove = new QAction("Удалить элемент");
+        connect(actRemove, SIGNAL(triggered()), SLOT(onRemoveItem()));
+    }
+    return QList<QAction*>();
 }
 
 int ProtoTreeItem::rowCount() const

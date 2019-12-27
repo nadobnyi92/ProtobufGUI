@@ -2,8 +2,8 @@
 
 #include <fstream>
 
-RootProtoItem::RootProtoItem(const proto::Descriptor *protoclass, ProtoTreeItem *parentItem)
-    : MessageProtoItem(protoclass, parentItem) {}
+RootProtoItem::RootProtoItem(const proto::Descriptor *protoclass)
+    : ProtoTreeItem(protoclass, nullptr), MessageProtoItem(protoclass, nullptr) {}
 
 std::string RootProtoItem::getStringMessage()
 {

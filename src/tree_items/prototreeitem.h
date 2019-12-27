@@ -39,6 +39,7 @@ public:
 
     void expand();
     void setValue(const QVariant& data);
+    void setName(const QString& name);
     void setDesc(const proto::Descriptor * desc);
     void removeRow(int row);
 
@@ -49,6 +50,7 @@ public:
     virtual void initFieldValue(const proto::Message*) = 0;
     virtual void initRepeatedFieldValue(const proto::Message*, int idx) = 0;
     virtual void clearValue();
+    virtual QList<QAction*> getActions();
 
     const google::protobuf::Descriptor * descriptor() const;
     const std::vector< std::unique_ptr<ProtoTreeItem> >& childItems() const;

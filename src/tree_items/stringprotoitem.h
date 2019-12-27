@@ -5,7 +5,7 @@
 
 #include <QItemDelegate>
 
-class StringProtoItem : public ProtoTreeItem
+class StringProtoItem : public virtual ProtoTreeItem
 {
     class ItemDelegate : public QItemDelegate
     {

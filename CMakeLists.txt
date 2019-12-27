@@ -34,7 +34,8 @@ set(SRC     src/main.cpp
             src/tree_items/enumprotoitem.cpp
             src/tree_items/repeatedprotoitem.cpp
             src/tree_items/messageprotoitem.cpp
-            src/tree_items/rootprotoitem.cpp)
+            src/tree_items/rootprotoitem.cpp
+            src/tree_items/bytestprotoitem.cpp)
 
 set(HEADERS src/mainwindow.h
             src/prototypedialog.h
@@ -49,7 +50,8 @@ set(HEADERS src/mainwindow.h
             src/tree_items/enumprotoitem.h
             src/tree_items/repeatedprotoitem.h
             src/tree_items/messageprotoitem.h
-            src/tree_items/rootprotoitem.h)
+            src/tree_items/rootprotoitem.h
+            src/tree_items/bytestprotoitem.h)
 
 set(RSC rsc/rsc.qrc)
 qt5_wrap_ui(UI ui/mainwindow.ui

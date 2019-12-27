@@ -2,7 +2,7 @@
 #define MESSAGEPROTOITEM_H
 
 #include "prototreeitem.h"
-class MessageProtoItem : public ProtoTreeItem
+class MessageProtoItem : public virtual ProtoTreeItem
 {
 public:
     MessageProtoItem(const proto::FieldDescriptor * field, ProtoTreeItem *parentItem = nullptr);

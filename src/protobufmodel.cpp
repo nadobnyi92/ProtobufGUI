@@ -1,6 +1,7 @@
 #include "protobufmodel.h"
 #include "tree_items/prototreeitem.h"
 #include "tree_items/repeatedprotoitem.h"
+#include "tree_items/bytestprotoitem.h"
 
 #include <QFileDialog>
 
@@ -68,7 +69,7 @@ void ProtobufModel::onRemoveItem(const QModelIndex &index)
 
 void ProtobufModel::onReplaceType(const QModelIndex &index, const proto::Descriptor* desc)
 {
-    ProtoTreeItem *pItem = static_cast<ProtoTreeItem*>(index.internalPointer());
+    BytesProtoItem *pItem = static_cast<BytesProtoItem*>(index.internalPointer());
     pItem->setDesc(desc);
 }
 
