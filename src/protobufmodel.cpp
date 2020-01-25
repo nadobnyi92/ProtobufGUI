@@ -70,7 +70,11 @@ void ProtobufModel::onRemoveItem(const QModelIndex &index)
 void ProtobufModel::onReplaceType(const QModelIndex &index, const proto::Descriptor* desc)
 {
     BytesProtoItem *pItem = static_cast<BytesProtoItem*>(index.internalPointer());
+    beginRemoveRows(index, 0, pItem->children().size());
     pItem->setDesc(desc);
+    endRemoveRows();
+    beginInsertRows(index, 0, pItem->childItems().size());
+    endInsertRows();
 }
 
 void ProtobufModel::onClearData()

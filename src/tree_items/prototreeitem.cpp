@@ -149,6 +149,9 @@ void ProtoTreeItem::setName(const QString &name)
 
 void ProtoTreeItem::setDesc(const google::protobuf::Descriptor *desc)
 {
+    if(desc == nullptr)
+        return;
+
     mChildItems.clear();
     mDesc = desc;
     expand();
@@ -200,7 +203,9 @@ QString ProtoTreeItem::typeName() const
 {
     QString tName = mTypeName;
     if(mDesc != nullptr && mType != proto::FieldDescriptor::TYPE_MESSAGE)
-        tName.append("(").append(mDesc->name().c_str()).append(")");
+        tName.append(QString("(%1::%2)")
+                        .arg(mDesc->file()->package().c_str())
+                        .arg(mDesc->name().c_str()));
     return tName;
 }
 

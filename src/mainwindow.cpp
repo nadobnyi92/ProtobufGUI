@@ -134,7 +134,7 @@ void MainWindow::onReplaceType()
         QModelIndex idx = qvariant_cast<QModelIndex>(act->data());
         mModel.onReplaceType(idx,
             mProtoManager.getClassDescriptor(dlg.pPackage(), dlg.pClass()));
-        ui->tvProtoTree->expand(idx);
+        ui->tvProtoTree->expand(idx.siblingAtColumn(0));
     }
 }
 

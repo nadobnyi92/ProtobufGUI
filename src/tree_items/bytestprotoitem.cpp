@@ -1,6 +1,7 @@
 #include "bytestprotoitem.h"
 
 #include <QLineEdit>
+#include <QMessageBox>
 
 BytesProtoItem::BytesProtoItem(const proto::FieldDescriptor * field, ProtoTreeItem *parentItem)
     : ProtoTreeItem(field, parentItem), StringProtoItem(field, parentItem), MessageProtoItem(field, parentItem)
@@ -10,25 +11,29 @@ BytesProtoItem::BytesProtoItem(const proto::FieldDescriptor * field, ProtoTreeIt
 
 void BytesProtoItem::setDesc(const google::protobuf::Descriptor *desc)
 {
+    if(desc == nullptr)
+        return;
 
-    if(descriptor() != nullptr)
-    {
-        clearChildren();
-    }
-
-    ProtoTreeItem::setDesc(desc);
-
-    if(!value().isNull() && desc != nullptr)
+    if(!value().isNull())
     {
         std::string subMessage = value().toString().toStdString();
 
         proto::DynamicMessageFactory f;
         proto::Message * m = f.GetPrototype(desc)->New();
         if(!m->ParseFromString(subMessage))
+        {
+            QMessageBox::critical(nullptr, "error", "failed parse message");
             return;
+        }
+
+        ProtoTreeItem::setDesc(desc);
         std::cout << "MESSAGE:\n" << m->Utf8DebugString() << std::endl;
         MessageProtoItem::initFieldValue(m);
         setValue(QVariant());
+    }
+    else
+    {
+        ProtoTreeItem::setDesc(desc);
     }
 }
 
