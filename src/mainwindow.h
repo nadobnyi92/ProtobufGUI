@@ -30,6 +30,8 @@ public slots:
     void onSaveProtoData();
     void onLoadProtoData();
 
+    void onProcessProtoError(const ProtoTreeError&);
+
 private:
     Ui::MainWindow * ui;
     ProtoManager mProtoManager;

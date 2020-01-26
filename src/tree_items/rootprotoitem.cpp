@@ -1,4 +1,5 @@
 #include "rootprotoitem.h"
+#include "../prototreeerror.h"
 
 #include <fstream>
 
@@ -17,17 +18,17 @@ std::string RootProtoItem::getStringMessage()
     return sMessage;
 }
 
-bool RootProtoItem::initMessage(const std::string& fp)
+void RootProtoItem::initMessage(const std::string& fp)
 {
     std::ifstream is;
     is.open(fp.c_str(), std::ios::binary);
 
     proto::Message * m = mFactory.GetPrototype(descriptor())->New();
     if(!m->ParseFromIstream(&is))
-        return false;
+    {
+        throw ProtoTreeError(m);
+    }
     initFieldValue(m);
-    std::cout << "MESSAGE:\n" << m->Utf8DebugString() << std::endl;
-    return true;
 }
 
 

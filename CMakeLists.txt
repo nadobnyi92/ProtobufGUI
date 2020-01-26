@@ -26,6 +26,7 @@ set(SRC     src/main.cpp
             src/protomanager.cpp
             src/protobufmodel.cpp
             src/fielddelegate.cpp
+            src/prototreeerror.cpp
             src/tree_items/prototreeitem.cpp
             src/tree_items/numericprotoitem.cpp
             src/tree_items/stringprotoitem.cpp
@@ -42,6 +43,7 @@ set(HEADERS src/mainwindow.h
             src/protomanager.h
             src/protobufmodel.h
             src/fielddelegate.h
+            src/prototreeerror.h
             src/tree_items/prototreeitem.h
             src/tree_items/numericprotoitem.h
             src/tree_items/stringprotoitem.h

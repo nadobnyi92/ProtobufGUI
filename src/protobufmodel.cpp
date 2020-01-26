@@ -2,8 +2,10 @@
 #include "tree_items/prototreeitem.h"
 #include "tree_items/repeatedprotoitem.h"
 #include "tree_items/bytestprotoitem.h"
+#include "prototreeerror.h"
 
 #include <QFileDialog>
+#include <QMessageBox>
 
 QString ProtobufModel::getMessage() const
 {
@@ -14,10 +16,9 @@ QString ProtobufModel::getMessage() const
 void ProtobufModel::loadProtoData()
 {
     if(!mRootItem)
-        throw ProtoInitException("Не определен proto-класс");
+        throw ProtoTreeError("Ошибка", "Не определен proto-класс");
     mDataFilePath = QFileDialog::getOpenFileName().toStdString();
-    if(!mRootItem->initMessage(mDataFilePath))
-        throw ProtoInitException("Ошибка разбора proto-класса");
+    mRootItem->initMessage(mDataFilePath);
 }
 
 void ProtobufModel::setProtoClass(const google::protobuf::Descriptor *protoclass)
@@ -71,17 +72,32 @@ void ProtobufModel::onReplaceType(const QModelIndex &index, const proto::Descrip
 {
     BytesProtoItem *pItem = static_cast<BytesProtoItem*>(index.internalPointer());
     beginRemoveRows(index, 0, pItem->children().size());
-    pItem->setDesc(desc);
+    try {
+        pItem->setDesc(desc);
+    } catch (ProtoTreeError& e) {
+        emit processProtoError(e);
+    }
     endRemoveRows();
-    beginInsertRows(index, 0, pItem->childItems().size());
+    beginInsertRows(index, 0, pItem->children().size());
     endInsertRows();
 }
 
 void ProtobufModel::onClearData()
 {
     beginResetModel();
-    if(mDataFilePath.empty() || !mRootItem->initMessage(mDataFilePath))
+    bool needClear = true;
+    if(!mDataFilePath.empty()) {
+        try {
+            mRootItem->initMessage(mDataFilePath);
+            needClear = false;
+        } catch (const ProtoTreeError& e) {
+            emit processProtoError(e);
+        }
+    }
+
+    if(needClear) {
         mRootItem->clearValue();
+    }
     endResetModel();
 }
 
@@ -118,7 +134,7 @@ int ProtobufModel::rowCount(const QModelIndex &parent) const
     return parentItem->rowCount();
 }
 
-int ProtobufModel::columnCount(const QModelIndex &parent) const
+int ProtobufModel::columnCount(const QModelIndex &) const
 {
     return COL_COUNT;
 }
@@ -207,7 +223,3 @@ Qt::ItemFlags ProtobufModel::flags(const QModelIndex &index) const
         return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
     return QAbstractItemModel::flags(index) | Qt::ItemIsEnabled;
 }
-
-
-ProtobufModel::ProtoInitException::ProtoInitException(const char * msg) noexcept : msg(msg) {}
-const char *ProtobufModel::ProtoInitException::what() const noexcept { return msg.c_str(); }

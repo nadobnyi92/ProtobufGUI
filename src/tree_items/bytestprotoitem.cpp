@@ -3,6 +3,8 @@
 #include <QLineEdit>
 #include <QMessageBox>
 
+#include <src/prototreeerror.h>
+
 BytesProtoItem::BytesProtoItem(const proto::FieldDescriptor * field, ProtoTreeItem *parentItem)
     : ProtoTreeItem(field, parentItem), StringProtoItem(field, parentItem), MessageProtoItem(field, parentItem)
 {
@@ -22,12 +24,10 @@ void BytesProtoItem::setDesc(const google::protobuf::Descriptor *desc)
         proto::Message * m = f.GetPrototype(desc)->New();
         if(!m->ParseFromString(subMessage))
         {
-            QMessageBox::critical(nullptr, "error", "failed parse message");
-            return;
+            throw ProtoTreeError(m);
         }
 
         ProtoTreeItem::setDesc(desc);
-        std::cout << "MESSAGE:\n" << m->Utf8DebugString() << std::endl;
         MessageProtoItem::initFieldValue(m);
         setValue(QVariant());
     }

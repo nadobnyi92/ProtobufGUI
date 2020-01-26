@@ -11,6 +11,7 @@
 #include "fielddelegate.h"
 
 #include "prototypedialog.h"
+#include "prototreeerror.h"
 
 #include "ui_mainwindow.h"
 
@@ -49,6 +50,9 @@ MainWindow::MainWindow(QWidget * parent) noexcept
 
     connect(ui->tvProtoTree, SIGNAL(customContextMenuRequested(const QPoint&)),
             this, SLOT(onPrepareMenu(const QPoint&)));
+
+    connect(&mModel, SIGNAL(processProtoError(const ProtoTreeError&)),
+            SLOT(onProcessProtoError(const ProtoTreeError&)));
 }
 
 void MainWindow::onLoadClasses()
@@ -154,26 +158,28 @@ void MainWindow::onSaveProtoData()
 
 void MainWindow::onLoadProtoData()
 {
-    try
-    {
+    try {
         mModel.loadProtoData();
     }
-    catch (const ProtobufModel::ProtoInitException& e)
-    {
-        QMessageBox::critical(this, "Ошибка", e.what());
+    catch (const ProtoTreeError& e) {
+        onProcessProtoError(e);
     }
+}
+
+void MainWindow::onProcessProtoError(const ProtoTreeError & e)
+{
+    QMessageBox::critical(this, e.what(), e.details());
 }
 
 bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 {
     if( watched == ui->tvProtoTree &&
-        event->type() == QEvent::KeyPress )
-    {
-        QKeyEvent * kEvent = static_cast<QKeyEvent*>(event);
-        if(kEvent->key() == Qt::Key_Delete)
-        {
-            mModel.setData(ui->tvProtoTree->currentIndex().siblingAtColumn(ProtobufModel::COL_VALUE), QVariant(), Qt::EditRole);
-        }
+        event->type() == QEvent::KeyPress &&
+        static_cast<QKeyEvent*>(event)->key() == Qt::Key_Delete) {
+        mModel.setData(
+            ui->tvProtoTree->currentIndex().siblingAtColumn(ProtobufModel::COL_VALUE),
+            QVariant(),
+            Qt::EditRole);
     }
     return QMainWindow::eventFilter(watched, event);
 }
