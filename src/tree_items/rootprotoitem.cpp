@@ -14,20 +14,35 @@ std::string RootProtoItem::getStringMessage()
     {
         std::cout << "MESSAGE:\n" << m->Utf8DebugString() <<std::endl;
         sMessage = m->SerializeAsString();
+        for(auto& s: sMessage)
+            printf("0x%02hhx ", s);
+        std::cout << std::endl;
     }
     return sMessage;
 }
 
 void RootProtoItem::initMessage(const std::string& fp)
 {
-    std::ifstream is;
-    is.open(fp.c_str(), std::ios::binary);
+    std::ifstream is(fp.c_str());
+    std::string str((std::istreambuf_iterator<char>(is)),
+                     std::istreambuf_iterator<char>());
+
+    for(auto& s: str)
+        printf("0x%02hhx ", s);
+    std::cout << std::endl;
 
     proto::Message * m = mFactory.GetPrototype(descriptor())->New();
-    if(!m->ParseFromIstream(&is))
+//    if(!m->ParseFromIstream(&is))
+//    {
+//        throw ProtoTreeError(m);
+//    }
+//    std::cout << "MESSGE:\n" << m->DebugString() << std::endl;
+
+    if(m->ParseFromString(str))
     {
-        throw ProtoTreeError(m);
+        std::cout << "MESSGE:\n" << m->DebugString() << std::endl;
     }
+
     initFieldValue(m);
 }
 

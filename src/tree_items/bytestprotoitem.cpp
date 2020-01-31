@@ -5,6 +5,8 @@
 
 #include <src/prototreeerror.h>
 
+#include <iomanip>
+
 BytesProtoItem::BytesProtoItem(const proto::FieldDescriptor * field, ProtoTreeItem *parentItem)
     : ProtoTreeItem(field, parentItem), StringProtoItem(field, parentItem), MessageProtoItem(field, parentItem)
 {
@@ -54,6 +56,10 @@ void BytesProtoItem::fillFieldValue(google::protobuf::Message * m)
         StringProtoItem::fillFieldValue(m);
     } else {
         m->GetReflection()->SetString(m, field(), getMessage()->SerializeAsString());
+        auto msg = getMessage()->SerializeAsString();
+        for(auto& s: msg)
+            printf("0x%02hhx ", s);
+        printf("\n");
     }
 }
 
@@ -70,6 +76,10 @@ void BytesProtoItem::initFieldValue(const google::protobuf::Message * m)
 {
     setDesc(nullptr);
     StringProtoItem::initFieldValue(m);
+    auto msg = m->GetReflection()->GetString(*m, field());
+    std::cout << msg << " " << msg.length() << std::endl;
+
+
 }
 
 void BytesProtoItem::initRepeatedFieldValue(const google::protobuf::Message * m, int idx)
