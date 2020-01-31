@@ -42,7 +42,7 @@ QItemDelegate *NumericProtoItem::getDelegate() const
 }
 
 
-void NumericProtoItem::setFieldValue(google::protobuf::Message *message)
+void NumericProtoItem::fillFieldValue(google::protobuf::Message *message)
 {
     switch (field()->type())
     {

@@ -48,10 +48,10 @@ void BytesProtoItem::clearValue()
     ProtoTreeItem::clearValue();
 }
 
-void BytesProtoItem::setFieldValue(google::protobuf::Message * m)
+void BytesProtoItem::fillFieldValue(google::protobuf::Message * m)
 {
     if(descriptor() == nullptr) {
-        StringProtoItem::setFieldValue(m);
+        StringProtoItem::fillFieldValue(m);
     } else {
         m->GetReflection()->SetString(m, field(), getMessage()->SerializeAsString());
     }

@@ -42,7 +42,7 @@ QBrush BoolProtoItem::color() const
 }
 
 
-void BoolProtoItem::setFieldValue(google::protobuf::Message *message)
+void BoolProtoItem::fillFieldValue(google::protobuf::Message *message)
 {
     message->GetReflection()->SetBool(message, field(), value().toString() == "True");
 }

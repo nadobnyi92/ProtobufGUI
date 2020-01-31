@@ -29,7 +29,7 @@ public:
 
 protected:
     void addFieldValue(google::protobuf::Message *message, const google::protobuf::FieldDescriptor *desc) override;
-    void setFieldValue(google::protobuf::Message *message) override;
+    void fillFieldValue(google::protobuf::Message *message) override;
     void initFieldValue(const google::protobuf::Message *) override;
     void initRepeatedFieldValue(const google::protobuf::Message *, int idx) override;
 

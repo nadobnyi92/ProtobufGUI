@@ -31,7 +31,7 @@ private:
 
     // ProtoTreeItem interface
 protected:
-    void setFieldValue(google::protobuf::Message *message) override;
+    void fillFieldValue(google::protobuf::Message *message) override;
     void addFieldValue(google::protobuf::Message *, const google::protobuf::FieldDescriptor *) override;
     void initFieldValue(const google::protobuf::Message *) override;
     void initRepeatedFieldValue(const google::protobuf::Message *, int idx) override;

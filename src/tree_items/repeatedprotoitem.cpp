@@ -19,7 +19,7 @@ QItemDelegate *RepeatedProtoItem::getDelegate() const
     return nullptr;
 }
 
-void RepeatedProtoItem::setFieldValue(google::protobuf::Message *message)
+void RepeatedProtoItem::fillFieldValue(google::protobuf::Message *message)
 {
     for(auto& child: childItems())
     {

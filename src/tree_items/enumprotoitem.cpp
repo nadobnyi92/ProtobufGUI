@@ -49,7 +49,7 @@ QBrush EnumProtoItem::color() const
     return QBrush(QColor(0, 255, 255, 90));
 }
 
-void EnumProtoItem::setFieldValue(google::protobuf::Message *message)
+void EnumProtoItem::fillFieldValue(google::protobuf::Message *message)
 {
     message->GetReflection()->SetEnumValue(message, field(),
         field()->enum_type()->FindValueByName(value().toString().toStdString())->number());

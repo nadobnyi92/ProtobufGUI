@@ -8,7 +8,7 @@ class RootProtoItem : public MessageProtoItem
 public:
     RootProtoItem(const proto::Descriptor *protoclass);
     std::string getStringMessage();
-    bool initMessage(const std::string& fp);
+    void initMessage(const std::string& fp);
 
     // ProtoTreeItem interface
 protected:

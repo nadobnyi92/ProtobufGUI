@@ -41,7 +41,7 @@ QBrush FloatProtoItem::color() const
 }
 
 
-void FloatProtoItem::setFieldValue(google::protobuf::Message *message)
+void FloatProtoItem::fillFieldValue(google::protobuf::Message *message)
 {
     message->GetReflection()->SetFloat(message, field(), value().toFloat());
 }

@@ -1,4 +1,4 @@
-#include "messageprotoitem.h"
+﻿#include "messageprotoitem.h"
 
 MessageProtoItem::MessageProtoItem(const proto::FieldDescriptor * field, ProtoTreeItem *parentItem)
     : ProtoTreeItem(field, parentItem) {}
@@ -18,7 +18,7 @@ QItemDelegate *MessageProtoItem::getDelegate() const
     return nullptr;
 }
 
-void MessageProtoItem::setFieldValue(google::protobuf::Message *message)
+void MessageProtoItem::fillFieldValue(google::protobuf::Message *message)
 {
     message->GetReflection()->SetAllocatedMessage(message, getMessage(), field());
 }
@@ -32,7 +32,7 @@ proto::Message * MessageProtoItem::getMessage()
 
     for(auto& child: childItems())
     {
-        child->setFieldValue(m);
+        child->fillFieldValue(m);
     }
     return m;
 }
