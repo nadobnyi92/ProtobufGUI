@@ -28,6 +28,9 @@ protected:
     // ProtoTreeItem interface
 public:
     QBrush color() const override;
+
+private:
+    std::string sourceData;
 };
 
 #endif // BYTESTPROTOITEM_H

@@ -23,6 +23,9 @@ protected:
 
     proto::Message *getMessage();
 
+    void printHex(const proto::Message *) const;
+    void printHex(const std::string&, size_t line_width = 80 ) const;
+
 protected:
     proto::DynamicMessageFactory mFactory;
 

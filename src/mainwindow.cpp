@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -57,11 +58,9 @@ MainWindow::MainWindow(QWidget * parent) noexcept
 
 void MainWindow::onLoadClasses()
 {
-    QUrl path = QFileDialog::getExistingDirectoryUrl();
+    QUrl path = QFileDialog::getExistingDirectoryUrl(this, "load proto dirs", QDir::homePath());
     if(!path.isEmpty())
-    {
          mProtoManager.load(path);
-    }
 }
 
 void MainWindow::onSetPackages(const QStringList& packages)
@@ -83,24 +82,19 @@ void MainWindow::onPrepareMenu(const QPoint &p)
 
     QMenu menu;
 
-    if(item->label() == proto::FieldDescriptor::LABEL_REPEATED)
-    {
+    if(item->label() == proto::FieldDescriptor::LABEL_REPEATED) {
         QAction * actAddItem = new QAction("Добавить элемент");
         actAddItem->setData(idx);
         connect(actAddItem, SIGNAL(triggered()), SLOT(onAddItem()));
         menu.addAction(actAddItem);
-    }
-    else
-    {
-        if(item->type() == proto::FieldDescriptor::TYPE_BYTES)
-        {
+    } else {
+        if(item->type() == proto::FieldDescriptor::TYPE_BYTES) {
             QAction * actTransform = new QAction("Преобразовать тип");
             actTransform->setData(idx);
             connect(actTransform, SIGNAL(triggered()), SLOT(onReplaceType()));
             menu.addAction(actTransform);
         }
-        if(item->parentItem()->label() == proto::FieldDescriptor::LABEL_REPEATED)
-        {
+        if(item->parentItem()->label() == proto::FieldDescriptor::LABEL_REPEATED) {
             QAction * actRemove = new QAction("Удалить элемент");
             actRemove->setData(idx);
             connect(actRemove, SIGNAL(triggered()), SLOT(onRemoveItem()));
@@ -108,8 +102,7 @@ void MainWindow::onPrepareMenu(const QPoint &p)
         }
     }
 
-    if(menu.actions().size() > 0)
-    {
+    if(menu.actions().size() > 0) {
         menu.exec( ui->tvProtoTree->mapToGlobal(p) );
     }
 }
@@ -132,8 +125,7 @@ void MainWindow::onRemoveItem()
 void MainWindow::onReplaceType()
 {
     ProtoTypeDialog dlg(mProtoManager, this);
-    if(dlg.exec() == QDialog::Accepted)
-    {
+    if(dlg.exec() == QDialog::Accepted) {
         QAction * act = static_cast<QAction*>(sender());
         QModelIndex idx = qvariant_cast<QModelIndex>(act->data());
         mModel.onReplaceType(idx,
@@ -144,15 +136,12 @@ void MainWindow::onReplaceType()
 
 void MainWindow::onSaveProtoData()
 {
-    QString message = mModel.getMessage();
-    if(!message.isEmpty())
-    {
-        QFile f(QFileDialog::getSaveFileName());
-        if(f.open(QIODevice::WriteOnly))
-        {
-            QTextStream stream(&f);
-            stream << message;
-        }
+    std::string message = mModel.getMessage();
+    if(!message.empty()) {
+        QString fp = QFileDialog::getSaveFileName(/*this, "save proto data", QDir::homePath()*/);
+        std::ofstream of(fp.toStdString(), std::fstream::binary);
+        if(of.is_open())
+            of << message;
     }
 }
 
@@ -160,8 +149,7 @@ void MainWindow::onLoadProtoData()
 {
     try {
         mModel.loadProtoData();
-    }
-    catch (const ProtoTreeError& e) {
+    } catch (const ProtoTreeError& e) {
         onProcessProtoError(e);
     }
 }

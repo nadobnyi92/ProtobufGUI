@@ -28,9 +28,7 @@ EnumProtoItem::EnumProtoItem(const proto::FieldDescriptor * field, ProtoTreeItem
 {
     QStringList items;
     for(int i = 0, c = field->enum_type()->value_count(); i < c; ++i)
-    {
         items.append(field->enum_type()->value(i)->name().c_str());
-    }
     mDelegate = new ItemDelegate(items);
 }
 

@@ -33,12 +33,9 @@ ProtoTreeItem::ProtoTreeItem(const google::protobuf::FieldDescriptor * field, Pr
     , mDesc(field->message_type())
     , mParentItem(parentItem)
 {
-    if(parentItem != nullptr && parentItem->label() == proto::FieldDescriptor::LABEL_REPEATED)
-    {
+    if(parentItem != nullptr && parentItem->label() == proto::FieldDescriptor::LABEL_REPEATED) {
         mLabel = proto::FieldDescriptor::LABEL_OPTIONAL;
-    }
-    else
-    {
+    } else {
         mLabel = field->label();
     }
 }
@@ -52,21 +49,16 @@ void ProtoTreeItem::expand()
 {
     expandChildren();
     for(auto& child: mChildItems)
-    {
         child->expandChildren();
-    }
 }
 
 void ProtoTreeItem::expandChildren()
 {
     if( mLabel != proto::FieldDescriptor::LABEL_REPEATED &&
         mDesc != nullptr &&
-        mChildItems.empty() )
-    {
+        mChildItems.empty() ) {
         for(int i = 0; i < mDesc->field_count(); ++i)
-        {
             createNode(mDesc->field(i));
-        }
     }
 }
 
@@ -92,12 +84,9 @@ const google::protobuf::FieldDescriptor *ProtoTreeItem::field() const
 
 std::unique_ptr<ProtoTreeItem>& ProtoTreeItem::createNode(const google::protobuf::FieldDescriptor *field, bool isRepeat)
 {
-    if(field->label() == proto::FieldDescriptor::LABEL_REPEATED && isRepeat)
-    {
+    if(field->label() == proto::FieldDescriptor::LABEL_REPEATED && isRepeat) {
         mChildItems.push_back(std::make_unique<RepeatedProtoItem>(field, this));
-    }
-    else
-    {
+    } else {
         switch(field->type())
         {
             case proto::FieldDescriptor::TYPE_DOUBLE:
@@ -170,8 +159,7 @@ void ProtoTreeItem::clearValue()
 QList<QAction *> ProtoTreeItem::getActions()
 {
     QList<QAction*> actions;
-    if(parentItem() && parentItem()->label() == proto::FieldDescriptor::LABEL_REPEATED)
-    {
+    if(parentItem() && parentItem()->label() == proto::FieldDescriptor::LABEL_REPEATED) {
         QAction * actRemove = new QAction("Удалить элемент");
         connect(actRemove, SIGNAL(triggered()), SLOT(onRemoveItem()));
     }

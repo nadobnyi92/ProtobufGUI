@@ -95,15 +95,13 @@ void ProtoManager::load(const QUrl& path)
     QDir root(p);
 
     QDirIterator it(p, QStringList() << "*.proto", QDir::Files, QDirIterator::Subdirectories);
-    while(it.hasNext())
-    {
+    while(it.hasNext()) {
         QString protoFile = it.next();
         const proto::FileDescriptor * fDesc = context->import(root.relativeFilePath(protoFile).toStdString());
         if(fDesc == nullptr)
             continue;
 
-        for (int i = 0, c = fDesc->message_type_count(); i < c; ++i)
-        {
+        for (int i = 0, c = fDesc->message_type_count(); i < c; ++i) {
             proto::Descriptor const * desc = fDesc->message_type(i);
             mProtoPackages[fDesc->package().c_str()][desc->name().c_str()] = desc;
         }
@@ -115,11 +113,9 @@ QMultiHash<QString, QString> ProtoManager::getProtoClasses() const
 {
     QMultiHash<QString, QString> protoClasses;
     for(auto itPkg = mProtoPackages.begin(), itPkg_end = mProtoPackages.end();
-        itPkg != itPkg_end; ++itPkg)
-    {
+        itPkg != itPkg_end; ++itPkg) {
         for(auto itCls = itPkg.value().begin(), itCls_end = itPkg.value().end();
-            itCls != itCls_end; ++itCls)
-        {
+            itCls != itCls_end; ++itCls) {
             protoClasses.insert(itPkg.key(), itCls.key());
         }
     }

@@ -31,18 +31,33 @@ proto::Message * MessageProtoItem::getMessage()
     proto::Message * m = mFactory.GetPrototype(descriptor())->New();
 
     for(auto& child: childItems())
-    {
         child->fillFieldValue(m);
-    }
     return m;
+}
+
+void MessageProtoItem::printHex(const google::protobuf::Message * m) const
+{
+    printf("Message data:%s\n", m->DebugString().c_str());
+    printHex(m->SerializeAsString());
+}
+
+void MessageProtoItem::printHex(const std::string & msg, size_t line_width) const
+{
+    int n = 0;
+    printf("Message:\n%s\nHEX:\n", msg.c_str());
+    for(auto& s: msg) {
+        if((++n) % line_width == 0)
+            printf("\n");
+        printf("0x%02hhx ", s);
+    }
+    printf("\n");
+    fflush(stdout);
 }
 
 void MessageProtoItem::initChildValues(const google::protobuf::Message &m)
 {
     for(auto& child: childItems())
-    {
         child->initFieldValue(&m);
-    }
 }
 
 void MessageProtoItem::addFieldValue(google::protobuf::Message * message, const google::protobuf::FieldDescriptor * desk)
@@ -55,15 +70,11 @@ void MessageProtoItem::initFieldValue(const google::protobuf::Message * message)
 {
     expandChildren();
     const proto::Message& m = message->GetReflection()->GetMessage(*message, field());
-    for(auto& child: childItems())
-    {
+    for(auto& child: childItems()) {
         if( child->label() == proto::FieldDescriptor::LABEL_REPEATED ||
-            message->GetReflection()->HasField(m, child->field()))
-        {
+            message->GetReflection()->HasField(m, child->field())) {
             child->initFieldValue(&m);
-        }
-        else
-        {
+        } else {
             child->clearValue();
         }
     }
@@ -74,23 +85,17 @@ void MessageProtoItem::initRepeatedFieldValue(const google::protobuf::Message * 
 {
     const proto::Message& m = message->GetReflection()->GetRepeatedMessage(*message, field(), idx);
     for(int i = 0; i < descriptor()->field_count(); ++i)
-    {
         createNode(descriptor()->field(i))->initFieldValue(&m);
-    }
 }
 
 
 void MessageProtoItem::clearValue()
 {
-    for(auto& child: childItems())
-    {
+    for(auto& child: childItems()) {
         if( child->label() != proto::FieldDescriptor::LABEL_REPEATED &&
-            child->type() == proto::FieldDescriptor::TYPE_MESSAGE )
-        {
+            child->type() == proto::FieldDescriptor::TYPE_MESSAGE ) {
             clearChildren();
-        }
-        else
-        {
+        } else {
             child->clearValue();
         }
     }

@@ -28,7 +28,7 @@ public:
         COL_COUNT
     };
 
-    QString getMessage() const;
+    std::string getMessage() const;
     void loadProtoData();
 
 signals:

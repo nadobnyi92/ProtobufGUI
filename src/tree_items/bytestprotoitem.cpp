@@ -3,9 +3,7 @@
 #include <QLineEdit>
 #include <QMessageBox>
 
-#include <src/prototreeerror.h>
-
-#include <iomanip>
+#include "src/prototreeerror.h"
 
 BytesProtoItem::BytesProtoItem(const proto::FieldDescriptor * field, ProtoTreeItem *parentItem)
     : ProtoTreeItem(field, parentItem), StringProtoItem(field, parentItem), MessageProtoItem(field, parentItem)
@@ -18,23 +16,21 @@ void BytesProtoItem::setDesc(const google::protobuf::Descriptor *desc)
     if(desc == nullptr)
         return;
 
-    if(!value().isNull())
-    {
-        std::string subMessage = value().toString().toStdString();
+    if(!value().isNull()) {
+        std::string subMessage = value().toByteArray().toStdString();
+        std::cout << "submessage\n";
+        printHex(subMessage);
 
         proto::DynamicMessageFactory f;
         proto::Message * m = f.GetPrototype(desc)->New();
         if(!m->ParseFromString(subMessage))
-        {
             throw ProtoTreeError(m);
-        }
 
         ProtoTreeItem::setDesc(desc);
-        MessageProtoItem::initFieldValue(m);
+        for(auto& child: childItems())
+            child->initFieldValue(m);
         setValue(QVariant());
-    }
-    else
-    {
+    } else {
         ProtoTreeItem::setDesc(desc);
     }
 }
@@ -55,11 +51,9 @@ void BytesProtoItem::fillFieldValue(google::protobuf::Message * m)
     if(descriptor() == nullptr) {
         StringProtoItem::fillFieldValue(m);
     } else {
-        m->GetReflection()->SetString(m, field(), getMessage()->SerializeAsString());
-        auto msg = getMessage()->SerializeAsString();
-        for(auto& s: msg)
-            printf("0x%02hhx ", s);
-        printf("\n");
+        auto subMessage = getMessage();
+        m->GetReflection()->SetString(m, field(), subMessage->SerializeAsString());
+        printHex(subMessage);
     }
 }
 
@@ -75,17 +69,15 @@ void BytesProtoItem::addFieldValue(google::protobuf::Message *m , const google::
 void BytesProtoItem::initFieldValue(const google::protobuf::Message * m)
 {
     setDesc(nullptr);
-    StringProtoItem::initFieldValue(m);
-    auto msg = m->GetReflection()->GetString(*m, field());
-    std::cout << msg << " " << msg.length() << std::endl;
-
-
+    setValue(QByteArray::fromStdString(m->GetReflection()->GetString(*m, field())));
+    printHex(m->GetReflection()->GetString(*m, field()));            
 }
 
 void BytesProtoItem::initRepeatedFieldValue(const google::protobuf::Message * m, int idx)
 {
     setDesc(nullptr);
-    StringProtoItem::initRepeatedFieldValue(m, idx);
+    setValue(QString::fromStdString(m->GetReflection()->GetRepeatedString(*m, field(), idx)));
+    printHex(m->GetReflection()->GetString(*m, field()));
 }
 
 QBrush BytesProtoItem::color() const

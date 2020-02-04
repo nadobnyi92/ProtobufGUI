@@ -5,8 +5,7 @@ ProtoTreeError::ProtoTreeError(const char *message, const char *detail)
 
 ProtoTreeError::ProtoTreeError(google::protobuf::Message * message)
 {
-    if(!message->IsInitialized())
-    {
+    if(!message->IsInitialized()) {
         mDetails = "Пропущены обязательные поля: " + message->InitializationErrorString();
         mMessage = "Ошибка разбора сообщения";
     }

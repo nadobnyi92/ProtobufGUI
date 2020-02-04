@@ -7,10 +7,9 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
-QString ProtobufModel::getMessage() const
+std::string ProtobufModel::getMessage() const
 {
-    return mRootItem != nullptr ?
-                QString::fromStdString(mRootItem.get()->getStringMessage()) : QString();
+    return mRootItem != nullptr ? mRootItem.get()->getStringMessage() : "";
 }
 
 void ProtobufModel::loadProtoData()
@@ -23,8 +22,7 @@ void ProtobufModel::loadProtoData()
 
 void ProtobufModel::setProtoClass(const google::protobuf::Descriptor *protoclass)
 {
-    if(protoclass != nullptr)
-    {
+    if(protoclass != nullptr) {
         emit beginResetModel();
         mRootItem = std::make_unique<RootProtoItem>(protoclass);
         mRootItem->expand();
@@ -48,8 +46,7 @@ void ProtobufModel::onAddItem(const QModelIndex &index)
 {
     ProtoTreeItem *item = static_cast<ProtoTreeItem*>(index.internalPointer());
     RepeatedProtoItem *rItem = dynamic_cast<RepeatedProtoItem*>(item);
-    if(rItem != nullptr)
-    {
+    if(rItem != nullptr) {
         beginInsertRows(index.siblingAtColumn(0), item->rowCount(), item->rowCount());
         rItem->addItem();
         endInsertRows();
@@ -58,8 +55,7 @@ void ProtobufModel::onAddItem(const QModelIndex &index)
 
 void ProtobufModel::onRemoveItem(const QModelIndex &index)
 {
-    if(index.parent().isValid())
-    {
+    if(index.parent().isValid()) {
         int row = static_cast<ProtoTreeItem*>(index.internalPointer())->row();
         ProtoTreeItem *pItem = static_cast<ProtoTreeItem*>(index.parent().internalPointer());
         beginRemoveRows(index.parent(), row, row);
@@ -186,8 +182,7 @@ QIcon ProtobufModel::icon(ProtoTreeItem* item) const
 
 QVariant ProtobufModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if(role == Qt::DisplayRole && orientation == Qt::Horizontal)
-    {
+    if(role == Qt::DisplayRole && orientation == Qt::Horizontal) {
         switch (section)
         {
             case COL_NAME:
@@ -204,8 +199,7 @@ QVariant ProtobufModel::headerData(int section, Qt::Orientation orientation, int
 
 bool ProtobufModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if(index.isValid() && role == Qt::EditRole && index.column() == COL_VALUE)
-    {
+    if(index.isValid() && role == Qt::EditRole && index.column() == COL_VALUE) {
         ProtoTreeItem *item = static_cast<ProtoTreeItem*>(index.internalPointer());
         item->setValue(value);
         return true;
