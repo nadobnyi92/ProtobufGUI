@@ -1,0 +1,23 @@
+language: cpp
+os: linux
+dist: bionic
+compiler: gcc
+python: "3.7"
+
+sudo: required
+before_install:
+  - sudo apt-get install -qq libqt5webkit5-dev qtdeclarative5-dev
+  - pip install conan --user
+
+script:
+  - mkdir build
+  - cd build
+  - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_CONFIGURATION -DTARGET_CPU=$TARGET_CPU
+  - cmake --build .
+
+env:
+  # список переменных окружения, влияющих на матрицу сборки:
+  - TARGET_CPU=amd64 BUILD_CONFIGURATION=Debug
+  - TARGET_CPU=amd64 BUILD_CONFIGURATION=Release
+  - TARGET_CPU=x86 BUILD_CONFIGURATION=Debug
+  - TARGET_CPU=x86 BUILD_CONFIGURATION=Release

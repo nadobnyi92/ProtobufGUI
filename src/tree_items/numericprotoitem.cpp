@@ -2,6 +2,21 @@
 
 #include <QSpinBox>
 
+
+template <typename T>
+struct IntegerType
+{
+    typedef T(proto::Reflection::*get_int)();
+    typedef T(proto::Reflection::*get_repeated_int)();
+    typedef void(proto::Reflection::*set_int)(proto::Message*, proto::FieldDescriptor*, T);
+    typedef void(proto::Reflection::*set_repeated_int)(proto::Message*, proto::FieldDescriptor*, T);
+    int minValue;
+    int maxValue;
+};
+
+
+
+
 NumericProtoItem::ItemDelegate::ItemDelegate(QObject *parent)
     : QItemDelegate(parent) {}
 
