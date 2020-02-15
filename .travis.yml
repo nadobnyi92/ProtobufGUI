@@ -1,4 +1,4 @@
-language: cpp
+language: python
 os: linux
 dist: bionic
 compiler: gcc
@@ -6,8 +6,9 @@ python: "3.7"
 
 sudo: required
 before_install:
-  - sudo apt-get install -qq libqt5webkit5-dev qtdeclarative5-dev
-  - pip install conan --user
+  - pip install configparser
+  - pip install conan
+  - conan remote add bincrafters "https://api.bintray.com/conan/bincrafters/public-conan"
 
 script:
   - mkdir build
