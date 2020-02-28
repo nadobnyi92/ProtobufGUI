@@ -2,20 +2,37 @@
 
 #include <QSpinBox>
 
+#include <variant>
 
 template <typename T>
 struct IntegerType
 {
-    typedef T(proto::Reflection::*get_int)();
-    typedef T(proto::Reflection::*get_repeated_int)();
-    typedef void(proto::Reflection::*set_int)(proto::Message*, proto::FieldDescriptor*, T);
-    typedef void(proto::Reflection::*set_repeated_int)(proto::Message*, proto::FieldDescriptor*, T);
+    T(proto::Reflection::*get_int)(const proto::Message&, const proto::FieldDescriptor*) const;
+    T(proto::Reflection::*get_repeated_int)(const proto::Message&, const proto::FieldDescriptor*, int) const;
+    void(proto::Reflection::*set_int)(proto::Message*, const proto::FieldDescriptor*, T) const;
+    void(proto::Reflection::*set_repeated_int)(proto::Message*, const proto::FieldDescriptor*, T) const;
     int minValue;
     int maxValue;
 };
 
+#define createIntegerType(N1, N2) \
+    IntegerType<proto::N1> {&proto::Reflection::Get##N2, \
+                            &proto::Reflection::GetRepeated##N2, \
+                            &proto::Reflection::Set##N2, \
+                            &proto::Reflection::Add##N2}
 
+using IType = std::variant<
+    IntegerType<proto::int32>,
+    IntegerType<proto::int64>,
+    IntegerType<proto::uint32>,
+    IntegerType<proto::uint64> >;
 
+static std::map<proto::FieldDescriptor::CppType, IType> mTypes {
+    { proto::FieldDescriptor::CPPTYPE_INT32, createIntegerType(int32, Int32) },
+    { proto::FieldDescriptor::CPPTYPE_INT64, createIntegerType(int64, Int64) },
+    { proto::FieldDescriptor::CPPTYPE_UINT32, createIntegerType(uint32, UInt32) },
+    { proto::FieldDescriptor::CPPTYPE_UINT64, createIntegerType(uint64, UInt64) }
+};
 
 NumericProtoItem::ItemDelegate::ItemDelegate(QObject *parent)
     : QItemDelegate(parent) {}
@@ -59,111 +76,37 @@ QItemDelegate *NumericProtoItem::getDelegate() const
 
 void NumericProtoItem::fillFieldValue(google::protobuf::Message *message)
 {
-    switch (field()->type())
-    {
-        case proto::FieldDescriptor::TYPE_SINT64:
-        case proto::FieldDescriptor::TYPE_SFIXED64:
-        case proto::FieldDescriptor::TYPE_FIXED64:
-        case proto::FieldDescriptor::TYPE_INT64:
-                message->GetReflection()->SetInt64(message, field(), value().toInt());
-        break;
-        case proto::FieldDescriptor::TYPE_UINT64:
-            message->GetReflection()->SetUInt64(message, field(), value().toUInt());
-        break;
-        case proto::FieldDescriptor::TYPE_SINT32:
-        case proto::FieldDescriptor::TYPE_SFIXED32:
-        case proto::FieldDescriptor::TYPE_FIXED32:
-        case proto::FieldDescriptor::TYPE_INT32:
-            message->GetReflection()->SetInt32(message, field(), value().toInt());
-        break;
-        case proto::FieldDescriptor::TYPE_UINT32:
-            message->GetReflection()->SetUInt32(message, field(), value().toUInt());
-        break;
-        default:
-            std::cout << "unsopported type\n";
-    }
+    auto func = [&](auto& a){
+        (message->GetReflection()->*a.set_int)(message, field(), value().toInt());
+    };
+    std::visit(func, mTypes[field()->cpp_type()]);
 }
 
 
 void NumericProtoItem::addFieldValue(google::protobuf::Message * message, const google::protobuf::FieldDescriptor * desk)
 {
-    switch (field()->type())
-    {
-        case proto::FieldDescriptor::TYPE_SINT64:
-        case proto::FieldDescriptor::TYPE_SFIXED64:
-        case proto::FieldDescriptor::TYPE_FIXED64:
-        case proto::FieldDescriptor::TYPE_INT64:
-            message->GetReflection()->AddInt64(message, desk, value().toInt());
-        break;
-        case proto::FieldDescriptor::TYPE_UINT64:
-            message->GetReflection()->AddUInt64(message, desk, value().toUInt());
-        break;
-        case proto::FieldDescriptor::TYPE_SINT32:
-        case proto::FieldDescriptor::TYPE_SFIXED32:
-        case proto::FieldDescriptor::TYPE_FIXED32:
-        case proto::FieldDescriptor::TYPE_INT32:
-            message->GetReflection()->AddInt32(message, desk, value().toInt());
-        break;
-        case proto::FieldDescriptor::TYPE_UINT32:
-            message->GetReflection()->AddUInt32(message, desk, value().toUInt());
-        break;
-        default:
-            std::cout << "unsopported type\n";
-    }
+    auto func = [&](auto& a){
+        (message->GetReflection()->*a.set_repeated_int)(message, desk, value().toInt());
+    };
+    std::visit(func, mTypes[desk->cpp_type()]);
 }
 
 
 void NumericProtoItem::initFieldValue(const google::protobuf::Message * message)
 {
-    switch (field()->type())
-    {
-        case proto::FieldDescriptor::TYPE_SINT64:
-        case proto::FieldDescriptor::TYPE_SFIXED64:
-        case proto::FieldDescriptor::TYPE_FIXED64:
-        case proto::FieldDescriptor::TYPE_INT64:
-            setValue(static_cast<int>(message->GetReflection()->GetInt64(*message, field())));
-        break;
-        case proto::FieldDescriptor::TYPE_UINT64:
-            setValue(static_cast<int>(message->GetReflection()->GetUInt64(*message, field())));
-        break;
-        case proto::FieldDescriptor::TYPE_SINT32:
-        case proto::FieldDescriptor::TYPE_SFIXED32:
-        case proto::FieldDescriptor::TYPE_FIXED32:
-        case proto::FieldDescriptor::TYPE_INT32:
-            setValue(message->GetReflection()->GetInt32(*message, field()));
-        break;
-        case proto::FieldDescriptor::TYPE_UINT32:
-            setValue(message->GetReflection()->GetUInt32(*message, field()));
-        break;
-        default:
-            std::cout << "unsopported type\n";
-    }
+    auto func = [&](auto& a){
+        auto res = (message->GetReflection()->*a.get_int)(*message, field());
+        return QVariant::fromValue(res);
+    };
+    setValue(std::visit(func, mTypes[field()->cpp_type()]));
 }
 
 
 void NumericProtoItem::initRepeatedFieldValue(const google::protobuf::Message * message, int idx)
 {
-    switch (field()->type())
-    {
-        case proto::FieldDescriptor::TYPE_SINT64:
-        case proto::FieldDescriptor::TYPE_SFIXED64:
-        case proto::FieldDescriptor::TYPE_FIXED64:
-        case proto::FieldDescriptor::TYPE_INT64:
-            setValue(static_cast<int>(message->GetReflection()->GetRepeatedInt64(*message, field(), idx)));
-        break;
-        case proto::FieldDescriptor::TYPE_UINT64:
-            setValue(static_cast<int>(message->GetReflection()->GetRepeatedUInt64(*message, field(),idx)));
-        break;
-        case proto::FieldDescriptor::TYPE_SINT32:
-        case proto::FieldDescriptor::TYPE_SFIXED32:
-        case proto::FieldDescriptor::TYPE_FIXED32:
-        case proto::FieldDescriptor::TYPE_INT32:
-            setValue(message->GetReflection()->GetRepeatedInt32(*message, field(), idx));
-        break;
-        case proto::FieldDescriptor::TYPE_UINT32:
-            setValue(message->GetReflection()->GetRepeatedUInt32(*message, field(), idx));
-        break;
-        default:
-            std::cout << "unsopported type\n";
-    }
+    auto func = [&](auto& a) {
+        auto res = (message->GetReflection()->*a.get_repeated_int)(*message, field(), idx);
+        return QVariant::fromValue(res);
+    };
+    setValue(std::visit(func, mTypes[field()->cpp_type()]));
 }
