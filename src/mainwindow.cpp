@@ -130,7 +130,7 @@ void MainWindow::onReplaceType()
         QModelIndex idx = qvariant_cast<QModelIndex>(act->data());
         mModel.onReplaceType(idx,
             mProtoManager.getClassDescriptor(dlg.pPackage(), dlg.pClass()));
-        ui->tvProtoTree->expand(idx.siblingAtColumn(0));
+        ui->tvProtoTree->expand(idx.sibling(idx.row(),0));
     }
 }
 
@@ -164,8 +164,9 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
     if( watched == ui->tvProtoTree &&
         event->type() == QEvent::KeyPress &&
         static_cast<QKeyEvent*>(event)->key() == Qt::Key_Delete) {
+        auto idx = ui->tvProtoTree->currentIndex();
         mModel.setData(
-            ui->tvProtoTree->currentIndex().siblingAtColumn(ProtobufModel::COL_VALUE),
+            idx.sibling(idx.row(), ProtobufModel::COL_VALUE),
             QVariant(),
             Qt::EditRole);
     }
