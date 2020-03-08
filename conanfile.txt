@@ -1,6 +1,5 @@
 [requires]
 protobuf/3.5.1@bincrafters/stable 
-qt/5.14.1@bincrafters/stable
 
 [generators]
 cmake

@@ -53,7 +53,8 @@ set(HEADERS src/mainwindow.h
             src/tree_items/repeatedprotoitem.h
             src/tree_items/messageprotoitem.h
             src/tree_items/rootprotoitem.h
-            src/tree_items/bytestprotoitem.h)
+            src/tree_items/bytestprotoitem.h
+            src/tree_items/protofieldwrapper.h)
 
 set(RSC rsc/rsc.qrc)
 qt5_wrap_ui(UI ui/mainwindow.ui
