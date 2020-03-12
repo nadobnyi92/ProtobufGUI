@@ -85,13 +85,13 @@ const google::protobuf::FieldDescriptor *ProtoTreeItem::field() const
 std::unique_ptr<ProtoTreeItem>& ProtoTreeItem::createNode(const google::protobuf::FieldDescriptor *field, bool isRepeat)
 {
     if(field->label() == proto::FieldDescriptor::LABEL_REPEATED && isRepeat) {
-        mChildItems.push_back(std::make_unique<RepeatedProtoItem>(field, this));
+        mChildItems.push_back(std::unique_ptr<RepeatedProtoItem>(new RepeatedProtoItem(field, this)));
     } else {
         switch(field->type())
         {
             case proto::FieldDescriptor::TYPE_DOUBLE:
             case proto::FieldDescriptor::TYPE_FLOAT:
-                mChildItems.push_back(std::make_unique<FloatProtoItem>(field, this));
+                mChildItems.push_back(std::unique_ptr<FloatProtoItem>(new FloatProtoItem(field, this)));
                 break;
             case proto::FieldDescriptor::TYPE_INT64:
             case proto::FieldDescriptor::TYPE_UINT64:
@@ -103,23 +103,23 @@ std::unique_ptr<ProtoTreeItem>& ProtoTreeItem::createNode(const google::protobuf
             case proto::FieldDescriptor::TYPE_SINT32:
             case proto::FieldDescriptor::TYPE_SINT64:
             case proto::FieldDescriptor::TYPE_UINT32:
-                mChildItems.push_back(std::make_unique<NumericProtoItem>(field, this));
+                mChildItems.push_back(std::unique_ptr<NumericProtoItem>(new NumericProtoItem(field, this)));
                 break;
             case proto::FieldDescriptor::TYPE_BOOL:
-                mChildItems.push_back(std::make_unique<BoolProtoItem>(field, this));
+                mChildItems.push_back(std::unique_ptr<BoolProtoItem>(new BoolProtoItem(field, this)));
                 break;
             case proto::FieldDescriptor::TYPE_BYTES:
-                mChildItems.push_back(std::make_unique<BytesProtoItem>(field, this));
+                mChildItems.push_back(std::unique_ptr<BytesProtoItem>(new BytesProtoItem(field, this)));
             break;
             case proto::FieldDescriptor::TYPE_STRING:
-                mChildItems.push_back(std::make_unique<StringProtoItem>(field, this));
+                mChildItems.push_back(std::unique_ptr<StringProtoItem>(new StringProtoItem(field, this)));
                 break;
             case proto::FieldDescriptor::TYPE_GROUP:
             case proto::FieldDescriptor::TYPE_MESSAGE:
-                mChildItems.push_back(std::make_unique<MessageProtoItem>(field, this));
+                mChildItems.push_back(std::unique_ptr<MessageProtoItem>(new MessageProtoItem(field, this)));
                 break;
             case proto::FieldDescriptor::TYPE_ENUM:
-                mChildItems.push_back(std::make_unique<EnumProtoItem>(field, this));
+                mChildItems.push_back(std::unique_ptr<EnumProtoItem>(new EnumProtoItem(field, this)));
                 break;
         }
     }
@@ -158,11 +158,6 @@ void ProtoTreeItem::clearValue()
 
 QList<QAction *> ProtoTreeItem::getActions()
 {
-    QList<QAction*> actions;
-    if(parentItem() && parentItem()->label() == proto::FieldDescriptor::LABEL_REPEATED) {
-        QAction * actRemove = new QAction("Удалить элемент");
-        connect(actRemove, SIGNAL(triggered()), SLOT(onRemoveItem()));
-    }
     return QList<QAction*>();
 }
 
@@ -207,7 +202,7 @@ int ProtoTreeItem::row() const
     if(mParentItem == nullptr)
         return 0;
     auto it = std::find_if(mParentItem->mChildItems.begin(), mParentItem->mChildItems.end(),
-        [this](auto&& val) { return val.get() == this; });
+        [this](const std::unique_ptr<ProtoTreeItem>& val) { return val.get() == this; });
     return static_cast<int>(std::distance(mParentItem->mChildItems.begin(), it));
 }
 

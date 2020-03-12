@@ -57,7 +57,8 @@ public:
 
     bool regWrapper(protofd::CppType type, FieldWrapper* wrapper) {
         bool isReg = false;
-        if(auto it = mWrappers.find(type); it != mWrappers.end()) {
+        auto it = mWrappers.find(type);
+        if(it != mWrappers.end()) {
             mWrappers[type] = wrapper;
             isReg = true;
         }
@@ -65,7 +66,8 @@ public:
     }
     FieldWrapper* wrapper(protofd::CppType type) {
         FieldWrapper * wrapper = nullptr;
-        if(auto it = mWrappers.find(type); it != mWrappers.end()) {
+        auto it = mWrappers.find(type);
+        if(it != mWrappers.end()) {
             wrapper = it->second;
         }
         return wrapper;

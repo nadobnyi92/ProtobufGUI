@@ -1,7 +1,5 @@
 #include "numericprotoitem.h"
 
-#include <any>
-
 #include <QSpinBox>
 
 #include "protofieldwrapper.h"

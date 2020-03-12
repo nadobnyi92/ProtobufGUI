@@ -24,7 +24,7 @@ void ProtobufModel::setProtoClass(const google::protobuf::Descriptor *protoclass
 {
     if(protoclass != nullptr) {
         emit beginResetModel();
-        mRootItem = std::make_unique<RootProtoItem>(protoclass);
+        mRootItem = std::unique_ptr<RootProtoItem>(new RootProtoItem(protoclass));
         mRootItem->expand();
         emit endResetModel();
     }

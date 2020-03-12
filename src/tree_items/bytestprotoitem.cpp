@@ -17,7 +17,8 @@ void BytesProtoItem::setDesc(const google::protobuf::Descriptor *desc)
         return;
 
     if(!value().isNull()) {
-        std::string subMessage = value().toByteArray().toStdString();
+        QByteArray arr = value().toByteArray();
+        std::string subMessage(arr.constData(), arr.length());
         std::cout << "submessage\n";
         printHex(subMessage);
 
@@ -69,7 +70,8 @@ void BytesProtoItem::addFieldValue(google::protobuf::Message *m , const google::
 void BytesProtoItem::initFieldValue(const google::protobuf::Message * m)
 {
     setDesc(nullptr);
-    setValue(QByteArray::fromStdString(m->GetReflection()->GetString(*m, field())));
+    std::string msg = m->GetReflection()->GetString(*m, field());
+    setValue(QByteArray(msg.c_str(), msg.length()));
     printHex(m->GetReflection()->GetString(*m, field()));            
 }
 

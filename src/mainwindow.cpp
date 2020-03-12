@@ -83,19 +83,19 @@ void MainWindow::onPrepareMenu(const QPoint &p)
     QMenu menu;
 
     if(item->label() == proto::FieldDescriptor::LABEL_REPEATED) {
-        QAction * actAddItem = new QAction("Добавить элемент");
+        QAction * actAddItem = new QAction("Добавить элемент", &menu);
         actAddItem->setData(idx);
         connect(actAddItem, SIGNAL(triggered()), SLOT(onAddItem()));
         menu.addAction(actAddItem);
     } else {
         if(item->type() == proto::FieldDescriptor::TYPE_BYTES) {
-            QAction * actTransform = new QAction("Преобразовать тип");
+            QAction * actTransform = new QAction("Преобразовать тип", &menu);
             actTransform->setData(idx);
             connect(actTransform, SIGNAL(triggered()), SLOT(onReplaceType()));
             menu.addAction(actTransform);
         }
         if(item->parentItem()->label() == proto::FieldDescriptor::LABEL_REPEATED) {
-            QAction * actRemove = new QAction("Удалить элемент");
+            QAction * actRemove = new QAction("Удалить элемент", &menu);
             actRemove->setData(idx);
             connect(actRemove, SIGNAL(triggered()), SLOT(onRemoveItem()));
             menu.addAction(actRemove);
