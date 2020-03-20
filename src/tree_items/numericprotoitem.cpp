@@ -4,10 +4,6 @@
 
 #include "protofieldwrapper.h"
 
-createWrapper(proto::int32, Int32, INT32)
-createWrapper(proto::int64, Int64, INT64)
-createWrapper(proto::uint32, UInt32, UINT32)
-createWrapper(proto::uint64, UInt64, UINT64)
 
 NumericProtoItem::ItemDelegate::ItemDelegate(QObject *parent)
     : QItemDelegate(parent) {}

@@ -36,7 +36,8 @@ set(SRC     src/main.cpp
             src/tree_items/repeatedprotoitem.cpp
             src/tree_items/messageprotoitem.cpp
             src/tree_items/rootprotoitem.cpp
-            src/tree_items/bytestprotoitem.cpp)
+            src/tree_items/bytestprotoitem.cpp
+            src/tree_items/protofieldwrapper.cpp)
 
 set(HEADERS src/mainwindow.h
             src/prototypedialog.h
