@@ -136,12 +136,16 @@ void MainWindow::onReplaceType()
 
 void MainWindow::onSaveProtoData()
 {
-    std::string message = mModel.getMessage();
-    if(!message.empty()) {
-        QString fp = QFileDialog::getSaveFileName(/*this, "save proto data", QDir::homePath()*/);
-        std::ofstream of(fp.toStdString(), std::fstream::binary);
-        if(of.is_open())
-            of << message;
+    try {
+        std::string message = mModel.getMessage();
+        if(!message.empty()) {
+            QString fp = QFileDialog::getSaveFileName(/*this, "save proto data", QDir::homePath()*/);
+            std::ofstream of(fp.toStdString(), std::fstream::binary);
+            if(of.is_open())
+                of << message;
+        }
+    } catch (ProtoTreeError& e) {
+        QMessageBox::critical(this, e.what(), e.details());
     }
 }
 

@@ -1,4 +1,7 @@
 #include "enumprotoitem.h"
+#include "../prototreeerror.h"
+
+#include <sstream>
 
 #include <QComboBox>
 
@@ -47,16 +50,27 @@ QBrush EnumProtoItem::color() const
     return QBrush(QColor(0, 255, 255, 90));
 }
 
+int EnumProtoItem::getEnumValue()
+{
+    auto enumType = field()->enum_type()->FindValueByName(value().toString().toStdString());
+    if(enumType == nullptr)
+    {
+        std::stringstream ss;
+        ss << "Field " << value().toString().toStdString()
+           << " is not represend in enum " << field()->name();
+        throw ProtoTreeError("Failed init enum field", ss.str());
+    }
+    return enumType->number();
+}
+
 void EnumProtoItem::fillFieldValue(google::protobuf::Message *message)
 {
-    message->GetReflection()->SetEnumValue(message, field(),
-        field()->enum_type()->FindValueByName(value().toString().toStdString())->number());
+    message->GetReflection()->SetEnumValue(message, field(), getEnumValue());
 }
 
 void EnumProtoItem::addFieldValue(google::protobuf::Message *message, const google::protobuf::FieldDescriptor *desc)
 {
-    message->GetReflection()->AddEnumValue(message, desc,
-        field()->enum_type()->FindValueByName(value().toString().toStdString())->number());
+    message->GetReflection()->AddEnumValue(message, desc, getEnumValue());
 }
 
 void EnumProtoItem::initFieldValue(const google::protobuf::Message * message)
@@ -68,3 +82,4 @@ void EnumProtoItem::initRepeatedFieldValue(const google::protobuf::Message * mes
 {
     setValue(QString::fromStdString(message->GetReflection()->GetRepeatedEnum(*message, field(), idx)->name()));
 }
+

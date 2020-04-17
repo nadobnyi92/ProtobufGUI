@@ -19,7 +19,6 @@ void BytesProtoItem::setDesc(const google::protobuf::Descriptor *desc)
     if(!value().isNull()) {
         QByteArray arr = value().toByteArray();
         std::string subMessage(arr.constData(), arr.length());
-        std::cout << "submessage\n";
         printHex(subMessage);
 
         proto::DynamicMessageFactory f;
@@ -52,9 +51,7 @@ void BytesProtoItem::fillFieldValue(google::protobuf::Message * m)
     if(descriptor() == nullptr) {
         StringProtoItem::fillFieldValue(m);
     } else {
-        auto subMessage = getMessage();
-        m->GetReflection()->SetString(m, field(), subMessage->SerializeAsString());
-        printHex(subMessage);
+        m->GetReflection()->SetString(m, field(), getSerializedMessage();
     }
 }
 
@@ -63,7 +60,7 @@ void BytesProtoItem::addFieldValue(google::protobuf::Message *m , const google::
     if(descriptor() == nullptr) {
         StringProtoItem::addFieldValue(m, d);
     } else {
-        m->GetReflection()->AddString(m, field(), getMessage()->SerializeAsString());
+        m->GetReflection()->AddString(m, field(), getSerializedMessage());
     }
 }
 
@@ -85,5 +82,16 @@ void BytesProtoItem::initRepeatedFieldValue(const google::protobuf::Message * m,
 QBrush BytesProtoItem::color() const
 {
     return StringProtoItem::color();
+}
+
+std::string BytesProtoItem::getSerializedMessage()
+{
+    try {
+        std::string subMessage = getMessage()->SerializeAsString();
+        printHex(subMessage);
+        return subMessage;
+    } catch (google::protobuf::FatalException& e) {
+        throw ProtoTreeError("Failed serialized field", e.message());
+    }
 }
 

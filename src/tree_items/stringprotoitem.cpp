@@ -44,13 +44,16 @@ QBrush StringProtoItem::color() const
 void StringProtoItem::fillFieldValue(google::protobuf::Message *message)
 {
     std::string sData = value().toString().toStdString();
-    message->GetReflection()->SetString(message, field(), sData);
+    if(sData.length() > 0)
+        message->GetReflection()->SetString(message, field(), sData);
 }
 
 
 void StringProtoItem::addFieldValue(google::protobuf::Message * message, const google::protobuf::FieldDescriptor * desc)
 {
-    message->GetReflection()->AddString(message, desc, value().toString().toStdString());
+    std::string sData = value().toString().toStdString();
+    if(sData.length() > 0)
+        message->GetReflection()->AddString(message, desc, sData);
 }
 
 

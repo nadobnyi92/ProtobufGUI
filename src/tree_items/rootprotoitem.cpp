@@ -11,7 +11,12 @@ std::string RootProtoItem::getStringMessage()
     std::string sMessage;
     proto::Message * m = getMessage();
     if(m != nullptr) {
-        sMessage = m->SerializeAsString();
+        try {
+            sMessage = m->SerializeAsString();
+        } catch (google::protobuf::FatalException& e) {
+            throw ProtoTreeError("Failed serialize message", e.message());
+        }
+
         printHex(sMessage);
     }
     return sMessage;

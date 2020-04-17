@@ -30,6 +30,9 @@ public:
     QBrush color() const override;
 
 private:
+    std::string getSerializedMessage();
+
+private:
     std::string sourceData;
 };
 

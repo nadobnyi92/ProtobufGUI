@@ -11,7 +11,7 @@ namespace proto = google::protobuf;
 class ProtoTreeError : public std::exception
 {
 public:
-    ProtoTreeError(const char * message, const char * detail = nullptr);
+    ProtoTreeError(const std::string& message, const std::string& detail = nullptr);
     ProtoTreeError(proto::Message *);
 
     const char *what() const noexcept override;

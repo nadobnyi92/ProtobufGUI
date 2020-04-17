@@ -1,13 +1,13 @@
 #include "prototreeerror.h"
 
-ProtoTreeError::ProtoTreeError(const char *message, const char *detail)
+ProtoTreeError::ProtoTreeError(const std::string& message, const std::string& detail)
     : mMessage(message) , mDetails(detail) {}
 
 ProtoTreeError::ProtoTreeError(google::protobuf::Message * message)
 {
     if(!message->IsInitialized()) {
-        mDetails = "Пропущены обязательные поля: " + message->InitializationErrorString();
-        mMessage = "Ошибка разбора сообщения";
+        mDetails = "skiped required fuelds: " + message->InitializationErrorString();
+        mMessage = "Failed parsing message";
     }
 }
 

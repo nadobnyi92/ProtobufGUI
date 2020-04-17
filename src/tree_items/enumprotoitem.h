@@ -35,6 +35,9 @@ protected:
 
 private:
     ItemDelegate *mDelegate;
+
+private:
+    int getEnumValue();
 };
 
 #endif // ENUMPROTOITEM_H
