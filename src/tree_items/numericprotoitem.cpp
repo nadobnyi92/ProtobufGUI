@@ -10,7 +10,9 @@ NumericProtoItem::ItemDelegate::ItemDelegate(QObject *parent)
 
 QWidget *NumericProtoItem::ItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &) const
 {
-    return new QSpinBox(parent);
+    QSpinBox * sb = new QSpinBox(parent);
+    sb->setRange(std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
+    return sb;
 }
 
 void NumericProtoItem::ItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
