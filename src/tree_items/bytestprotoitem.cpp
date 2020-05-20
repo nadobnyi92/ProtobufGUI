@@ -51,7 +51,7 @@ void BytesProtoItem::fillFieldValue(google::protobuf::Message * m)
     if(descriptor() == nullptr) {
         StringProtoItem::fillFieldValue(m);
     } else {
-        m->GetReflection()->SetString(m, field(), getSerializedMessage();
+        m->GetReflection()->SetString(m, field(), getSerializedMessage());
     }
 }
 
