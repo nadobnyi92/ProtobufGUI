@@ -1,0 +1,40 @@
+version: 1.0.{build}
+
+branches:
+  only:
+    - master
+
+image:
+- Visual Studio 2017
+- Ubuntu1804
+- macOS
+
+configuration:
+  - Debug
+  - Release
+
+platform:
+  - x64
+
+for:
+- 
+  matrix:
+    only:
+      - image: Ubuntu1804
+
+  init:
+    - sudo apt install --yes mesa-common-dev
+    - sudo pip install conan
+
+  build_script:
+    - mkdir .build
+    - cd .build
+    - cmake -DCMAKE_BUILD_TYPE=%configuration% -DCMAKE_PREFIX_PATH=$HOME/Qt/5.14.2/gcc_64 ..
+    - make --build . --target ALL_BUILD --config %Configuration% -- /maxcpucount:4  
+
+- 
+  matrix:
+    only:
+      - image: Visual Studio 201  
+  init:
+    - pip install conan
