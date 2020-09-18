@@ -18,7 +18,6 @@ class ProtobufModel : public QAbstractItemModel
     Q_OBJECT
 public:
     ProtobufModel(QObject * parent = nullptr) : QAbstractItemModel(parent) {}
-    ~ProtobufModel() override {}
 
     enum ColumnTypes
     {

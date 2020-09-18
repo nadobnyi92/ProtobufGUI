@@ -5,6 +5,7 @@
 #include <QBrush>
 #include <QIcon>
 #include <QMenu>
+#include <QQmlListProperty>
 
 #include <vector>
 #include <bits/unique_ptr.h>
@@ -19,6 +20,11 @@ class ProtoManager;
 class ProtoTreeItem : public QObject
 {
     Q_OBJECT
+
+//    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+//    Q_PROPERTY(QVariant value READ svalue WRITE setSValue NOTIFY valueChanged)
+//    Q_PROPERTY(QQmlListProperty<ProtoTreeItem> children READ children NOTIFY childrenChanged)
+//    Q_PROPERTY(int label READ label WRITE setLabel CONSTANT)
 
 public:
     ProtoTreeItem(const proto::Descriptor *protoclass, ProtoTreeItem *parentItem = nullptr);
@@ -36,6 +42,10 @@ public:
     proto::FieldDescriptor::Type type() const;
     QString typeName() const;
     proto::FieldDescriptor::Label label() const;
+
+    QQmlListProperty<ProtoTreeItem> children();
+    int childCount();
+    ProtoTreeItem* childNode(int idx);
 
     void expand();
     void setValue(const QVariant& data);

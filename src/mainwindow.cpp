@@ -37,12 +37,6 @@ MainWindow::MainWindow(QWidget * parent) noexcept
             &mProtoManager, SLOT(setPackage(const QString&)));
     connect(ui->cbClass, SIGNAL(currentTextChanged(const QString&)),
             &mProtoManager, SLOT(setClass(const QString&)));
-    connect(&mProtoManager, SIGNAL(onProtoChange(const QStringList&)),
-            SLOT(onSetPackages(const QStringList&)));
-    connect(&mProtoManager, SIGNAL(onPackageChange(const QStringList&)),
-            SLOT(onSetClasses(const QStringList&)));
-    connect(&mProtoManager, SIGNAL(onClassChange(const proto::Descriptor*)),
-            &mModel, SLOT(setProtoClass(const proto::Descriptor *)));
     connect(ui->tvProtoTree, SIGNAL(expanded(const QModelIndex&)),
             &mModel, SLOT(onExpand(const QModelIndex&)));
     connect(ui->pbSaveData, SIGNAL(clicked()), SLOT(onSaveProtoData()));
@@ -128,8 +122,8 @@ void MainWindow::onReplaceType()
     if(dlg.exec() == QDialog::Accepted) {
         QAction * act = static_cast<QAction*>(sender());
         QModelIndex idx = qvariant_cast<QModelIndex>(act->data());
-        mModel.onReplaceType(idx,
-            mProtoManager.getClassDescriptor(dlg.pPackage(), dlg.pClass()));
+//        mModel.onReplaceType(idx,
+//            mProtoManager.getClassDescriptor(dlg.pPackage(), dlg.pClass()));
         ui->tvProtoTree->expand(idx.sibling(idx.row(),0));
     }
 }

@@ -9,7 +9,6 @@ ProtoTypeDialog::ProtoTypeDialog(const ProtoManager& manager, QWidget * parent)
 {
     ui->setupUi(this);
 
-    mClasses = manager.getProtoClasses();
     ui->cbPackage->addItems(removeEmptyOrDupl(mClasses.keys()));
 
     connect(ui->cbPackage, SIGNAL(currentTextChanged(const QString&)),

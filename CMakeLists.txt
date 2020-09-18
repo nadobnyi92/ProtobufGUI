@@ -13,7 +13,7 @@ conan_cmake_run(
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
-find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
+find_package(Qt5 COMPONENTS Quick Core Widgets REQUIRED)
 find_package(Protobuf REQUIRED)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -24,6 +24,7 @@ set(SRC     src/main.cpp
             src/mainwindow.cpp
             src/prototypedialog.cpp
             src/protomanager.cpp
+            src/protoloader.cpp
             src/protobufmodel.cpp
             src/fielddelegate.cpp
             src/prototreeerror.cpp
@@ -42,6 +43,7 @@ set(SRC     src/main.cpp
 set(HEADERS src/mainwindow.h
             src/prototypedialog.h
             src/protomanager.h
+            src/protoloader.h
             src/protobufmodel.h
             src/fielddelegate.h
             src/prototreeerror.h
@@ -64,4 +66,4 @@ qt5_wrap_ui(UI ui/mainwindow.ui
 
 add_executable(${PROJECT_NAME} ${SRC} ${HEADERS} ${RSC} ${UI})
 include_directories(${PROJECT_NAME} ${Protobuf_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Widgets ${Protobuf_PROTOC_LIBRARIES} ${Protobuf_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Widgets Qt5::Quick ${Protobuf_PROTOC_LIBRARIES} ${Protobuf_LIBRARIES})

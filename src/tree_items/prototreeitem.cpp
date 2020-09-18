@@ -14,6 +14,21 @@
 #include "messageprotoitem.h"
 #include "bytestprotoitem.h"
 
+int count_element(QQmlListProperty<ProtoTreeItem> *property)
+{
+    ProtoTreeItem *parent = (qobject_cast<ProtoTreeItem *>(property->object));
+    return parent->childCount();
+}
+
+ProtoTreeItem *at_element(QQmlListProperty<ProtoTreeItem> *property, int index)
+{
+    ProtoTreeItem *parent = (qobject_cast<ProtoTreeItem *>(property->object));
+    if(index < 0 || index >= parent->childCount())
+        return nullptr;
+    return parent->childNode(index);
+}
+
+
 ProtoTreeItem::ProtoTreeItem(const google::protobuf::Descriptor *pclass, ProtoTreeItem *parentItem)
     : QObject(nullptr)
     , mField(nullptr)
@@ -76,6 +91,11 @@ const std::vector<std::unique_ptr<ProtoTreeItem> > &ProtoTreeItem::childItems() 
 {
     return mChildItems;
 }
+
+//ProtoTreeItem *ProtoTreeItem::item(int idx)
+//{
+//    return mChildItems.at(idx);
+//}
 
 const google::protobuf::FieldDescriptor *ProtoTreeItem::field() const
 {
@@ -195,6 +215,24 @@ QString ProtoTreeItem::typeName() const
 google::protobuf::FieldDescriptor::Label ProtoTreeItem::label() const
 {
     return mLabel;
+}
+
+QQmlListProperty<ProtoTreeItem> ProtoTreeItem::children()
+{
+   QQmlListProperty<ProtoTreeItem> items(this, 0,
+                                          &count_element,
+                                          &at_element);
+   return items;
+}
+
+int ProtoTreeItem::childCount()
+{
+    return mChildItems.size();
+}
+
+ProtoTreeItem *ProtoTreeItem::childNode(int idx)
+{
+    return mChildItems.at(idx).get();
 }
 
 int ProtoTreeItem::row() const

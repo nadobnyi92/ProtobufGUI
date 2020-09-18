@@ -67,14 +67,14 @@ void ProtobufModel::onRemoveItem(const QModelIndex &index)
 void ProtobufModel::onReplaceType(const QModelIndex &index, const proto::Descriptor* desc)
 {
     BytesProtoItem *pItem = static_cast<BytesProtoItem*>(index.internalPointer());
-    beginRemoveRows(index, 0, pItem->children().size());
+    beginRemoveRows(index, 0, pItem->rowCount());
     try {
         pItem->setDesc(desc);
     } catch (ProtoTreeError& e) {
         emit processProtoError(e);
     }
     endRemoveRows();
-    beginInsertRows(index, 0, pItem->children().size());
+    beginInsertRows(index, 0, pItem->rowCount());
     endInsertRows();
 }
 

@@ -3,5 +3,11 @@
         <file>icons/optional.png</file>
         <file>icons/repeated.png</file>
         <file>icons/required.png</file>
+        <file>qml/main.qml</file>
+        <file>qml/TreeItem.qml</file>
+        <file>qml/TreeNode.qml</file>
+        <file>qml/EmptyItem.qml</file>
+        <file>qml/ProtoFileDialog.qml</file>
+        <file>qml/ProtoSelectDialog.qml</file>
     </qresource>
 </RCC>
