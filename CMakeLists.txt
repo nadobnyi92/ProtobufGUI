@@ -21,8 +21,6 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
 set(SRC     src/main.cpp
-            src/mainwindow.cpp
-            src/prototypedialog.cpp
             src/protomanager.cpp
             src/protoloader.cpp
             src/protobufmodel.cpp
@@ -40,9 +38,7 @@ set(SRC     src/main.cpp
             src/tree_items/bytestprotoitem.cpp
             src/tree_items/protofieldwrapper.cpp)
 
-set(HEADERS src/mainwindow.h
-            src/prototypedialog.h
-            src/protomanager.h
+set(HEADERS src/protomanager.h
             src/protoloader.h
             src/protobufmodel.h
             src/fielddelegate.h
@@ -60,10 +56,7 @@ set(HEADERS src/mainwindow.h
             src/tree_items/protofieldwrapper.h)
 
 set(RSC rsc/rsc.qrc)
-qt5_wrap_ui(UI ui/mainwindow.ui
-               ui/prototypedialog.ui)
 
-
-add_executable(${PROJECT_NAME} ${SRC} ${HEADERS} ${RSC} ${UI})
+add_executable(${PROJECT_NAME} ${SRC} ${HEADERS} ${RSC})
 include_directories(${PROJECT_NAME} ${Protobuf_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Widgets Qt5::Quick ${Protobuf_PROTOC_LIBRARIES} ${Protobuf_LIBRARIES})

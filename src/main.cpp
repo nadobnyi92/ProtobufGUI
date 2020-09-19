@@ -2,7 +2,6 @@
 #include <QApplication>
 #include <QQmlApplicationEngine>
 
-#include "mainwindow.h"
 #include "tree_items/prototreeitem.h"
 #include "protomanager.h"
 
