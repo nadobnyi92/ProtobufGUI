@@ -60,13 +60,14 @@ Window {
         }
     }
 
-    Rectangle {
+    ListView {
         anchors.top: rTopPanel.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: rBottomPanel.top
+        model: protoManager.rootItem
         TreeItem {
-            id: rootItem
+            id: rootItem 
         }
     }
 

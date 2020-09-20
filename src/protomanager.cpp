@@ -56,12 +56,10 @@ const QString &ProtoManager::curClass() const
     return mCurClass;
 }
 
-//const proto::Descriptor *ProtoManager::getClassDescriptor(const QString &pPackage, const QString &pClass) const
-//{
-//    return mProtoPackages
-//        .value(pPackage, QHash<QString, const proto::Descriptor*>())
-//            .value(pClass, nullptr);
-//}
+ProtoTreeItem* ProtoManager::rootItem() const
+{
+    return mRootITem.get();
+}
 
 void ProtoManager::setCurPackage(const QString & curPackage)
 {
@@ -72,4 +70,5 @@ void ProtoManager::setCurPackage(const QString & curPackage)
 void ProtoManager::setCurClass(const QString & curClass)
 {
     mCurClass = curClass;
+    mRootITem.reset(new ProtoTreeItem(mLoader->proto(mCurClass, mCurPackage)));
 }

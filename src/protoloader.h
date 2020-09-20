@@ -31,6 +31,7 @@ public:
 
     QStringList protoPackages() const;
     QStringList protoClasses(const QString& package) const;
+    const proto::Descriptor* proto(const QString& pPackage, const QString& pClass) const;
 
 private:
     ProtoContext* mContext;

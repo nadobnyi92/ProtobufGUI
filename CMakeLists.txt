@@ -23,37 +23,37 @@ set(CMAKE_AUTORCC ON)
 set(SRC     src/main.cpp
             src/protomanager.cpp
             src/protoloader.cpp
-            src/protobufmodel.cpp
             src/fielddelegate.cpp
             src/prototreeerror.cpp
             src/tree_items/prototreeitem.cpp
-            src/tree_items/numericprotoitem.cpp
-            src/tree_items/stringprotoitem.cpp
-            src/tree_items/floatprotoitem.cpp
-            src/tree_items/boolprotoitem.cpp
-            src/tree_items/enumprotoitem.cpp
-            src/tree_items/repeatedprotoitem.cpp
-            src/tree_items/messageprotoitem.cpp
-            src/tree_items/rootprotoitem.cpp
-            src/tree_items/bytestprotoitem.cpp
-            src/tree_items/protofieldwrapper.cpp)
+#            src/tree_items/numericprotoitem.cpp
+#            src/tree_items/stringprotoitem.cpp
+#            src/tree_items/floatprotoitem.cpp
+#            src/tree_items/boolprotoitem.cpp
+#            src/tree_items/enumprotoitem.cpp
+#            src/tree_items/repeatedprotoitem.cpp
+#            src/tree_items/messageprotoitem.cpp
+#            src/tree_items/rootprotoitem.cpp
+#            src/tree_items/bytestprotoitem.cpp
+#            src/tree_items/protofieldwrapper.cpp
+)
 
 set(HEADERS src/protomanager.h
             src/protoloader.h
-            src/protobufmodel.h
             src/fielddelegate.h
             src/prototreeerror.h
             src/tree_items/prototreeitem.h
-            src/tree_items/numericprotoitem.h
-            src/tree_items/stringprotoitem.h
-            src/tree_items/floatprotoitem.h
-            src/tree_items/boolprotoitem.h
-            src/tree_items/enumprotoitem.h
-            src/tree_items/repeatedprotoitem.h
-            src/tree_items/messageprotoitem.h
-            src/tree_items/rootprotoitem.h
-            src/tree_items/bytestprotoitem.h
-            src/tree_items/protofieldwrapper.h)
+#            src/tree_items/numericprotoitem.h
+#            src/tree_items/stringprotoitem.h
+#            src/tree_items/floatprotoitem.h
+#            src/tree_items/boolprotoitem.h
+#            src/tree_items/enumprotoitem.h
+#            src/tree_items/repeatedprotoitem.h
+#            src/tree_items/messageprotoitem.h
+#            src/tree_items/rootprotoitem.h
+#            src/tree_items/bytestprotoitem.h
+#            src/tree_items/protofieldwrapper.h
+)
 
 set(RSC rsc/rsc.qrc)
 

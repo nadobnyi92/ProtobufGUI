@@ -11,17 +11,18 @@ FieldDelegate::FieldDelegate(QObject * parent)
 QWidget *FieldDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem& style, const QModelIndex& index) const
 {
     ProtoTreeItem *item = static_cast<ProtoTreeItem*>(index.internalPointer());
-    return item->getDelegate()->createEditor(parent, style, index);
+//    return item->getDelegate()->createEditor(parent, style, index);
+    return nullptr;
 }
 
 void FieldDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
     ProtoTreeItem *item = static_cast<ProtoTreeItem*>(index.internalPointer());
-    item->getDelegate()->setEditorData(editor, index);
+//    item->getDelegate()->setEditorData(editor, index);
 }
 
 void FieldDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
     ProtoTreeItem *item = static_cast<ProtoTreeItem*>(index.internalPointer());
-    item->getDelegate()->setModelData(editor, model, index);
+//    item->getDelegate()->setModelData(editor, model, index);
 }

@@ -24,9 +24,9 @@ Column {
 
     function title() {
         if(modelData.children.length > 0) {
-            return (expanded ? " + " : " - ") + modelData.title
+            return (expanded ? " + " : " - ") + modelData.name
         } else {
-            return modelData.title
+            return modelData.name
         }
     }
 }

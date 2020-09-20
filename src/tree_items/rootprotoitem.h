@@ -11,8 +11,8 @@ public:
     void initMessage(const std::string& fp);
 
     // ProtoTreeItem interface
-protected:
-    void initFieldValue(const google::protobuf::Message *) override;
+//protected:
+//    void initFieldValue(const google::protobuf::Message *) override;
 };
 
 #endif // ROOTPROTOITEM_H

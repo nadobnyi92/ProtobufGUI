@@ -22,19 +22,19 @@ public:
     ~StringProtoItem() override;
 
     // ProtoTreeItem interface
-public:
-    QItemDelegate *getDelegate() const override;
-    QBrush color() const override;
+//public:
+//    QItemDelegate *getDelegate() const override;
+//    QBrush color() const override;
 
 private:
     ItemDelegate *mDelegate;
 
     // ProtoTreeItem interface
-protected:
-    void fillFieldValue(google::protobuf::Message *message) override;
-    void addFieldValue(google::protobuf::Message *, const google::protobuf::FieldDescriptor *) override;
-    void initFieldValue(const google::protobuf::Message *) override;
-    void initRepeatedFieldValue(const google::protobuf::Message *, int idx) override;
+//protected:
+//    void fillFieldValue(google::protobuf::Message *message) override;
+//    void addFieldValue(google::protobuf::Message *, const google::protobuf::FieldDescriptor *) override;
+//    void initFieldValue(const google::protobuf::Message *) override;
+//    void initRepeatedFieldValue(const google::protobuf::Message *, int idx) override;
 };
 
 #endif // STRINGPROTOITEM_H

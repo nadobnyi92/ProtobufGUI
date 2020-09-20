@@ -21,10 +21,12 @@ class ProtoTreeItem : public QObject
 {
     Q_OBJECT
 
-//    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
-//    Q_PROPERTY(QVariant value READ svalue WRITE setSValue NOTIFY valueChanged)
-//    Q_PROPERTY(QQmlListProperty<ProtoTreeItem> children READ children NOTIFY childrenChanged)
-//    Q_PROPERTY(int label READ label WRITE setLabel CONSTANT)
+    Q_PROPERTY(QString name READ name NOTIFY nameChanged)
+    Q_PROPERTY(QString value READ value WRITE setValue NOTIFY valueChanged)
+    Q_PROPERTY(QQmlListProperty<ProtoTreeItem> children READ children NOTIFY childrenChanged)
+    Q_PROPERTY(QString typeName READ typeName CONSTANT)
+    Q_PROPERTY(QColor color READ color CONSTANT)
+    Q_PROPERTY(int label READ label CONSTANT) //TODO pass icon
 
 public:
     ProtoTreeItem(const proto::Descriptor *protoclass, ProtoTreeItem *parentItem = nullptr);
@@ -32,46 +34,58 @@ public:
 
     virtual ~ProtoTreeItem() {}
 
-    int rowCount() const;
-    ProtoTreeItem *parentItem();
-    ProtoTreeItem *child(size_t row);
-    int row() const;
+//    int rowCount() const;
+//    ProtoTreeItem *parentItem();
+//    ProtoTreeItem *child(size_t row);
+//    int row() const;
 
     QString name() const;
-    QVariant value() const;
-    proto::FieldDescriptor::Type type() const;
-    QString typeName() const;
-    proto::FieldDescriptor::Label label() const;
+
+    QString value() const;
+    void setValue(const QString& data);
 
     QQmlListProperty<ProtoTreeItem> children();
     int childCount();
     ProtoTreeItem* childNode(int idx);
 
-    void expand();
-    void setValue(const QVariant& data);
-    void setName(const QString& name);
-    void setDesc(const proto::Descriptor * desc);
-    void removeRow(int row);
+//    proto::FieldDescriptor::Type type() const;
+    QString typeName() const;
 
-    virtual QItemDelegate* getDelegate() const = 0;
-    virtual QBrush color() const = 0;
-    virtual void fillFieldValue(proto::Message*) = 0;
-    virtual void addFieldValue(proto::Message*, const proto::FieldDescriptor*) = 0;
-    virtual void initFieldValue(const proto::Message*) = 0;
-    virtual void initRepeatedFieldValue(const proto::Message*, int idx) = 0;
-    virtual void clearValue();
-    virtual QList<QAction*> getActions();
+    proto::FieldDescriptor::Label label() const;
 
-    const google::protobuf::Descriptor * descriptor() const;
-    const std::vector< std::unique_ptr<ProtoTreeItem> >& childItems() const;
-    const proto::FieldDescriptor * field() const;
+    QColor color() const;
 
-protected:
-    std::unique_ptr<ProtoTreeItem>& createNode(const proto::FieldDescriptor * field, bool isRepeated = true);
-    void expandChildren();
-    void clearChildren();
+    Q_INVOKABLE void expand();
+
+signals:
+    void nameChanged(const QString& name);
+    void valueChanged(const QString& value);
+    void childrenChanged(const QQmlListProperty<ProtoTreeItem>& children);
+
+//    void setDesc(const proto::Descriptor * desc);
+//    void removeRow(int row);
+
+//    virtual QItemDelegate* getDelegate() const = 0;
+//    virtual QBrush color() const = 0;
+//    virtual void fillFieldValue(proto::Message*) = 0;
+//    virtual void addFieldValue(proto::Message*, const proto::FieldDescriptor*) = 0;
+//    virtual void initFieldValue(const proto::Message*) = 0;
+//    virtual void initRepeatedFieldValue(const proto::Message*, int idx) = 0;
+//    virtual void clearValue();
+//    virtual QList<QAction*> getActions();
+
+//    const google::protobuf::Descriptor * descriptor() const;
+//    const std::vector< std::unique_ptr<ProtoTreeItem> >& childItems() const;
+//    const proto::FieldDescriptor * field() const;
+
+//protected:
+//    void expandChildren();
+//    void clearChildren();
 
 private:
+    void expandChildren();
+    void createNode(const proto::FieldDescriptor * field, bool isRepeated = true);
+
     bool isRepeated(const google::protobuf::FieldDescriptor *field) const;
 
 private:
@@ -80,7 +94,7 @@ private:
     QString mTypeName;
     proto::FieldDescriptor::Type mType;
     proto::FieldDescriptor::Label mLabel;
-    QVariant mValue;
+    QString mValue;
     const proto::Descriptor * mDesc;
 
     std::vector< std::unique_ptr<ProtoTreeItem> > mChildItems;

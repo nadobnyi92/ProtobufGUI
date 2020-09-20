@@ -81,3 +81,8 @@ QStringList ProtoLoader::protoClasses(const QString &package) const
 {
     return mDescriptors[package].keys();
 }
+
+const proto::Descriptor *ProtoLoader::proto(const QString &pPackage, const QString &pClass) const
+{
+    return mDescriptors.value(pPackage, QHash<QString, const proto::Descriptor*>()).value(pClass, nullptr);
+}
