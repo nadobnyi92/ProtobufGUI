@@ -52,12 +52,6 @@ Window {
             Layout.fillHeight: true
             onClicked: fileDialog.open()
         }
-        ToolButton {
-            id: btTest
-            onClicked: {
-                selectClassDialog.open(0)
-            }
-        }
     }
 
     ListView {
@@ -65,10 +59,9 @@ Window {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: rBottomPanel.top
+        anchors.fill: parent
         model: protoManager.rootItem
-        TreeItem {
-            id: rootItem 
-        }
+        delegate: TreeNode {}
     }
 
     Row {

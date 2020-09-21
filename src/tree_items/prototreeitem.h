@@ -29,6 +29,7 @@ class ProtoTreeItem : public QObject
     Q_PROPERTY(int label READ label CONSTANT) //TODO pass icon
 
 public:
+    ProtoTreeItem(ProtoTreeItem *parentItem = nullptr);
     ProtoTreeItem(const proto::Descriptor *protoclass, ProtoTreeItem *parentItem = nullptr);
     ProtoTreeItem(const proto::FieldDescriptor * field, ProtoTreeItem *parentItem = nullptr);
 

@@ -28,6 +28,14 @@ ProtoTreeItem *at_element(QQmlListProperty<ProtoTreeItem> *property, int index)
     return parent->childNode(index);
 }
 
+ProtoTreeItem::ProtoTreeItem(ProtoTreeItem *parentItem)
+    : QObject(nullptr)
+    , mField(nullptr)
+    , mTypeName("Message")
+    , mType(proto::FieldDescriptor::TYPE_MESSAGE)
+    , mLabel(proto::FieldDescriptor::LABEL_REQUIRED)
+    , mDesc(nullptr)
+    , mParentItem(parentItem) {}
 
 ProtoTreeItem::ProtoTreeItem(const google::protobuf::Descriptor *pclass, ProtoTreeItem *parentItem)
     : QObject(nullptr)

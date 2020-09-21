@@ -41,7 +41,7 @@ signals:
     void protoClassesChanged(const QStringList& classes);
     void curPackageChanged(const QString& curPackage);
     void curClassChanged(const QString& curClass);
-    void rootItemChanged(const ProtoTreeItem& item);
+    void rootItemChanged(ProtoTreeItem* item);
 
 private:
     explicit ProtoManager(const std::shared_ptr<ProtoLoader>& loader, QObject * parent = nullptr);

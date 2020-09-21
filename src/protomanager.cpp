@@ -70,5 +70,7 @@ void ProtoManager::setCurPackage(const QString & curPackage)
 void ProtoManager::setCurClass(const QString & curClass)
 {
     mCurClass = curClass;
-    mRootITem.reset(new ProtoTreeItem(mLoader->proto(mCurClass, mCurPackage)));
+    mRootITem.reset(new ProtoTreeItem(mLoader->proto(mCurPackage, mCurClass)));
+    mRootITem->expand();
+    emit rootItemChanged(mRootITem.get());
 }
