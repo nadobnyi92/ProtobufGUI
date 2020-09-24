@@ -5,7 +5,7 @@ RepeatedProtoItem::RepeatedProtoItem(const proto::FieldDescriptor * field, Proto
 
 void RepeatedProtoItem::addItem()
 {
-    createNode(field(), false);
+    createNode(field());
     expand();
 }
 
@@ -21,7 +21,7 @@ QItemDelegate *RepeatedProtoItem::getDelegate() const
 
 void RepeatedProtoItem::fillFieldValue(google::protobuf::Message *message)
 {
-    for(auto& child: childItems())
+    for(auto& child: children())
         child->addFieldValue(message, field());
 }
 
@@ -30,7 +30,7 @@ void RepeatedProtoItem::initFieldValue(const google::protobuf::Message * message
 {
     clearChildren();
     for(int i = 0, size = message->GetReflection()->FieldSize(*message, field()); i < size; ++i)
-        createNode(field(), false)->initRepeatedFieldValue(message, i);
+        createNode(field())->initRepeatedFieldValue(message, i);
 }
 
 void RepeatedProtoItem::clearValue()

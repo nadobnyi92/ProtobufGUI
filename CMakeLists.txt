@@ -27,6 +27,7 @@ set(SRC     src/main.cpp
             src/protobufmodel.cpp
             src/fielddelegate.cpp
             src/prototreeerror.cpp
+            src/protoview.cpp
             src/tree_items/prototreeitem.cpp
             src/tree_items/numericprotoitem.cpp
             src/tree_items/stringprotoitem.cpp
@@ -45,6 +46,7 @@ set(HEADERS src/mainwindow.h
             src/protobufmodel.h
             src/fielddelegate.h
             src/prototreeerror.h
+            src/protoview.h
             src/tree_items/prototreeitem.h
             src/tree_items/numericprotoitem.h
             src/tree_items/stringprotoitem.h
@@ -59,7 +61,8 @@ set(HEADERS src/mainwindow.h
 
 set(RSC rsc/rsc.qrc)
 qt5_wrap_ui(UI ui/mainwindow.ui
-               ui/prototypedialog.ui)
+               ui/prototypedialog.ui
+               ui/protoview.ui)
 
 
 add_executable(${PROJECT_NAME} ${SRC} ${HEADERS} ${RSC} ${UI})

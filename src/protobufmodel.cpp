@@ -7,7 +7,12 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
-std::string ProtobufModel::getMessage() const
+google::protobuf::Message *ProtobufModel::getMessage()
+{
+    return mRootItem != nullptr ? mRootItem->getMessage() : nullptr;
+}
+
+std::string ProtobufModel::getSerializedMessage() const
 {
     return mRootItem != nullptr ? mRootItem.get()->getStringMessage() : "";
 }
@@ -35,19 +40,19 @@ void ProtobufModel::onExpand(const QModelIndex &index)
     if (!mRootItem || !index.isValid())
         return;
 
-    ProtoTreeItem *item = static_cast<ProtoTreeItem*>(index.internalPointer());
+    ProtoTreeItem *item = toItem(index);
 
     item->expand();
-    beginInsertRows(index.sibling(index.row(),0), 0, item->rowCount());
+    beginInsertRows(index.sibling(index.row(),0), 0, item->children().size());
     endInsertRows();
 }
 
 void ProtobufModel::onAddItem(const QModelIndex &index)
 {
-    ProtoTreeItem *item = static_cast<ProtoTreeItem*>(index.internalPointer());
+    ProtoTreeItem *item = toItem(index);
     RepeatedProtoItem *rItem = dynamic_cast<RepeatedProtoItem*>(item);
     if(rItem != nullptr) {
-        beginInsertRows(index.sibling(index.row(), 0), item->rowCount(), item->rowCount());
+        beginInsertRows(index.sibling(index.row(), 0), item->children().size(), item->children().size());
         rItem->addItem();
         endInsertRows();
     }
@@ -56,8 +61,8 @@ void ProtobufModel::onAddItem(const QModelIndex &index)
 void ProtobufModel::onRemoveItem(const QModelIndex &index)
 {
     if(index.parent().isValid()) {
-        int row = static_cast<ProtoTreeItem*>(index.internalPointer())->row();
-        ProtoTreeItem *pItem = static_cast<ProtoTreeItem*>(index.parent().internalPointer());
+        int row = itemIndex(toItem(index));
+        ProtoTreeItem *pItem = toItem(index.parent());
         beginRemoveRows(index.parent(), row, row);
         pItem->removeRow(row);
         endRemoveRows();
@@ -66,7 +71,7 @@ void ProtobufModel::onRemoveItem(const QModelIndex &index)
 
 void ProtobufModel::onReplaceType(const QModelIndex &index, const proto::Descriptor* desc)
 {
-    BytesProtoItem *pItem = static_cast<BytesProtoItem*>(index.internalPointer());
+    BytesProtoItem *pItem = static_cast<BytesProtoItem*>(index.internalPointer()); //fixit
     beginRemoveRows(index, 0, pItem->children().size());
     try {
         pItem->setDesc(desc);
@@ -102,9 +107,8 @@ QModelIndex ProtobufModel::index(int row, int column, const QModelIndex &parent)
     if(!mRootItem || !hasIndex(row, column, parent))
         return QModelIndex();
 
-    ProtoTreeItem *parentItem = parent.isValid() ?
-        static_cast<ProtoTreeItem*>(parent.internalPointer()) : mRootItem.get();
-    return createIndex(row, column, parentItem->child(row));
+    ProtoTreeItem *parentItem = parent.isValid() ? toItem(parent) : mRootItem.get();
+    return createIndex(row, column, parentItem->children().at(row).get());
 }
 
 QModelIndex ProtobufModel::parent(const QModelIndex &index) const
@@ -112,11 +116,10 @@ QModelIndex ProtobufModel::parent(const QModelIndex &index) const
     if (!mRootItem || !index.isValid())
         return QModelIndex();
 
-    ProtoTreeItem *childItem = static_cast<ProtoTreeItem*>(index.internalPointer());
+    ProtoTreeItem *childItem = toItem(index);
     ProtoTreeItem *parentItem = childItem->parentItem();
-
     return parentItem == mRootItem.get() ?
-        QModelIndex() : createIndex(parentItem->row(), index.column(), parentItem);
+        QModelIndex() : createIndex(itemIndex(parentItem), index.column(), parentItem);
 }
 
 int ProtobufModel::rowCount(const QModelIndex &parent) const
@@ -124,10 +127,9 @@ int ProtobufModel::rowCount(const QModelIndex &parent) const
     if (!mRootItem)
         return 0;
 
-    ProtoTreeItem *parentItem = parent.isValid() ?
-        static_cast<ProtoTreeItem*>(parent.internalPointer()) : mRootItem.get();
+    ProtoTreeItem *parentItem = parent.isValid() ? toItem(parent) : mRootItem.get();
 
-    return parentItem->rowCount();
+    return parentItem->children().size();
 }
 
 int ProtobufModel::columnCount(const QModelIndex &) const
@@ -140,7 +142,7 @@ QVariant ProtobufModel::data(const QModelIndex &index, int role) const
     if (!mRootItem || !index.isValid())
         return QVariant();
 
-    ProtoTreeItem *item = static_cast<ProtoTreeItem*>(index.internalPointer());
+    ProtoTreeItem *item = toItem(index);
 
     switch (role)
     {
@@ -200,8 +202,7 @@ QVariant ProtobufModel::headerData(int section, Qt::Orientation orientation, int
 bool ProtobufModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     if(index.isValid() && role == Qt::EditRole && index.column() == COL_VALUE) {
-        ProtoTreeItem *item = static_cast<ProtoTreeItem*>(index.internalPointer());
-        item->setValue(value);
+        toItem(index)->setValue(value);
         return true;
     }
     return false;
@@ -213,7 +214,22 @@ Qt::ItemFlags ProtobufModel::flags(const QModelIndex &index) const
     if (!index.isValid())
         return Qt::ItemIsEnabled;
     if(index.column() == COL_VALUE &&
-        static_cast<ProtoTreeItem*>(index.internalPointer())->getDelegate() != nullptr)
+        toItem(index)->getDelegate() != nullptr)
         return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
     return QAbstractItemModel::flags(index) | Qt::ItemIsEnabled;
+}
+
+int ProtobufModel::itemIndex(ProtoTreeItem *item) const
+{
+    if(item->parentItem() == nullptr)
+        return 0;
+    const std::vector<std::unique_ptr<ProtoTreeItem> > & children = item->parentItem()->children();
+    auto it = std::find_if(children.begin(), children.end(),
+        [&](const std::unique_ptr<ProtoTreeItem>& val) { return val.get() == item; });
+    return static_cast<int>(std::distance(children.begin(), it));
+}
+
+ProtoTreeItem *ProtobufModel::toItem(const QModelIndex &index) const
+{
+    return index.isValid() ? static_cast<ProtoTreeItem*>(index.internalPointer()) : nullptr;
 }

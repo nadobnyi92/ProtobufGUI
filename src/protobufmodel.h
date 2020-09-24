@@ -1,4 +1,4 @@
-#ifndef PROTOBUFMODEL_H
+﻿#ifndef PROTOBUFMODEL_H
 #define PROTOBUFMODEL_H
 
 #include <QAbstractItemModel>
@@ -28,7 +28,8 @@ public:
         COL_COUNT
     };
 
-    std::string getMessage() const;
+    proto::Message* getMessage();
+    std::string getSerializedMessage() const;
     void loadProtoData();
 
 signals:
@@ -54,6 +55,9 @@ public:
     Qt::ItemFlags flags(const QModelIndex &index) const override;
 
 private:
+    int itemIndex(ProtoTreeItem* item) const;
+    ProtoTreeItem* toItem(const QModelIndex& idx) const;
+
     QIcon icon(ProtoTreeItem* item) const;
     std::string mDataFilePath;
 

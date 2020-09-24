@@ -8,6 +8,7 @@ class RootProtoItem : public MessageProtoItem
 public:
     RootProtoItem(const proto::Descriptor *protoclass);
     std::string getStringMessage();
+    google::protobuf::Message* getMessage();
     void initMessage(const std::string& fp);
 
     // ProtoTreeItem interface

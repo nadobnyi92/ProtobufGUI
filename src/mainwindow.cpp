@@ -13,6 +13,7 @@
 
 #include "prototypedialog.h"
 #include "prototreeerror.h"
+#include "protoview.h"
 
 #include "ui_mainwindow.h"
 
@@ -48,6 +49,13 @@ MainWindow::MainWindow(QWidget * parent) noexcept
     connect(ui->pbSaveData, SIGNAL(clicked()), SLOT(onSaveProtoData()));
     connect(ui->pbLoadData, SIGNAL(clicked()), SLOT(onLoadProtoData()));
     connect(ui->pbReject, SIGNAL(clicked()), &mModel, SLOT(onClearData()));
+    connect(ui->pbView, &QPushButton::clicked,
+            [this](){
+                if(mModel.getMessage()) {
+                    ProtoView v(mModel.getMessage());
+                    v.exec();
+                }
+            });
 
     connect(ui->tvProtoTree, SIGNAL(customContextMenuRequested(const QPoint&)),
             this, SLOT(onPrepareMenu(const QPoint&)));
@@ -137,7 +145,7 @@ void MainWindow::onReplaceType()
 void MainWindow::onSaveProtoData()
 {
     try {
-        std::string message = mModel.getMessage();
+        std::string message = mModel.getSerializedMessage();
         if(!message.empty()) {
             QString fp = QFileDialog::getSaveFileName(/*this, "save proto data", QDir::homePath()*/);
             std::ofstream of(fp.toStdString(), std::fstream::binary);

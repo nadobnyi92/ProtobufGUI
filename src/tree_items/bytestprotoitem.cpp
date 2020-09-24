@@ -27,7 +27,7 @@ void BytesProtoItem::setDesc(const google::protobuf::Descriptor *desc)
             throw ProtoTreeError(m);
 
         ProtoTreeItem::setDesc(desc);
-        for(auto& child: childItems())
+        for(auto& child: children())
             child->initFieldValue(m);
         setValue(QVariant());
     } else {

@@ -30,7 +30,7 @@ proto::Message * MessageProtoItem::getMessage()
         return nullptr;
     proto::Message * m = mFactory.GetPrototype(descriptor())->New();
 
-    for(auto& child: childItems())
+    for(auto& child: children())
         child->fillFieldValue(m);
     return m;
 }
@@ -56,7 +56,7 @@ void MessageProtoItem::printHex(const std::string & msg, size_t line_width) cons
 
 void MessageProtoItem::initChildValues(const google::protobuf::Message &m)
 {
-    for(auto& child: childItems())
+    for(auto& child: children())
         child->initFieldValue(&m);
 }
 
@@ -70,7 +70,7 @@ void MessageProtoItem::initFieldValue(const google::protobuf::Message * message)
 {
     expandChildren();
     const proto::Message& m = message->GetReflection()->GetMessage(*message, field());
-    for(auto& child: childItems()) {
+    for(auto& child: children()) {
         if( child->label() == proto::FieldDescriptor::LABEL_REPEATED ||
             message->GetReflection()->HasField(m, child->field())) {
             child->initFieldValue(&m);
@@ -84,14 +84,15 @@ void MessageProtoItem::initFieldValue(const google::protobuf::Message * message)
 void MessageProtoItem::initRepeatedFieldValue(const google::protobuf::Message * message, int idx)
 {
     const proto::Message& m = message->GetReflection()->GetRepeatedMessage(*message, field(), idx);
-    for(int i = 0; i < descriptor()->field_count(); ++i)
+    for(int i = 0; i < descriptor()->field_count(); ++i) {
         createNode(descriptor()->field(i))->initFieldValue(&m);
+    }
 }
 
 
 void MessageProtoItem::clearValue()
 {
-    for(auto& child: childItems()) {
+    for(auto& child: children()) {
         if( child->label() != proto::FieldDescriptor::LABEL_REPEATED &&
             child->type() == proto::FieldDescriptor::TYPE_MESSAGE ) {
             clearChildren();
