@@ -9,11 +9,6 @@ void RepeatedProtoItem::addItem()
     expand();
 }
 
-QBrush RepeatedProtoItem::color() const
-{
-    return QBrush(QColor(255, 0, 0, 90));
-}
-
 QItemDelegate *RepeatedProtoItem::getDelegate() const
 {
     return nullptr;

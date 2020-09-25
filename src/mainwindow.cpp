@@ -30,6 +30,7 @@ MainWindow::MainWindow(QWidget * parent) noexcept
 
     ui->tvProtoTree->setItemDelegateForColumn(ProtobufModel::COL_VALUE, new FieldDelegate(this));
     ui->tvProtoTree->setContextMenuPolicy(Qt::CustomContextMenu);
+    ui->tvProtoTree->setStyleSheet("alternate-background-color: rgba(154,154,154,64);background-color: rgba(154,154,154,10);");
 
     ui->tvProtoTree->installEventFilter(this);
 
@@ -51,10 +52,6 @@ MainWindow::MainWindow(QWidget * parent) noexcept
     connect(ui->pbReject, SIGNAL(clicked()), &mModel, SLOT(onClearData()));
     connect(ui->pbView, &QPushButton::clicked,
             [this](){
-                if(mModel.getMessage()) {
-                    ProtoView v(mModel.getMessage());
-                    v.exec();
-                }
             });
 
     connect(ui->tvProtoTree, SIGNAL(customContextMenuRequested(const QPoint&)),
@@ -152,8 +149,8 @@ void MainWindow::onSaveProtoData()
             if(of.is_open())
                 of << message;
         }
-    } catch (ProtoTreeError& e) {
-        QMessageBox::critical(this, e.what(), e.details());
+    } catch (const ProtoTreeError& e) {
+        onProcessProtoError(e);
     }
 }
 
@@ -162,6 +159,18 @@ void MainWindow::onLoadProtoData()
     try {
         mModel.loadProtoData();
     } catch (const ProtoTreeError& e) {
+        onProcessProtoError(e);
+    }
+}
+
+void MainWindow::onViewProtoMessage()
+{
+    try {
+        if(mModel.getMessage()) {
+            ProtoView v(mModel.getMessage());
+            v.exec();
+        }
+    } catch(const ProtoTreeError& e) {
         onProcessProtoError(e);
     }
 }
@@ -176,11 +185,7 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
     if( watched == ui->tvProtoTree &&
         event->type() == QEvent::KeyPress &&
         static_cast<QKeyEvent*>(event)->key() == Qt::Key_Delete) {
-        auto idx = ui->tvProtoTree->currentIndex();
-        mModel.setData(
-            idx.sibling(idx.row(), ProtobufModel::COL_VALUE),
-            QVariant(),
-            Qt::EditRole);
+        mModel.onClearField(ui->tvProtoTree->currentIndex());
     }
     return QMainWindow::eventFilter(watched, event);
 }

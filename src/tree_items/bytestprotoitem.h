@@ -25,10 +25,6 @@ protected:
     void initFieldValue(const google::protobuf::Message *) override;
     void initRepeatedFieldValue(const google::protobuf::Message *, int idx) override;
 
-    // ProtoTreeItem interface
-public:
-    QBrush color() const override;
-
 private:
     std::string getSerializedMessage();
 

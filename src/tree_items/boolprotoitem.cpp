@@ -36,12 +36,6 @@ QItemDelegate *BoolProtoItem::getDelegate() const
     return mDelegate;
 }
 
-QBrush BoolProtoItem::color() const
-{
-    return QBrush(QColor(255, 0, 255, 90));
-}
-
-
 void BoolProtoItem::fillFieldValue(google::protobuf::Message *message)
 {
     message->GetReflection()->SetBool(message, field(), value().toString() == "True");

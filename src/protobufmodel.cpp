@@ -102,6 +102,13 @@ void ProtobufModel::onClearData()
     endResetModel();
 }
 
+void ProtobufModel::onClearField(const QModelIndex &index)
+{
+    QModelIndex chngIndex = index.sibling(index.row(), ProtobufModel::COL_VALUE);
+    setData( chngIndex, QVariant(), Qt::EditRole );
+    emit dataChanged(chngIndex, chngIndex);
+}
+
 QModelIndex ProtobufModel::index(int row, int column, const QModelIndex &parent) const
 {
     if(!mRootItem || !hasIndex(row, column, parent))
@@ -160,10 +167,8 @@ QVariant ProtobufModel::data(const QModelIndex &index, int role) const
                     return QVariant();
             }
         }
-        case Qt::BackgroundRole:
-            return item->color();
         case Qt::DecorationRole:
-            return index.column() == COL_VALUE ? icon(item) : QVariant();
+            return index.column() == COL_NAME ? icon(item) : QVariant();
     }
     return QVariant();
 }

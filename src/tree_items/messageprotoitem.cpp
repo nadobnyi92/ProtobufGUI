@@ -8,11 +8,6 @@ MessageProtoItem::MessageProtoItem(const google::protobuf::Descriptor *protoclas
 
 MessageProtoItem::~MessageProtoItem() {}
 
-QBrush MessageProtoItem::color() const
-{
-    return QBrush(QColor(255, 0, 0, 90));
-}
-
 QItemDelegate *MessageProtoItem::getDelegate() const
 {
     return nullptr;

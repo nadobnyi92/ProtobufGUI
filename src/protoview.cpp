@@ -1,5 +1,6 @@
 #include "protoview.h"
 #include "ui_protoview.h"
+#include "prototreeerror.h"
 
 ProtoView::ProtoView(google::protobuf::Message *msg, QWidget *parent)
     : QDialog(parent)
@@ -33,21 +34,33 @@ ProtoView::ProtoView(google::protobuf::Message *msg, QWidget *parent)
 
 void ProtoView::displayText()
 {
-    ui->textField->setText(mMessage->DebugString().c_str());
+    try {
+        ui->textField->setText(mMessage->DebugString().c_str());
+    } catch (google::protobuf::FatalException& e) {
+        throw ProtoTreeError("Failed get string message", e.message());
+    }
 }
 
 void ProtoView::displayBin()
 {
-    ui->textField->setText(mMessage->SerializeAsString().c_str());
+    try {
+        ui->textField->setText(mMessage->SerializeAsString().c_str());
+    } catch (google::protobuf::FatalException& e) {
+        throw ProtoTreeError("Failed get string message", e.message());
+    }
 }
 
 void ProtoView::displayHex()
 {
-    std::string message = mMessage->SerializeAsString();
-    QString hexMessage;
-    for(auto x: message)
-    {
-        hexMessage += QString("0x%1 ").arg((int)x, 0, 16).rightJustified(3, '0').right(3);;
+    try {
+        std::string message = mMessage->SerializeAsString();
+        QString hexMessage;
+        for(auto x: message)
+        {
+            hexMessage += QString("0x%1 ").arg((int)x, 0, 16).rightJustified(3, '0').right(3);;
+        }
+        ui->textField->setText(hexMessage);
+    } catch (google::protobuf::FatalException& e) {
+        throw ProtoTreeError("Failed get string message", e.message());
     }
-    ui->textField->setText(hexMessage);
 }

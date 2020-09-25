@@ -42,6 +42,7 @@ public slots:
     void onRemoveItem(const QModelIndex& index);
     void onReplaceType(const QModelIndex& index, const proto::Descriptor * desc);
     void onClearData();
+    void onClearField(const QModelIndex& index);
 
     // QAbstractItemModel interface
 public:

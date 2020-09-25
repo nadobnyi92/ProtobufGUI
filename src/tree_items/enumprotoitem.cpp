@@ -30,6 +30,7 @@ EnumProtoItem::EnumProtoItem(const proto::FieldDescriptor * field, ProtoTreeItem
     : ProtoTreeItem(field, parentItem)
 {
     QStringList items;
+    items.append("");
     for(int i = 0, c = field->enum_type()->value_count(); i < c; ++i)
         items.append(field->enum_type()->value(i)->name().c_str());
     mDelegate = new ItemDelegate(items);
@@ -43,11 +44,6 @@ EnumProtoItem::~EnumProtoItem()
 QItemDelegate *EnumProtoItem::getDelegate() const
 {
     return mDelegate;
-}
-
-QBrush EnumProtoItem::color() const
-{
-    return QBrush(QColor(0, 255, 255, 90));
 }
 
 int EnumProtoItem::getEnumValue()
@@ -65,12 +61,16 @@ int EnumProtoItem::getEnumValue()
 
 void EnumProtoItem::fillFieldValue(google::protobuf::Message *message)
 {
-    message->GetReflection()->SetEnumValue(message, field(), getEnumValue());
+    try {
+        message->GetReflection()->SetEnumValue(message, field(), getEnumValue());
+    } catch (const ProtoTreeError& ) {}
 }
 
 void EnumProtoItem::addFieldValue(google::protobuf::Message *message, const google::protobuf::FieldDescriptor *desc)
 {
-    message->GetReflection()->AddEnumValue(message, desc, getEnumValue());
+    try {
+        message->GetReflection()->AddEnumValue(message, desc, getEnumValue());
+    } catch(const ProtoTreeError& ) {}
 }
 
 void EnumProtoItem::initFieldValue(const google::protobuf::Message * message)

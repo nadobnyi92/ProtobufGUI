@@ -42,7 +42,6 @@ public:
     void removeRow(int row); //TODO hide it
 
     virtual QItemDelegate* getDelegate() const = 0;
-    virtual QBrush color() const = 0;
 
     virtual void fillFieldValue(proto::Message*) = 0;
     virtual void addFieldValue(proto::Message*, const proto::FieldDescriptor*) = 0;

@@ -25,7 +25,6 @@ public:
     // ProtoTreeItem interface
 public:
     QItemDelegate *getDelegate() const override;
-    QBrush color() const override;
 
 protected:
     void addFieldValue(google::protobuf::Message *message, const google::protobuf::FieldDescriptor *desc) override;

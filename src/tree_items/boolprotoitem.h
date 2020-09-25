@@ -24,7 +24,6 @@ public:
     // ProtoTreeItem interface
 public:
     QItemDelegate *getDelegate() const override;
-    QBrush color() const override;
 
     // ProtoTreeItem interface
 protected:

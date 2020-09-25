@@ -29,6 +29,7 @@ public slots:
 
     void onSaveProtoData();
     void onLoadProtoData();
+    void onViewProtoMessage();
 
     void onProcessProtoError(const ProtoTreeError&);
 

@@ -79,11 +79,6 @@ void BytesProtoItem::initRepeatedFieldValue(const google::protobuf::Message * m,
     printHex(m->GetReflection()->GetString(*m, field()));
 }
 
-QBrush BytesProtoItem::color() const
-{
-    return StringProtoItem::color();
-}
-
 std::string BytesProtoItem::getSerializedMessage()
 {
     try {

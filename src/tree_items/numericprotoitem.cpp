@@ -36,11 +36,6 @@ NumericProtoItem::~NumericProtoItem()
     delete mDelegate;
 }
 
-QBrush NumericProtoItem::color() const
-{
-    return QBrush(QColor(0, 255, 0, 90));
-}
-
 QItemDelegate *NumericProtoItem::getDelegate() const
 {
     return mDelegate;

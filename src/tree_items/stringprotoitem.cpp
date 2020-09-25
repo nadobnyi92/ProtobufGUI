@@ -36,11 +36,6 @@ QItemDelegate *StringProtoItem::getDelegate() const
     return mDelegate;
 }
 
-QBrush StringProtoItem::color() const
-{
-    return QBrush(QColor(255, 255, 0, 90));
-}
-
 void StringProtoItem::fillFieldValue(google::protobuf::Message *message)
 {
     std::string sData = value().toString().toStdString();
