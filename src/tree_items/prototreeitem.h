@@ -22,6 +22,13 @@ class ProtoTreeItem : public QObject
     Q_OBJECT
 
 public:
+    enum ItemState
+    {
+        STATE_EMPTY,
+        STATE_OPTIONAL,
+        STATE_FILL,
+    };
+
     ProtoTreeItem(const proto::Descriptor *protoclass, ProtoTreeItem *parentItem = nullptr);
     ProtoTreeItem(const proto::FieldDescriptor * field, ProtoTreeItem *parentItem = nullptr);
 
@@ -30,11 +37,10 @@ public:
     ProtoTreeItem *parentItem();
     const std::vector< std::unique_ptr<ProtoTreeItem> >& children() const;
 
-    QString name() const;
+    virtual QString name() const;
     QVariant value() const;
-    proto::FieldDescriptor::Type type() const;
-    QString typeName() const;
-    proto::FieldDescriptor::Label label() const;
+    virtual QString typeName() const;
+    virtual ItemState state() const;
 
     void expand();
     void setValue(const QVariant& data);
@@ -59,15 +65,15 @@ protected:
     void expandChildren();
     void clearChildren();
 
-private:
-    bool isRepeated(const google::protobuf::FieldDescriptor *field) const;
+    bool isRepeated() const;
+    bool isRequired() const;
+
+    bool isExpanded() const;
+    bool isMessageType() const;
 
 private:
     const proto::FieldDescriptor * mField;
     QString mName;
-    QString mTypeName;
-    proto::FieldDescriptor::Type mType;
-    proto::FieldDescriptor::Label mLabel;
     QVariant mValue;
     const proto::Descriptor * mDesc;
 

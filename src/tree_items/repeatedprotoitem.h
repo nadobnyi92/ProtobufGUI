@@ -10,22 +10,18 @@ class RepeatedProtoItem : public ProtoTreeItem
 public:
     RepeatedProtoItem(const proto::FieldDescriptor * field, ProtoTreeItem *parentItem = nullptr);
 
+    void clearValue() override;
+    QItemDelegate *getDelegate() const override;
+    QString name() const override;
+
 public slots:
     void addItem();
-
-    // ProtoTreeItem interface
-public:
-    QItemDelegate *getDelegate() const override;
 
 protected:
     void fillFieldValue(google::protobuf::Message *message) override;
     void addFieldValue(google::protobuf::Message *, const google::protobuf::FieldDescriptor *) override {}
     void initFieldValue(const google::protobuf::Message *) override;
     void initRepeatedFieldValue(const google::protobuf::Message *, int) override {}
-
-    // ProtoTreeItem interface
-public:
-    void clearValue() override;
 };
 
 #endif // REPEATEDPROTOITEM_H

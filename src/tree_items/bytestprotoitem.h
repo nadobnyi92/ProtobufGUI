@@ -14,10 +14,9 @@ public:
 
     void setDesc(const proto::Descriptor * desc);
 
-    // ProtoTreeItem interface
-public:
     QItemDelegate *getDelegate() const override;
     void clearValue() override;
+    QString typeName() const override;
 
 protected:
     void fillFieldValue(google::protobuf::Message *) override;

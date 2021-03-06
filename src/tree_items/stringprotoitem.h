@@ -21,19 +21,16 @@ public:
     StringProtoItem(const proto::FieldDescriptor * field, ProtoTreeItem *parentItem = nullptr);
     ~StringProtoItem() override;
 
-    // ProtoTreeItem interface
-public:
     QItemDelegate *getDelegate() const override;
 
-private:
-    ItemDelegate *mDelegate;
-
-    // ProtoTreeItem interface
 protected:
     void fillFieldValue(google::protobuf::Message *message) override;
     void addFieldValue(google::protobuf::Message *, const google::protobuf::FieldDescriptor *) override;
     void initFieldValue(const google::protobuf::Message *) override;
     void initRepeatedFieldValue(const google::protobuf::Message *, int idx) override;
+
+private:
+    ItemDelegate *mDelegate;
 };
 
 #endif // STRINGPROTOITEM_H

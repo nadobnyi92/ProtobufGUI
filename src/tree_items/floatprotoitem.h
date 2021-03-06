@@ -21,11 +21,8 @@ public:
     FloatProtoItem(const proto::FieldDescriptor * field, ProtoTreeItem *parentItem = nullptr);
     ~FloatProtoItem() override;
 
-    // ProtoTreeItem interface
-public:
     QItemDelegate *getDelegate() const override;
 
-    // ProtoTreeItem interface
 protected:
     void fillFieldValue(google::protobuf::Message *message) override;
     void addFieldValue(google::protobuf::Message *, const google::protobuf::FieldDescriptor *) override;

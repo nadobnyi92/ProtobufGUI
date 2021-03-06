@@ -175,14 +175,11 @@ QVariant ProtobufModel::data(const QModelIndex &index, int role) const
 
 QIcon ProtobufModel::icon(ProtoTreeItem* item) const
 {
-    switch (item->label())
+    switch (item->state())
     {
-        case proto::FieldDescriptor::LABEL_OPTIONAL:
-            return QIcon(":/icons/optional.png");
-        case proto::FieldDescriptor::LABEL_REPEATED:
-            return QIcon(":/icons/repeated.png");
-        case proto::FieldDescriptor::LABEL_REQUIRED:
-            return QIcon(":/icons/required.png");
+        case ProtoTreeItem::STATE_FILL:     return QIcon(":/icons/optional.png");
+        case ProtoTreeItem::STATE_OPTIONAL: return QIcon(":/icons/repeated.png");
+        case ProtoTreeItem::STATE_EMPTY:    return QIcon(":/icons/required.png");
     }
     return QIcon();
 }
@@ -192,12 +189,9 @@ QVariant ProtobufModel::headerData(int section, Qt::Orientation orientation, int
     if(role == Qt::DisplayRole && orientation == Qt::Horizontal) {
         switch (section)
         {
-            case COL_NAME:
-                return "Поле";
-            case COL_TYPE:
-                return "Тип данных";
-            case COL_VALUE:
-                return "Значение";
+            case COL_NAME:  return "Поле";
+            case COL_TYPE:  return "Тип данных";
+            case COL_VALUE: return "Значение";
         }
     }
     return QVariant();

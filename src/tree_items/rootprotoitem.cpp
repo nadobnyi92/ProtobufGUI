@@ -42,7 +42,7 @@ void RootProtoItem::initMessage(const std::string& fp)
 void RootProtoItem::initFieldValue(const google::protobuf::Message * message)
 {
     for(auto& child: children()) {
-        if( child->label() == proto::FieldDescriptor::LABEL_REPEATED ||
+        if( child->field()->label() == proto::FieldDescriptor::LABEL_REPEATED ||
             message->GetReflection()->HasField(*message, child->field())) {
             child->initFieldValue(message);
         } else {

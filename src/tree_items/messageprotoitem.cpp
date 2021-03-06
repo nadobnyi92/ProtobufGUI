@@ -18,7 +18,6 @@ void MessageProtoItem::fillFieldValue(google::protobuf::Message *message)
     message->GetReflection()->SetAllocatedMessage(message, getMessage(), field());
 }
 
-
 proto::Message * MessageProtoItem::getMessage()
 {
     if(descriptor() == nullptr)
@@ -60,13 +59,12 @@ void MessageProtoItem::addFieldValue(google::protobuf::Message * message, const 
     message->GetReflection()->AddAllocatedMessage(message, desk, getMessage());
 }
 
-
 void MessageProtoItem::initFieldValue(const google::protobuf::Message * message)
 {
     expandChildren();
     const proto::Message& m = message->GetReflection()->GetMessage(*message, field());
     for(auto& child: children()) {
-        if( child->label() == proto::FieldDescriptor::LABEL_REPEATED ||
+        if( child->field()->label() == proto::FieldDescriptor::LABEL_REPEATED ||
             message->GetReflection()->HasField(m, child->field())) {
             child->initFieldValue(&m);
         } else {
@@ -74,7 +72,6 @@ void MessageProtoItem::initFieldValue(const google::protobuf::Message * message)
         }
     }
 }
-
 
 void MessageProtoItem::initRepeatedFieldValue(const google::protobuf::Message * message, int idx)
 {
@@ -84,15 +81,18 @@ void MessageProtoItem::initRepeatedFieldValue(const google::protobuf::Message * 
     }
 }
 
-
 void MessageProtoItem::clearValue()
 {
     for(auto& child: children()) {
-        if( child->label() != proto::FieldDescriptor::LABEL_REPEATED &&
-            child->type() == proto::FieldDescriptor::TYPE_MESSAGE ) {
-            clearChildren();
-        } else {
-            child->clearValue();
-        }
+        child->clearValue();
     }
+}
+
+ProtoTreeItem::ItemState MessageProtoItem::state() const
+{
+    auto it = std::find_if( children().begin(), children().end(),
+                            [](const std::unique_ptr<ProtoTreeItem>& child) { return child->state() == STATE_EMPTY; });
+    if(it == children().end())
+        return STATE_FILL ;
+    return isRequired() ? STATE_EMPTY : STATE_OPTIONAL;
 }

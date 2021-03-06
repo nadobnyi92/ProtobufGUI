@@ -10,9 +10,9 @@ public:
 
     ~MessageProtoItem() override;
 
-    // ProtoTreeItem interface
-public:
     QItemDelegate *getDelegate() const override;
+    void clearValue() override;
+    ItemState state() const;
 
 protected:
     void fillFieldValue(google::protobuf::Message *message) override;
@@ -30,10 +30,6 @@ protected:
 
 private:
     void initChildValues(const proto::Message&);
-
-    // ProtoTreeItem interface
-public:
-    void clearValue() override;
 };
 
 #endif // MESSAGEPROTOITEM_H

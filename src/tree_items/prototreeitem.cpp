@@ -18,9 +18,6 @@ ProtoTreeItem::ProtoTreeItem(const google::protobuf::Descriptor *pclass, ProtoTr
     : QObject(nullptr)
     , mField(nullptr)
     , mName(pclass->name().c_str())
-    , mTypeName("Message")
-    , mType(proto::FieldDescriptor::TYPE_MESSAGE)
-    , mLabel(proto::FieldDescriptor::LABEL_REQUIRED)
     , mDesc(pclass)
     , mParentItem(parentItem) {}
 
@@ -28,17 +25,8 @@ ProtoTreeItem::ProtoTreeItem(const google::protobuf::FieldDescriptor * field, Pr
     : QObject(nullptr)
     , mField(field)
     , mName(field->name().c_str())
-    , mTypeName(field->type_name())
-    , mType(field->type())
     , mDesc(field->message_type())
-    , mParentItem(parentItem)
-{
-    if(parentItem != nullptr && parentItem->label() == proto::FieldDescriptor::LABEL_REPEATED) {
-        mLabel = proto::FieldDescriptor::LABEL_OPTIONAL;
-    } else {
-        mLabel = field->label();
-    }
-}
+    , mParentItem(parentItem) {}
 
 void ProtoTreeItem::expand()
 {
@@ -49,11 +37,8 @@ void ProtoTreeItem::expand()
 
 void ProtoTreeItem::expandChildren()
 {
-    if( mLabel != proto::FieldDescriptor::LABEL_REPEATED &&
-        mDesc != nullptr &&
-        mChildItems.empty() ) {
-        for(int i = 0; i < mDesc->field_count(); ++i)
-        {
+    if( !isRepeated() && isMessageType() && !isExpanded() ) {
+        for(int i = 0; i < mDesc->field_count(); ++i) {
             if(mDesc->field(i)->label() == proto::FieldDescriptor::LABEL_REPEATED)
                 createRepeatedNode(mDesc->field(i));
             else
@@ -65,6 +50,26 @@ void ProtoTreeItem::expandChildren()
 void ProtoTreeItem::clearChildren()
 {
     mChildItems.clear();
+}
+
+bool ProtoTreeItem::isRepeated() const
+{
+    return mField != nullptr && mField->label() == proto::FieldDescriptor::LABEL_REPEATED;
+}
+
+bool ProtoTreeItem::isRequired() const
+{
+    return mField == nullptr || mField->label() == proto::FieldDescriptor::LABEL_REQUIRED;
+}
+
+bool ProtoTreeItem::isExpanded() const
+{
+    return mChildItems.size() > 0;
+}
+
+bool ProtoTreeItem::isMessageType() const
+{
+    return mDesc != nullptr;
 }
 
 const google::protobuf::Descriptor *ProtoTreeItem::descriptor() const
@@ -156,8 +161,7 @@ void ProtoTreeItem::clearValue()
 
 QString ProtoTreeItem::name() const
 {
-    return label() == proto::FieldDescriptor::LABEL_REPEATED ?
-        QString("%1 [%2]").arg(mName).arg(mChildItems.size()) : mName;
+    return mName;
 }
 
 QVariant ProtoTreeItem::value() const
@@ -165,24 +169,16 @@ QVariant ProtoTreeItem::value() const
     return mValue;
 }
 
-google::protobuf::FieldDescriptor::Type ProtoTreeItem::type() const
-{
-    return mType;
-}
-
 QString ProtoTreeItem::typeName() const
 {
-    QString tName = mTypeName;
-    if(mDesc != nullptr && mType != proto::FieldDescriptor::TYPE_MESSAGE)
-        tName.append(QString("(%1::%2)")
-                        .arg(mDesc->file()->package().c_str())
-                        .arg(mDesc->name().c_str()));
-    return tName;
+    return mField ? mField->type_name() : "Message";
 }
 
-google::protobuf::FieldDescriptor::Label ProtoTreeItem::label() const
+ProtoTreeItem::ItemState ProtoTreeItem::state() const
 {
-    return mLabel;
+    if(mValue.isValid())
+        return STATE_FILL;
+    return isRequired() ? STATE_EMPTY : STATE_OPTIONAL;
 }
 
 ProtoTreeItem *ProtoTreeItem::parentItem()

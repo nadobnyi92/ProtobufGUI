@@ -30,7 +30,6 @@ BoolProtoItem::~BoolProtoItem()
     delete mDelegate;
 }
 
-
 QItemDelegate *BoolProtoItem::getDelegate() const
 {
     return mDelegate;

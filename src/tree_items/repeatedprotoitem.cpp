@@ -14,6 +14,11 @@ QItemDelegate *RepeatedProtoItem::getDelegate() const
     return nullptr;
 }
 
+QString RepeatedProtoItem::name() const
+{
+    return QString("%1 [%2]").arg(ProtoTreeItem::name()).arg(children().size());
+}
+
 void RepeatedProtoItem::fillFieldValue(google::protobuf::Message *message)
 {
     for(auto& child: children())

@@ -46,6 +46,16 @@ void BytesProtoItem::clearValue()
     ProtoTreeItem::clearValue();
 }
 
+QString BytesProtoItem::typeName() const
+{
+    QString tName = ProtoTreeItem::typeName();
+    if(descriptor() != nullptr)
+        tName.append(QString("(%1::%2)")
+                        .arg(descriptor()->file()->package().c_str())
+                        .arg(descriptor()->name().c_str()));
+    return tName;
+}
+
 void BytesProtoItem::fillFieldValue(google::protobuf::Message * m)
 {
     if(descriptor() == nullptr) {
