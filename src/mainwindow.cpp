@@ -30,7 +30,6 @@ MainWindow::MainWindow(QWidget * parent) noexcept
 
     ui->tvProtoTree->setItemDelegateForColumn(ProtobufModel::COL_VALUE, new FieldDelegate(this));
     ui->tvProtoTree->setContextMenuPolicy(Qt::CustomContextMenu);
-    ui->tvProtoTree->setStyleSheet("alternate-background-color: rgba(154,154,154,64);background-color: rgba(154,154,154,10);");
 
     ui->tvProtoTree->installEventFilter(this);
 
@@ -87,25 +86,25 @@ void MainWindow::onPrepareMenu(const QPoint &p)
 
     QMenu menu;
 
-    if(item->label() == proto::FieldDescriptor::LABEL_REPEATED) {
-        QAction * actAddItem = new QAction("Добавить элемент", &menu);
-        actAddItem->setData(idx);
-        connect(actAddItem, SIGNAL(triggered()), SLOT(onAddItem()));
-        menu.addAction(actAddItem);
-    } else {
-        if(item->type() == proto::FieldDescriptor::TYPE_BYTES) {
-            QAction * actTransform = new QAction("Преобразовать тип", &menu);
-            actTransform->setData(idx);
-            connect(actTransform, SIGNAL(triggered()), SLOT(onReplaceType()));
-            menu.addAction(actTransform);
-        }
-        if(item->parentItem()->label() == proto::FieldDescriptor::LABEL_REPEATED) {
-            QAction * actRemove = new QAction("Удалить элемент", &menu);
-            actRemove->setData(idx);
-            connect(actRemove, SIGNAL(triggered()), SLOT(onRemoveItem()));
-            menu.addAction(actRemove);
-        }
-    }
+//    if(item->label() == proto::FieldDescriptor::LABEL_REPEATED) {
+//        QAction * actAddItem = new QAction("Добавить элемент", &menu);
+//        actAddItem->setData(idx);
+//        connect(actAddItem, SIGNAL(triggered()), SLOT(onAddItem()));
+//        menu.addAction(actAddItem);
+//    } else {
+//        if(item->type() == proto::FieldDescriptor::TYPE_BYTES) {
+//            QAction * actTransform = new QAction("Преобразовать тип", &menu);
+//            actTransform->setData(idx);
+//            connect(actTransform, SIGNAL(triggered()), SLOT(onReplaceType()));
+//            menu.addAction(actTransform);
+//        }
+//        if(item->parentItem()->label() == proto::FieldDescriptor::LABEL_REPEATED) {
+//            QAction * actRemove = new QAction("Удалить элемент", &menu);
+//            actRemove->setData(idx);
+//            connect(actRemove, SIGNAL(triggered()), SLOT(onRemoveItem()));
+//            menu.addAction(actRemove);
+//        }
+//    }
 
     if(menu.actions().size() > 0) {
         menu.exec( ui->tvProtoTree->mapToGlobal(p) );

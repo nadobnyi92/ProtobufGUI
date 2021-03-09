@@ -17,6 +17,7 @@ public:
     QItemDelegate *getDelegate() const override;
     void clearValue() override;
     QString typeName() const override;
+    ItemState state() const override;
 
 protected:
     void fillFieldValue(google::protobuf::Message *) override;

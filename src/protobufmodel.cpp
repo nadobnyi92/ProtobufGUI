@@ -115,7 +115,7 @@ QModelIndex ProtobufModel::index(int row, int column, const QModelIndex &parent)
         return QModelIndex();
 
     ProtoTreeItem *parentItem = parent.isValid() ? toItem(parent) : mRootItem.get();
-    return createIndex(row, column, parentItem->children().at(row).get());
+    return createIndex(row, column, parentItem->children().at(row));
 }
 
 QModelIndex ProtobufModel::parent(const QModelIndex &index) const
@@ -222,9 +222,9 @@ int ProtobufModel::itemIndex(ProtoTreeItem *item) const
 {
     if(item->parentItem() == nullptr)
         return 0;
-    const std::vector<std::unique_ptr<ProtoTreeItem> > & children = item->parentItem()->children();
+    const std::vector<ProtoTreeItem*> & children = item->parentItem()->children();
     auto it = std::find_if(children.begin(), children.end(),
-        [&](const std::unique_ptr<ProtoTreeItem>& val) { return val.get() == item; });
+        [&](const ProtoTreeItem* val) { return val == item; });
     return static_cast<int>(std::distance(children.begin(), it));
 }
 

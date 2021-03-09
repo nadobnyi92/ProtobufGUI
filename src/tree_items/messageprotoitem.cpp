@@ -91,7 +91,7 @@ void MessageProtoItem::clearValue()
 ProtoTreeItem::ItemState MessageProtoItem::state() const
 {
     auto it = std::find_if( children().begin(), children().end(),
-                            [](const std::unique_ptr<ProtoTreeItem>& child) { return child->state() == STATE_EMPTY; });
+                            [](const ProtoTreeItem* child) { return child->state() == STATE_EMPTY; });
     if(it == children().end())
         return STATE_FILL ;
     return isRequired() ? STATE_EMPTY : STATE_OPTIONAL;

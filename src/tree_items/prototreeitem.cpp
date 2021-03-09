@@ -4,6 +4,7 @@
 
 #include <QIcon>
 #include <QPainter>
+#include <QDebug>
 
 #include "numericprotoitem.h"
 #include "floatprotoitem.h"
@@ -15,18 +16,20 @@
 #include "bytestprotoitem.h"
 
 ProtoTreeItem::ProtoTreeItem(const google::protobuf::Descriptor *pclass, ProtoTreeItem *parentItem)
-    : QObject(nullptr)
+    : QObject(parentItem)
     , mField(nullptr)
     , mName(pclass->name().c_str())
     , mDesc(pclass)
     , mParentItem(parentItem) {}
 
 ProtoTreeItem::ProtoTreeItem(const google::protobuf::FieldDescriptor * field, ProtoTreeItem *parentItem)
-    : QObject(nullptr)
+    : QObject(parentItem)
     , mField(field)
     , mName(field->name().c_str())
     , mDesc(field->message_type())
     , mParentItem(parentItem) {}
+
+ProtoTreeItem::~ProtoTreeItem() {}
 
 void ProtoTreeItem::expand()
 {
@@ -77,7 +80,7 @@ const google::protobuf::Descriptor *ProtoTreeItem::descriptor() const
     return mDesc;
 }
 
-const std::vector<std::unique_ptr<ProtoTreeItem> > &ProtoTreeItem::children() const
+const std::vector<ProtoTreeItem*> &ProtoTreeItem::children() const
 {
     return mChildItems;
 }
@@ -87,19 +90,19 @@ const google::protobuf::FieldDescriptor *ProtoTreeItem::field() const
     return mField;
 }
 
-std::unique_ptr<ProtoTreeItem> &ProtoTreeItem::createRepeatedNode(const google::protobuf::FieldDescriptor *field)
+ProtoTreeItem* ProtoTreeItem::createRepeatedNode(const google::protobuf::FieldDescriptor *field)
 {
-    mChildItems.push_back(std::unique_ptr<RepeatedProtoItem>(new RepeatedProtoItem(field, this)));
+    mChildItems.push_back(new RepeatedProtoItem(field, this));
     return mChildItems.back();
 }
 
-std::unique_ptr<ProtoTreeItem>& ProtoTreeItem::createNode(const google::protobuf::FieldDescriptor *field)
+ProtoTreeItem* ProtoTreeItem::createNode(const google::protobuf::FieldDescriptor *field)
 {
     switch(field->type())
     {
         case proto::FieldDescriptor::TYPE_DOUBLE:
         case proto::FieldDescriptor::TYPE_FLOAT:
-            mChildItems.push_back(std::unique_ptr<FloatProtoItem>(new FloatProtoItem(field, this)));
+            mChildItems.push_back(new FloatProtoItem(field, this));
             break;
         case proto::FieldDescriptor::TYPE_INT64:
         case proto::FieldDescriptor::TYPE_UINT64:
@@ -111,23 +114,23 @@ std::unique_ptr<ProtoTreeItem>& ProtoTreeItem::createNode(const google::protobuf
         case proto::FieldDescriptor::TYPE_SINT32:
         case proto::FieldDescriptor::TYPE_SINT64:
         case proto::FieldDescriptor::TYPE_UINT32:
-            mChildItems.push_back(std::unique_ptr<NumericProtoItem>(new NumericProtoItem(field, this)));
+            mChildItems.push_back(new NumericProtoItem(field, this));
             break;
         case proto::FieldDescriptor::TYPE_BOOL:
-            mChildItems.push_back(std::unique_ptr<BoolProtoItem>(new BoolProtoItem(field, this)));
+            mChildItems.push_back(new BoolProtoItem(field, this));
             break;
         case proto::FieldDescriptor::TYPE_BYTES:
-            mChildItems.push_back(std::unique_ptr<BytesProtoItem>(new BytesProtoItem(field, this)));
+            mChildItems.push_back(new BytesProtoItem(field, this));
         break;
         case proto::FieldDescriptor::TYPE_STRING:
-            mChildItems.push_back(std::unique_ptr<StringProtoItem>(new StringProtoItem(field, this)));
+            mChildItems.push_back(new StringProtoItem(field, this));
             break;
         case proto::FieldDescriptor::TYPE_GROUP:
         case proto::FieldDescriptor::TYPE_MESSAGE:
-            mChildItems.push_back(std::unique_ptr<MessageProtoItem>(new MessageProtoItem(field, this)));
+            mChildItems.push_back(new MessageProtoItem(field, this));
             break;
         case proto::FieldDescriptor::TYPE_ENUM:
-            mChildItems.push_back(std::unique_ptr<EnumProtoItem>(new EnumProtoItem(field, this)));
+            mChildItems.push_back(new EnumProtoItem(field, this));
             break;
         default: break; //TODO add exception
     }

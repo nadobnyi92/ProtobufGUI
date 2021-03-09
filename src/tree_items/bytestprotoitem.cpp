@@ -56,6 +56,11 @@ QString BytesProtoItem::typeName() const
     return tName;
 }
 
+ProtoTreeItem::ItemState BytesProtoItem::state() const
+{
+    return descriptor() == nullptr ? StringProtoItem::state() : MessageProtoItem::state();
+}
+
 void BytesProtoItem::fillFieldValue(google::protobuf::Message * m)
 {
     if(descriptor() == nullptr) {

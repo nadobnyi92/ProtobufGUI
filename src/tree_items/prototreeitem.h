@@ -32,10 +32,10 @@ public:
     ProtoTreeItem(const proto::Descriptor *protoclass, ProtoTreeItem *parentItem = nullptr);
     ProtoTreeItem(const proto::FieldDescriptor * field, ProtoTreeItem *parentItem = nullptr);
 
-    virtual ~ProtoTreeItem() {}
+    virtual ~ProtoTreeItem();
 
     ProtoTreeItem *parentItem();
-    const std::vector< std::unique_ptr<ProtoTreeItem> >& children() const;
+    const std::vector< ProtoTreeItem* >& children() const;
 
     virtual QString name() const;
     QVariant value() const;
@@ -59,8 +59,8 @@ public:
     const proto::FieldDescriptor * field() const;
 
 protected:
-    std::unique_ptr<ProtoTreeItem>& createNode(const proto::FieldDescriptor * field);
-    std::unique_ptr<ProtoTreeItem>& createRepeatedNode(const proto::FieldDescriptor * field);
+    ProtoTreeItem* createNode(const proto::FieldDescriptor * field);
+    ProtoTreeItem* createRepeatedNode(const proto::FieldDescriptor * field);
 
     void expandChildren();
     void clearChildren();
@@ -77,7 +77,7 @@ private:
     QVariant mValue;
     const proto::Descriptor * mDesc;
 
-    std::vector< std::unique_ptr<ProtoTreeItem> > mChildItems;
+    std::vector<ProtoTreeItem*> mChildItems;
     ProtoTreeItem *mParentItem;
 };
 
