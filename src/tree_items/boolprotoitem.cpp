@@ -22,8 +22,8 @@ void BoolProtoItem::ItemDelegate::setModelData(QWidget *editor, QAbstractItemMod
     model->setData(index, e->checkState() == Qt::Checked ? "True" : "False");
 }
 
-BoolProtoItem::BoolProtoItem(const proto::FieldDescriptor * field, ProtoTreeItem *parentItem)
-    :ProtoTreeItem(field, parentItem), mDelegate(new ItemDelegate) {}
+BoolProtoItem::BoolProtoItem(ProtobufModel& model, const proto::FieldDescriptor * field, ProtoTreeItem *parentItem)
+    :ProtoTreeItem(model, field, parentItem), mDelegate(new ItemDelegate) {}
 
 BoolProtoItem::~BoolProtoItem()
 {

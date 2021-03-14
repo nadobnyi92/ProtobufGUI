@@ -6,6 +6,7 @@
 
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QDebug>
 
 google::protobuf::Message *ProtobufModel::getMessage()
 {
@@ -29,7 +30,7 @@ void ProtobufModel::setProtoClass(const google::protobuf::Descriptor *protoclass
 {
     if(protoclass != nullptr) {
         emit beginResetModel();
-        mRootItem = std::unique_ptr<RootProtoItem>(new RootProtoItem(protoclass));
+        mRootItem = std::unique_ptr<RootProtoItem>(new RootProtoItem(*this, protoclass));
         mRootItem->expand();
         emit endResetModel();
     }
@@ -42,20 +43,9 @@ void ProtobufModel::onExpand(const QModelIndex &index)
 
     ProtoTreeItem *item = toItem(index);
 
-    item->expand();
+    item->expand(); //FIXME after signal
     beginInsertRows(index.sibling(index.row(),0), 0, item->children().size());
     endInsertRows();
-}
-
-void ProtobufModel::onAddItem(const QModelIndex &index)
-{
-    ProtoTreeItem *item = toItem(index);
-    RepeatedProtoItem *rItem = dynamic_cast<RepeatedProtoItem*>(item);
-    if(rItem != nullptr) {
-        beginInsertRows(index.sibling(index.row(), 0), item->children().size(), item->children().size());
-        rItem->addItem();
-        endInsertRows();
-    }
 }
 
 void ProtobufModel::onRemoveItem(const QModelIndex &index)
@@ -153,22 +143,16 @@ QVariant ProtobufModel::data(const QModelIndex &index, int role) const
 
     switch (role)
     {
-        case Qt::DisplayRole:
+    case Qt::DisplayRole:
+        switch(index.column())
         {
-            switch(index.column())
-            {
-                case COL_NAME:
-                    return item->name();
-                case COL_TYPE:
-                    return item->typeName();
-                case COL_VALUE:
-                    return item->value();
-                default:
-                    return QVariant();
-            }
+        case COL_NAME: return item->name();
+        case COL_TYPE: return item->typeName();
+        case COL_VALUE: return item->value();
+        default: return QVariant();
         }
-        case Qt::DecorationRole:
-            return index.column() == COL_NAME ? icon(item) : QVariant();
+    case Qt::DecorationRole:
+        return index.column() == COL_NAME ? icon(item) : QVariant();
     }
     return QVariant();
 }
@@ -189,14 +173,13 @@ QVariant ProtobufModel::headerData(int section, Qt::Orientation orientation, int
     if(role == Qt::DisplayRole && orientation == Qt::Horizontal) {
         switch (section)
         {
-            case COL_NAME:  return "Поле";
-            case COL_TYPE:  return "Тип данных";
-            case COL_VALUE: return "Значение";
+        case COL_NAME:  return "Поле";
+        case COL_TYPE:  return "Тип данных";
+        case COL_VALUE: return "Значение";
         }
     }
     return QVariant();
 }
-
 
 bool ProtobufModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
@@ -207,7 +190,6 @@ bool ProtobufModel::setData(const QModelIndex &index, const QVariant &value, int
     return false;
 }
 
-
 Qt::ItemFlags ProtobufModel::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
@@ -216,6 +198,42 @@ Qt::ItemFlags ProtobufModel::flags(const QModelIndex &index) const
         toItem(index)->getDelegate() != nullptr)
         return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
     return QAbstractItemModel::flags(index) | Qt::ItemIsEnabled;
+}
+
+void ProtobufModel::beginAddItem(ProtoTreeItem *parent)
+{
+    QModelIndex idx = fromItem(parent);
+    if(!idx.isValid())
+    {
+        qDebug() << "index is not found";
+        return;
+    }
+    beginInsertRows(idx, parent->children().size(), parent->children().size());
+}
+
+void ProtobufModel::endAddItem(ProtoTreeItem* parent)
+{
+    endInsertRows();
+    QModelIndex idx = fromItem(parent);
+    if(idx.isValid())
+        onExpand(idx);
+}
+
+void ProtobufModel::beginRemoveItem(ProtoTreeItem *item)
+{
+    QModelIndex idx = fromItem(item);
+    QModelIndex parentIdx = fromItem(item->parentItem());
+    if(!idx.isValid() || !parentIdx.isValid())
+    {
+        qDebug() << "index is not found";
+        return;
+    }
+    beginRemoveRows(parentIdx, idx.row(), idx.row());
+}
+
+void ProtobufModel::endRemoveItem(ProtoTreeItem* parent)
+{
+    endRemoveRows();
 }
 
 int ProtobufModel::itemIndex(ProtoTreeItem *item) const
@@ -230,5 +248,20 @@ int ProtobufModel::itemIndex(ProtoTreeItem *item) const
 
 ProtoTreeItem *ProtobufModel::toItem(const QModelIndex &index) const
 {
-    return index.isValid() ? static_cast<ProtoTreeItem*>(index.internalPointer()) : nullptr;
+    return index.isValid() ? static_cast<ProtoTreeItem*>(index.internalPointer()) : nullptr; //check nullptr
+}
+
+QModelIndex ProtobufModel::fromItem(ProtoTreeItem *item, const QModelIndex &parent) const
+{
+    QModelIndex idx;
+    for(int i = 0; i < rowCount(parent); ++i)
+    {
+        QModelIndex child = index(i, 0, parent);
+        if(toItem(child) == item)
+            idx = child;
+        else
+            idx = fromItem(item, child);
+        if(idx.isValid()) break;
+    }
+    return idx;
 }

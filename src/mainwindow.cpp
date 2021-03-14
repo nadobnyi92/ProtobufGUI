@@ -6,6 +6,7 @@
 #include <QMap>
 #include <QKeyEvent>
 #include <QDebug>
+#include <QMenu>
 
 #include "mainwindow.h"
 #include "protomanager.h"
@@ -84,8 +85,6 @@ void MainWindow::onPrepareMenu(const QPoint &p)
     QModelIndex idx = ui->tvProtoTree->indexAt(p);
     ProtoTreeItem *item = static_cast<ProtoTreeItem*>(idx.internalPointer());
 
-    QMenu menu;
-
 //    if(item->label() == proto::FieldDescriptor::LABEL_REPEATED) {
 //        QAction * actAddItem = new QAction("Добавить элемент", &menu);
 //        actAddItem->setData(idx);
@@ -106,17 +105,11 @@ void MainWindow::onPrepareMenu(const QPoint &p)
 //        }
 //    }
 
-    if(menu.actions().size() > 0) {
+    if(item->actions().size() > 0) {
+        QMenu menu;
+        menu.addActions(item->actions());
         menu.exec( ui->tvProtoTree->mapToGlobal(p) );
     }
-}
-
-void MainWindow::onAddItem()
-{
-    QAction * act = static_cast<QAction*>(sender());
-    QModelIndex idx = qvariant_cast<QModelIndex>(act->data());
-    mModel.onAddItem(idx);
-    ui->tvProtoTree->expand(idx);
 }
 
 void MainWindow::onRemoveItem()

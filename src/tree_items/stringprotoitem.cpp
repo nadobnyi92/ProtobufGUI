@@ -22,8 +22,8 @@ void StringProtoItem::ItemDelegate::setModelData(QWidget *editor, QAbstractItemM
     model->setData(index, e->text());
 }
 
-StringProtoItem::StringProtoItem(const proto::FieldDescriptor * field, ProtoTreeItem *parentItem)
-    : ProtoTreeItem(field, parentItem)
+StringProtoItem::StringProtoItem(ProtobufModel& model, const proto::FieldDescriptor * field, ProtoTreeItem *parentItem)
+    : ProtoTreeItem(model, field, parentItem)
     , mDelegate(new ItemDelegate) {}
 
 StringProtoItem::~StringProtoItem()

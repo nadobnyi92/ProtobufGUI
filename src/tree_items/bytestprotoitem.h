@@ -10,7 +10,7 @@
 class BytesProtoItem : public StringProtoItem, public MessageProtoItem
 {
 public:
-    BytesProtoItem(const proto::FieldDescriptor * field, ProtoTreeItem *parentItem = nullptr);
+    BytesProtoItem(ProtobufModel& model, const proto::FieldDescriptor * field, ProtoTreeItem *parentItem = nullptr);
 
     void setDesc(const proto::Descriptor * desc);
 
@@ -27,6 +27,8 @@ protected:
 
 private:
     std::string getSerializedMessage();
+
+    void init();
 
 private:
     std::string sourceData;

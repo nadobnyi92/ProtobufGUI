@@ -1,12 +1,12 @@
 #include "repeatedprotoitem.h"
+#include "../protobufmodel.h"
 
-RepeatedProtoItem::RepeatedProtoItem(const proto::FieldDescriptor * field, ProtoTreeItem *parentItem)
-    : ProtoTreeItem(field, parentItem) {}
+#include <QDebug>
 
-void RepeatedProtoItem::addItem()
+RepeatedProtoItem::RepeatedProtoItem(ProtobufModel& model, const proto::FieldDescriptor * field, ProtoTreeItem *parentItem)
+    : ProtoTreeItem(model, field, parentItem)
 {
-    createNode(field());
-    expand();
+    init();
 }
 
 QItemDelegate *RepeatedProtoItem::getDelegate() const
@@ -31,6 +31,19 @@ void RepeatedProtoItem::initFieldValue(const google::protobuf::Message * message
     clearChildren();
     for(int i = 0, size = message->GetReflection()->FieldSize(*message, field()); i < size; ++i)
         createNode(field())->initRepeatedFieldValue(message, i);
+}
+
+void RepeatedProtoItem::init()
+{
+    QAction * act = new QAction(this);
+    act->setText("Добавить");
+    connect(act, &QAction::triggered, this, [&]() {
+        model().beginAddItem(this);
+        createNode(field());
+        expand();
+        model().endAddItem(parentItem());
+    });
+    addAction(act);
 }
 
 void RepeatedProtoItem::clearValue()

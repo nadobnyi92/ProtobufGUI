@@ -18,7 +18,7 @@ class BoolProtoItem : public ProtoTreeItem
     };
 
 public:
-    BoolProtoItem(const proto::FieldDescriptor * field, ProtoTreeItem *parentItem = nullptr);
+    BoolProtoItem(ProtobufModel& model, const proto::FieldDescriptor * field, ProtoTreeItem *parentItem = nullptr);
     ~BoolProtoItem() override;
 
     QItemDelegate *getDelegate() const override;

@@ -1,10 +1,10 @@
 ﻿#include "messageprotoitem.h"
 
-MessageProtoItem::MessageProtoItem(const proto::FieldDescriptor * field, ProtoTreeItem *parentItem)
-    : ProtoTreeItem(field, parentItem) {}
+MessageProtoItem::MessageProtoItem(ProtobufModel& model, const proto::FieldDescriptor * field, ProtoTreeItem *parentItem)
+    : ProtoTreeItem(model, field, parentItem) {}
 
-MessageProtoItem::MessageProtoItem(const google::protobuf::Descriptor *protoclass, ProtoTreeItem *parentItem)
-    : ProtoTreeItem(protoclass, parentItem) {}
+MessageProtoItem::MessageProtoItem(ProtobufModel& model, const google::protobuf::Descriptor *protoclass, ProtoTreeItem *parentItem)
+    : ProtoTreeItem(model, protoclass, parentItem) {}
 
 MessageProtoItem::~MessageProtoItem() {}
 

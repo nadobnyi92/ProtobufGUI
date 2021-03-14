@@ -21,8 +21,8 @@ void FloatProtoItem::ItemDelegate::setModelData(QWidget *editor, QAbstractItemMo
     model->setData(index, e->value());
 }
 
-FloatProtoItem::FloatProtoItem(const proto::FieldDescriptor * field, ProtoTreeItem *parentItem)
-    : ProtoTreeItem(field, parentItem), mDelegate(new ItemDelegate) {}
+FloatProtoItem::FloatProtoItem(ProtobufModel& model, const proto::FieldDescriptor * field, ProtoTreeItem *parentItem)
+    : ProtoTreeItem(model, field, parentItem), mDelegate(new ItemDelegate) {}
 
 FloatProtoItem::~FloatProtoItem()
 {

@@ -14,20 +14,29 @@
 #include "repeatedprotoitem.h"
 #include "messageprotoitem.h"
 #include "bytestprotoitem.h"
+#include "../protobufmodel.h"
 
-ProtoTreeItem::ProtoTreeItem(const google::protobuf::Descriptor *pclass, ProtoTreeItem *parentItem)
+ProtoTreeItem::ProtoTreeItem(ProtobufModel& model, const google::protobuf::Descriptor *pclass, ProtoTreeItem *parentItem)
     : QObject(parentItem)
     , mField(nullptr)
     , mName(pclass->name().c_str())
     , mDesc(pclass)
-    , mParentItem(parentItem) {}
+    , mModel(model)
+    , mParentItem(parentItem)
+{
+    init();
+}
 
-ProtoTreeItem::ProtoTreeItem(const google::protobuf::FieldDescriptor * field, ProtoTreeItem *parentItem)
+ProtoTreeItem::ProtoTreeItem(ProtobufModel& model, const google::protobuf::FieldDescriptor * field, ProtoTreeItem *parentItem)
     : QObject(parentItem)
     , mField(field)
     , mName(field->name().c_str())
     , mDesc(field->message_type())
-    , mParentItem(parentItem) {}
+    , mModel(model)
+    , mParentItem(parentItem)
+{
+    init();
+}
 
 ProtoTreeItem::~ProtoTreeItem() {}
 
@@ -55,6 +64,11 @@ void ProtoTreeItem::clearChildren()
     mChildItems.clear();
 }
 
+void ProtoTreeItem::addAction(QAction *action)
+{
+    mActions.append(action);
+}
+
 bool ProtoTreeItem::isRepeated() const
 {
     return mField != nullptr && mField->label() == proto::FieldDescriptor::LABEL_REPEATED;
@@ -75,6 +89,29 @@ bool ProtoTreeItem::isMessageType() const
     return mDesc != nullptr;
 }
 
+ProtobufModel &ProtoTreeItem::model()
+{
+    return mModel;
+}
+
+void ProtoTreeItem::init()
+{
+    if(mParentItem && mParentItem->isRepeated())
+    {
+        QAction *act = new QAction(this);
+        act->setText("Удалить");
+        connect(act, &QAction::triggered, [&]() {
+            model().beginRemoveItem(mParentItem);
+            mParentItem->mChildItems.erase(
+                std::remove(mParentItem->mChildItems.begin(),
+                            mParentItem->mChildItems.end(),
+                            this));
+            model().endRemoveItem(mParentItem);
+        });
+        addAction(act);
+    }
+}
+
 const google::protobuf::Descriptor *ProtoTreeItem::descriptor() const
 {
     return mDesc;
@@ -92,7 +129,7 @@ const google::protobuf::FieldDescriptor *ProtoTreeItem::field() const
 
 ProtoTreeItem* ProtoTreeItem::createRepeatedNode(const google::protobuf::FieldDescriptor *field)
 {
-    mChildItems.push_back(new RepeatedProtoItem(field, this));
+    mChildItems.push_back(new RepeatedProtoItem(model(), field, this));
     return mChildItems.back();
 }
 
@@ -102,7 +139,7 @@ ProtoTreeItem* ProtoTreeItem::createNode(const google::protobuf::FieldDescriptor
     {
         case proto::FieldDescriptor::TYPE_DOUBLE:
         case proto::FieldDescriptor::TYPE_FLOAT:
-            mChildItems.push_back(new FloatProtoItem(field, this));
+            mChildItems.push_back(new FloatProtoItem(model(), field, this));
             break;
         case proto::FieldDescriptor::TYPE_INT64:
         case proto::FieldDescriptor::TYPE_UINT64:
@@ -114,23 +151,23 @@ ProtoTreeItem* ProtoTreeItem::createNode(const google::protobuf::FieldDescriptor
         case proto::FieldDescriptor::TYPE_SINT32:
         case proto::FieldDescriptor::TYPE_SINT64:
         case proto::FieldDescriptor::TYPE_UINT32:
-            mChildItems.push_back(new NumericProtoItem(field, this));
+            mChildItems.push_back(new NumericProtoItem(model(), field, this));
             break;
         case proto::FieldDescriptor::TYPE_BOOL:
-            mChildItems.push_back(new BoolProtoItem(field, this));
+            mChildItems.push_back(new BoolProtoItem(model(), field, this));
             break;
         case proto::FieldDescriptor::TYPE_BYTES:
-            mChildItems.push_back(new BytesProtoItem(field, this));
+            mChildItems.push_back(new BytesProtoItem(model(), field, this));
         break;
         case proto::FieldDescriptor::TYPE_STRING:
-            mChildItems.push_back(new StringProtoItem(field, this));
+            mChildItems.push_back(new StringProtoItem(model(), field, this));
             break;
         case proto::FieldDescriptor::TYPE_GROUP:
         case proto::FieldDescriptor::TYPE_MESSAGE:
-            mChildItems.push_back(new MessageProtoItem(field, this));
+            mChildItems.push_back(new MessageProtoItem(model(), field, this));
             break;
         case proto::FieldDescriptor::TYPE_ENUM:
-            mChildItems.push_back(new EnumProtoItem(field, this));
+            mChildItems.push_back(new EnumProtoItem(model(), field, this));
             break;
         default: break; //TODO add exception
     }
@@ -182,6 +219,11 @@ ProtoTreeItem::ItemState ProtoTreeItem::state() const
     if(mValue.isValid())
         return STATE_FILL;
     return isRequired() ? STATE_EMPTY : STATE_OPTIONAL;
+}
+
+const QList<QAction *> &ProtoTreeItem::actions() const
+{
+    return mActions;
 }
 
 ProtoTreeItem *ProtoTreeItem::parentItem()

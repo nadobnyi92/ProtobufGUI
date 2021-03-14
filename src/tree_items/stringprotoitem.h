@@ -18,7 +18,7 @@ class StringProtoItem : public virtual ProtoTreeItem
     };
 
 public:
-    StringProtoItem(const proto::FieldDescriptor * field, ProtoTreeItem *parentItem = nullptr);
+    StringProtoItem(ProtobufModel& model, const proto::FieldDescriptor * field, ProtoTreeItem *parentItem = nullptr);
     ~StringProtoItem() override;
 
     QItemDelegate *getDelegate() const override;

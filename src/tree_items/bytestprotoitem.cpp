@@ -5,10 +5,10 @@
 
 #include "src/prototreeerror.h"
 
-BytesProtoItem::BytesProtoItem(const proto::FieldDescriptor * field, ProtoTreeItem *parentItem)
-    : ProtoTreeItem(field, parentItem), StringProtoItem(field, parentItem), MessageProtoItem(field, parentItem)
+BytesProtoItem::BytesProtoItem(ProtobufModel& model, const proto::FieldDescriptor * field, ProtoTreeItem *parentItem)
+    : ProtoTreeItem(model, field, parentItem), StringProtoItem(model, field, parentItem), MessageProtoItem(model, field, parentItem)
 {
-
+    init();
 }
 
 void BytesProtoItem::setDesc(const google::protobuf::Descriptor *desc)
@@ -103,5 +103,12 @@ std::string BytesProtoItem::getSerializedMessage()
     } catch (google::protobuf::FatalException& e) {
         throw ProtoTreeError("Failed serialized field", e.message());
     }
+}
+
+void BytesProtoItem::init()
+{
+    QAction * act = new QAction(this);
+    act->setText("Преобразовать тип");
+    addAction(act);
 }
 

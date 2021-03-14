@@ -18,7 +18,7 @@ class FloatProtoItem : public ProtoTreeItem
     };
 
 public:
-    FloatProtoItem(const proto::FieldDescriptor * field, ProtoTreeItem *parentItem = nullptr);
+    FloatProtoItem(ProtobufModel& model, const proto::FieldDescriptor * field, ProtoTreeItem *parentItem = nullptr);
     ~FloatProtoItem() override;
 
     QItemDelegate *getDelegate() const override;

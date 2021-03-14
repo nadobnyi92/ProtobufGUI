@@ -20,7 +20,7 @@ class EnumProtoItem : public ProtoTreeItem
     };
 
 public:
-    EnumProtoItem( const proto::FieldDescriptor * field, ProtoTreeItem *parentItem = nullptr);
+    EnumProtoItem(ProtobufModel& model, const proto::FieldDescriptor * field, ProtoTreeItem *parentItem = nullptr);
     ~EnumProtoItem() override;
 
     QItemDelegate *getDelegate() const override;

@@ -18,7 +18,7 @@ class NumericProtoItem : public ProtoTreeItem
     };
 
 public:
-    NumericProtoItem(const proto::FieldDescriptor * field, ProtoTreeItem *parentItem = nullptr);
+    NumericProtoItem(ProtobufModel& model, const proto::FieldDescriptor * field, ProtoTreeItem *parentItem = nullptr);
     ~NumericProtoItem() override;
 
     QItemDelegate *getDelegate() const override;

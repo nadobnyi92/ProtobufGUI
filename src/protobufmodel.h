@@ -38,9 +38,8 @@ signals:
 public slots:
     void setProtoClass(const proto::Descriptor * protoclass);
     void onExpand(const QModelIndex& index);
-    void onAddItem(const QModelIndex& index);
-    void onRemoveItem(const QModelIndex& index);
-    void onReplaceType(const QModelIndex& index, const proto::Descriptor * desc);
+    void onRemoveItem(const QModelIndex& index); //TODO remove it
+    void onReplaceType(const QModelIndex& index, const proto::Descriptor * desc); //TODO remove it -> use expand
     void onClearData();
     void onClearField(const QModelIndex& index);
 
@@ -55,9 +54,15 @@ public:
     bool setData(const QModelIndex &index, const QVariant &value, int role) override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
 
+    void beginAddItem(ProtoTreeItem* parent);
+    void endAddItem(ProtoTreeItem* parent);
+    void beginRemoveItem(ProtoTreeItem* item);
+    void endRemoveItem(ProtoTreeItem* parent);
+
 private:
     int itemIndex(ProtoTreeItem* item) const;
     ProtoTreeItem* toItem(const QModelIndex& idx) const;
+    QModelIndex fromItem(ProtoTreeItem* item, const QModelIndex& parent = QModelIndex()) const;
 
     QIcon icon(ProtoTreeItem* item) const;
     std::string mDataFilePath;

@@ -5,8 +5,8 @@
 class MessageProtoItem : public virtual ProtoTreeItem
 {
 public:
-    MessageProtoItem(const proto::FieldDescriptor * field, ProtoTreeItem *parentItem = nullptr);
-    MessageProtoItem(const proto::Descriptor *protoclass, ProtoTreeItem *parentItem = nullptr);
+    MessageProtoItem(ProtobufModel& model, const proto::FieldDescriptor * field, ProtoTreeItem *parentItem = nullptr);
+    MessageProtoItem(ProtobufModel& model, const proto::Descriptor *protoclass, ProtoTreeItem *parentItem = nullptr);
 
     ~MessageProtoItem() override;
 

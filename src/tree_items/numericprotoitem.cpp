@@ -27,8 +27,8 @@ void NumericProtoItem::ItemDelegate::setModelData(QWidget *editor, QAbstractItem
     model->setData(index, e->value());
 }
 
-NumericProtoItem::NumericProtoItem(const proto::FieldDescriptor * field, ProtoTreeItem *parentItem)
-    : ProtoTreeItem(field, parentItem)
+NumericProtoItem::NumericProtoItem(ProtobufModel& model, const proto::FieldDescriptor * field, ProtoTreeItem *parentItem)
+    : ProtoTreeItem(model, field, parentItem)
     , mDelegate(new ItemDelegate) {}
 
 NumericProtoItem::~NumericProtoItem()
