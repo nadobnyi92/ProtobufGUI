@@ -100,14 +100,7 @@ void ProtoTreeItem::init()
     {
         QAction *act = new QAction(this);
         act->setText("Удалить");
-        connect(act, &QAction::triggered, [&]() {
-            model().beginRemoveItem(mParentItem);
-            mParentItem->mChildItems.erase(
-                std::remove(mParentItem->mChildItems.begin(),
-                            mParentItem->mChildItems.end(),
-                            this));
-            model().endRemoveItem(mParentItem);
-        });
+        connect(act, &QAction::triggered, [&](){ model().removeItem(this); });
         addAction(act);
     }
 }
@@ -192,6 +185,11 @@ void ProtoTreeItem::setDesc(const google::protobuf::Descriptor *desc)
 void ProtoTreeItem::removeRow(int row)
 {
     mChildItems.erase(mChildItems.begin() + row);
+}
+
+void ProtoTreeItem::removeItem(ProtoTreeItem* item)
+{
+    mChildItems.erase(std::remove(mChildItems.begin(), mChildItems.end(), item));
 }
 
 void ProtoTreeItem::clearValue()

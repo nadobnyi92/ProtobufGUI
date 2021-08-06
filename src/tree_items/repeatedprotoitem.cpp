@@ -38,10 +38,7 @@ void RepeatedProtoItem::init()
     QAction * act = new QAction(this);
     act->setText("Добавить");
     connect(act, &QAction::triggered, this, [&]() {
-        model().beginAddItem(this);
-        createNode(field());
-        expand();
-        model().endAddItem(parentItem());
+        model().addItem(this, createNode(field()));
     });
     addAction(act);
 }

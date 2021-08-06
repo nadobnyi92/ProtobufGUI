@@ -48,6 +48,7 @@ public:
 
     void setDesc(const proto::Descriptor * desc); //TODO hide it
     void removeRow(int row); //TODO hide it
+    void removeItem(ProtoTreeItem* item);
 
     virtual QItemDelegate* getDelegate() const = 0;
 

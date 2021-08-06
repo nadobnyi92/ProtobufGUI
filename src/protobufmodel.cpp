@@ -48,17 +48,6 @@ void ProtobufModel::onExpand(const QModelIndex &index)
     endInsertRows();
 }
 
-void ProtobufModel::onRemoveItem(const QModelIndex &index)
-{
-    if(index.parent().isValid()) {
-        int row = itemIndex(toItem(index));
-        ProtoTreeItem *pItem = toItem(index.parent());
-        beginRemoveRows(index.parent(), row, row);
-        pItem->removeRow(row);
-        endRemoveRows();
-    }
-}
-
 void ProtobufModel::onReplaceType(const QModelIndex &index, const proto::Descriptor* desc)
 {
     BytesProtoItem *pItem = static_cast<BytesProtoItem*>(index.internalPointer()); //fixit
@@ -200,7 +189,7 @@ Qt::ItemFlags ProtobufModel::flags(const QModelIndex &index) const
     return QAbstractItemModel::flags(index) | Qt::ItemIsEnabled;
 }
 
-void ProtobufModel::beginAddItem(ProtoTreeItem *parent)
+void ProtobufModel::addItem(ProtoTreeItem* parent, ProtoTreeItem* child)
 {
     QModelIndex idx = fromItem(parent);
     if(!idx.isValid())
@@ -209,17 +198,11 @@ void ProtobufModel::beginAddItem(ProtoTreeItem *parent)
         return;
     }
     beginInsertRows(idx, parent->children().size(), parent->children().size());
-}
-
-void ProtobufModel::endAddItem(ProtoTreeItem* parent)
-{
     endInsertRows();
-    QModelIndex idx = fromItem(parent);
-    if(idx.isValid())
-        onExpand(idx);
+    onExpand(idx);
 }
 
-void ProtobufModel::beginRemoveItem(ProtoTreeItem *item)
+void ProtobufModel::removeItem(ProtoTreeItem* item)
 {
     QModelIndex idx = fromItem(item);
     QModelIndex parentIdx = fromItem(item->parentItem());
@@ -229,13 +212,9 @@ void ProtobufModel::beginRemoveItem(ProtoTreeItem *item)
         return;
     }
     beginRemoveRows(parentIdx, idx.row(), idx.row());
-}
-
-void ProtobufModel::endRemoveItem(ProtoTreeItem* parent)
-{
+    item->parentItem()->removeItem(item);
     endRemoveRows();
 }
-
 int ProtobufModel::itemIndex(ProtoTreeItem *item) const
 {
     if(item->parentItem() == nullptr)
