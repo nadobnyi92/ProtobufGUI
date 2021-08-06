@@ -116,7 +116,7 @@ QModelIndex ProtobufModel::parent(const QModelIndex &index) const
     ProtoTreeItem *childItem = toItem(index);
     ProtoTreeItem *parentItem = childItem->parentItem();
     return parentItem == mRootItem.get() ?
-        QModelIndex() : createIndex(itemIndex(parentItem), index.column(), parentItem);
+        QModelIndex() : createIndex(itemIndex(parentItem), 0, parentItem);
 }
 
 int ProtobufModel::rowCount(const QModelIndex &parent) const
