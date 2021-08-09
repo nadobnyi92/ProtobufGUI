@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QHash>
 
+#include <memory>
+
 QStringList removeEmptyOrDupl(const QStringList& src);
 
 namespace google
@@ -44,7 +46,7 @@ private:
     QString mCurPackage;
     QString mCurClass;
 
-    ProtoContext* context;
+    std::unique_ptr<ProtoContext> context;
 };
 
 #endif // PROTOMANAGER_H

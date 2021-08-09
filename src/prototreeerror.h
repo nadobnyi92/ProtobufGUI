@@ -4,9 +4,18 @@
 #include <exception>
 #include <string>
 
+#include <QString>
+
 #include <google/protobuf/dynamic_message.h>
 
 namespace proto = google::protobuf;
+
+struct ProtoMessageError
+{
+    QString filename;
+    int line;
+    QString message;
+};
 
 class ProtoTreeError : public std::exception
 {

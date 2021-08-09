@@ -28,6 +28,7 @@ set(SRC     src/main.cpp
             src/fielddelegate.cpp
             src/prototreeerror.cpp
             src/protoview.cpp
+            src/protoerrordialog.cpp
             src/tree_items/prototreeitem.cpp
             src/tree_items/numericprotoitem.cpp
             src/tree_items/stringprotoitem.cpp
@@ -47,6 +48,7 @@ set(HEADERS src/mainwindow.h
             src/fielddelegate.h
             src/prototreeerror.h
             src/protoview.h
+            src/protoerrordialog.h
             src/tree_items/prototreeitem.h
             src/tree_items/numericprotoitem.h
             src/tree_items/stringprotoitem.h
@@ -62,6 +64,7 @@ set(HEADERS src/mainwindow.h
 set(RSC rsc/rsc.qrc)
 qt5_wrap_ui(UI ui/mainwindow.ui
                ui/prototypedialog.ui
+               ui/protoerrordialog.ui
                ui/protoview.ui)
 
 

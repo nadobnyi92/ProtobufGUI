@@ -47,7 +47,6 @@ public:
     void setValue(const QVariant& data);
 
     void setDesc(const proto::Descriptor * desc); //TODO hide it
-    void removeRow(int row); //TODO hide it
     void removeItem(ProtoTreeItem* item);
 
     virtual QItemDelegate* getDelegate() const = 0;
@@ -58,7 +57,7 @@ public:
     virtual void initRepeatedFieldValue(const proto::Message*, int idx) = 0;
     virtual void clearValue();
 
-    const google::protobuf::Descriptor * descriptor() const;
+    const proto::Descriptor * descriptor() const;
     const proto::FieldDescriptor * field() const;
 
 protected:

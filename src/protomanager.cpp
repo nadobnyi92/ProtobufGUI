@@ -1,11 +1,15 @@
 #include <QDir>
 #include <QUrl>
 #include <QDirIterator>
+#include <QMessageBox>
+#include <QSet>
 
 #include <google/protobuf/compiler/importer.h>
 #include <google/protobuf/dynamic_message.h>
 
 #include "protomanager.h"
+#include "prototreeerror.h"
+#include "protoerrordialog.h"
 
 namespace protoc = google::protobuf::compiler;
 namespace proto = google::protobuf;
@@ -27,10 +31,18 @@ private:
     {
     public:
         void AddError(const std::string & filename, int line,
-                      int column, const std::string & message)
+                      int /*column*/, const std::string & message)
         {
             std::cout << "[" << filename << ":" << line << "]" << message << std::endl;
+            QString qFileName = QString::fromStdString(filename);
+            QString qMessage = QString::fromStdString(message);
+            mErrors.append(ProtoMessageError {qFileName, line, qMessage});
         }
+
+        const QList<ProtoMessageError>& errors() const { return mErrors; }
+
+    private:
+        QList<ProtoMessageError> mErrors;
     };
 
 public:
@@ -46,6 +58,8 @@ public:
         mProtoTree.MapPath(virtualPath, diskPath);
     }
 
+    const QList<ProtoMessageError>& errors() const { return mError.errors(); }
+
 private:
     protoc::DiskSourceTree mProtoTree;
     protoc::Importer mImporter;
@@ -60,13 +74,9 @@ QString getFilePath(QDir root, QString filePath)
 }
 
 ProtoManager::ProtoManager(QObject *parent)
-    : QObject(parent), context(nullptr) {}
+    : QObject(parent) {}
 
-ProtoManager::~ProtoManager()
-{
-    if(context)
-        delete context;
-}
+ProtoManager::~ProtoManager() {}
 
 void ProtoManager::setPackage(const QString& pPackage)
 {
@@ -84,13 +94,11 @@ void ProtoManager::setClass(const QString& pClass)
 
 void ProtoManager::load(const QUrl& path)
 {
-    if(context)
-        delete context;
     mProtoPackages.clear();
 
     QString p = path.toLocalFile();
 
-    context = new ProtoContext();
+    context.reset(new ProtoContext());
     context->mapPath("", p.toStdString());
     QDir root(p);
 
@@ -105,6 +113,11 @@ void ProtoManager::load(const QUrl& path)
             proto::Descriptor const * desc = fDesc->message_type(i);
             mProtoPackages[fDesc->package().c_str()][desc->name().c_str()] = desc;
         }
+    }
+    if(context->errors().size() > 0) {
+        ProtoErrorDialog dlg;
+        dlg.addErrors(context->errors());
+        dlg.exec();
     }
     emit onProtoChange(removeEmptyOrDupl(mProtoPackages.keys()));
 }

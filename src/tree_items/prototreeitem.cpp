@@ -182,11 +182,6 @@ void ProtoTreeItem::setDesc(const google::protobuf::Descriptor *desc)
     expand();
 }
 
-void ProtoTreeItem::removeRow(int row)
-{
-    mChildItems.erase(mChildItems.begin() + row);
-}
-
 void ProtoTreeItem::removeItem(ProtoTreeItem* item)
 {
     mChildItems.erase(std::remove(mChildItems.begin(), mChildItems.end(), item));
