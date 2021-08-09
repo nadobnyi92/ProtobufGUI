@@ -35,6 +35,8 @@ MainWindow::MainWindow(QWidget * parent) noexcept
     ui->tvProtoTree->installEventFilter(this);
 
     connect(ui->tbLoad, SIGNAL(clicked()), SLOT(onLoadClasses()));
+    connect(ui->tbReload, &QToolButton::clicked,
+            &mProtoManager, &ProtoManager::reload);
     connect(ui->cbPackage, SIGNAL(currentTextChanged(const QString&)),
             &mProtoManager, SLOT(setPackage(const QString&)));
     connect(ui->cbClass, SIGNAL(currentTextChanged(const QString&)),

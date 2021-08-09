@@ -1,5 +1,4 @@
 #include <QDir>
-#include <QUrl>
 #include <QDirIterator>
 #include <QMessageBox>
 #include <QSet>
@@ -95,8 +94,13 @@ void ProtoManager::setClass(const QString& pClass)
 void ProtoManager::load(const QUrl& path)
 {
     mProtoPackages.clear();
+    mProtoPath = path;
+    reload();
+}
 
-    QString p = path.toLocalFile();
+void ProtoManager::reload()
+{
+    QString p = mProtoPath.toLocalFile();
 
     context.reset(new ProtoContext());
     context->mapPath("", p.toStdString());

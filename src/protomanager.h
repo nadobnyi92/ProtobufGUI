@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QHash>
+#include <QUrl>
 
 #include <memory>
 
@@ -27,6 +28,7 @@ public:
     explicit ProtoManager(QObject *parent = nullptr);
     ~ProtoManager();
     void load(const QUrl &path);
+    void reload();
 
     QMultiHash <QString, QString> getProtoClasses() const;
     const proto::Descriptor * getClassDescriptor(const QString& pPackage, const QString& pClass) const;
@@ -45,6 +47,7 @@ private:
 
     QString mCurPackage;
     QString mCurClass;
+    QUrl mProtoPath;
 
     std::unique_ptr<ProtoContext> context;
 };
