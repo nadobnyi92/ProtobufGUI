@@ -47,6 +47,7 @@ void ProtobufModel::onExpand(const QModelIndex &index)
     item->expand(); //FIXME after signal
     beginInsertRows(index.sibling(index.row(),0), 0, item->children().size());
     endInsertRows();
+    emit expandNode(index);
 }
 
 void ProtobufModel::onClearData()

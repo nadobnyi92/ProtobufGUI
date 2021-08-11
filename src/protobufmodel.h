@@ -36,6 +36,7 @@ public:
 
 signals:
     void processProtoError(const ProtoTreeError&);
+    void expandNode(const QModelIndex& index);
 
 public slots:
     void setProtoClass(const proto::Descriptor * protoclass);

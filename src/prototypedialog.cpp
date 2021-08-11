@@ -12,8 +12,8 @@ ProtoTypeDialog::ProtoTypeDialog(const ProtoManager& manager, QWidget * parent)
     mClasses = manager.getProtoClasses();
     ui->cbPackage->addItems(removeEmptyOrDupl(mClasses.keys()));
 
-    connect(ui->cbPackage, SIGNAL(currentTextChanged(const QString&)),
-            SLOT(onSetPackage(const QString&)));
+    connect(ui->cbPackage, &QComboBox::currentTextChanged,
+            this, &ProtoTypeDialog::onSetPackage);
 }
 
 void ProtoTypeDialog::onSetPackage(const QString &package)

@@ -18,7 +18,7 @@ public:
     MainWindow(QWidget * parent = nullptr) noexcept;
 
 public slots:
-    void onLoadClasses();
+    void onLoadClasses(bool);
     void onSetPackages(const QStringList&);
     void onSetClasses(const QStringList&);
     void onPrepareMenu( const QPoint& p );

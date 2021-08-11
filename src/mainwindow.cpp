@@ -35,36 +35,42 @@ MainWindow::MainWindow(QWidget * parent) noexcept
 
     ui->tvProtoTree->installEventFilter(this);
 
-    connect(ui->tbLoad, SIGNAL(clicked()), SLOT(onLoadClasses()));
+    connect(ui->tbLoad, &QToolButton::clicked,
+            this, &MainWindow::onLoadClasses);
     connect(ui->tbReload, &QToolButton::clicked,
             &mProtoManager, &ProtoManager::reload);
-    connect(ui->cbPackage, SIGNAL(currentTextChanged(const QString&)),
-            &mProtoManager, SLOT(setPackage(const QString&)));
-    connect(ui->cbClass, SIGNAL(currentTextChanged(const QString&)),
-            &mProtoManager, SLOT(setClass(const QString&)));
-    connect(&mProtoManager, SIGNAL(onProtoChange(const QStringList&)),
-            SLOT(onSetPackages(const QStringList&)));
-    connect(&mProtoManager, SIGNAL(onPackageChange(const QStringList&)),
-            SLOT(onSetClasses(const QStringList&)));
-    connect(&mProtoManager, SIGNAL(onClassChange(const proto::Descriptor*)),
-            &mModel, SLOT(setProtoClass(const proto::Descriptor *)));
-    connect(ui->tvProtoTree, SIGNAL(expanded(const QModelIndex&)),
-            &mModel, SLOT(onExpand(const QModelIndex&)));
-    connect(ui->pbSaveData, SIGNAL(clicked()), SLOT(onSaveProtoData()));
-    connect(ui->pbLoadData, SIGNAL(clicked()), SLOT(onLoadProtoData()));
-    connect(ui->pbReject, SIGNAL(clicked()), &mModel, SLOT(onClearData()));
+    connect(ui->cbPackage, &QComboBox::currentTextChanged,
+            &mProtoManager, &ProtoManager::setPackage);
+    connect(ui->cbClass, &QComboBox::currentTextChanged,
+            &mProtoManager, &ProtoManager::setClass);
+    connect(&mProtoManager, &ProtoManager::onProtoChange,
+            this, &MainWindow::onSetPackages);
+    connect(&mProtoManager, &ProtoManager::onPackageChange,
+            this, &MainWindow::onSetClasses);
+    connect(&mProtoManager, &ProtoManager::onClassChange,
+            &mModel, &ProtobufModel::setProtoClass);
+    connect(ui->tvProtoTree, &QTreeView::expanded,
+            &mModel, &ProtobufModel::onExpand);
+    connect(ui->pbSaveData, &QPushButton::clicked,
+            this, &MainWindow::onSaveProtoData);
+    connect(ui->pbLoadData, &QPushButton::clicked,
+            this, &MainWindow::onLoadProtoData);
+    connect(ui->pbReject, &QPushButton::clicked,
+            &mModel, &ProtobufModel::onClearData);
     connect(ui->pbView, &QPushButton::clicked,
             [this](){
             });
 
-    connect(ui->tvProtoTree, SIGNAL(customContextMenuRequested(const QPoint&)),
-            this, SLOT(onPrepareMenu(const QPoint&)));
+    connect(ui->tvProtoTree, &QTreeView::customContextMenuRequested,
+            this, &MainWindow::onPrepareMenu);
 
-    connect(&mModel, SIGNAL(processProtoError(const ProtoTreeError&)),
-            SLOT(onProcessProtoError(const ProtoTreeError&)));
+    connect(&mModel, &ProtobufModel::processProtoError,
+            this, &MainWindow::onProcessProtoError);
+    connect(&mModel, &ProtobufModel::expandNode,
+            ui->tvProtoTree, &QTreeView::expand);
 }
 
-void MainWindow::onLoadClasses()
+void MainWindow::onLoadClasses(bool)
 {
     QUrl path = QFileDialog::getExistingDirectoryUrl(this, "load proto dirs", QDir::homePath());
     if(!path.isEmpty())
