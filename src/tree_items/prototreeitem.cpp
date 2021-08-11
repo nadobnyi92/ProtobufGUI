@@ -71,7 +71,7 @@ void ProtoTreeItem::addAction(QAction *action)
 
 bool ProtoTreeItem::isRepeated() const
 {
-    return mField != nullptr && mField->label() == proto::FieldDescriptor::LABEL_REPEATED;
+    return dynamic_cast<const RepeatedProtoItem*>(this) != nullptr;
 }
 
 bool ProtoTreeItem::isRequired() const
