@@ -17,7 +17,9 @@ class ProtobufModel : public QAbstractItemModel
 {
     Q_OBJECT
 public:
-    ProtobufModel(QObject * parent = nullptr) : QAbstractItemModel(parent) {}
+    ProtobufModel(const ProtoManager& manager, QObject * parent = nullptr)
+        : QAbstractItemModel(parent)
+        , mProtoManager(manager) {}
     ~ProtobufModel() override {}
 
     enum ColumnTypes
@@ -38,7 +40,6 @@ signals:
 public slots:
     void setProtoClass(const proto::Descriptor * protoclass);
     void onExpand(const QModelIndex& index);
-    void onReplaceType(const QModelIndex& index, const proto::Descriptor * desc); //TODO remove it -> use expand
     void onClearData();
     void onClearField(const QModelIndex& index);
 
@@ -53,8 +54,7 @@ public:
     bool setData(const QModelIndex &index, const QVariant &value, int role) override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
 
-    void addItem(ProtoTreeItem* parent, ProtoTreeItem* child);
-    void removeItem(ProtoTreeItem* item);
+    QList<QAction*> actions(const QModelIndex& index);
 
 private:
     int itemIndex(ProtoTreeItem* item) const;
@@ -67,6 +67,7 @@ private:
 
 private:
     std::unique_ptr<RootProtoItem> mRootItem;
+    const ProtoManager& mProtoManager;
 };
 
 

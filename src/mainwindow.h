@@ -23,8 +23,6 @@ public slots:
     void onSetClasses(const QStringList&);
     void onPrepareMenu( const QPoint& p );
 
-    void onReplaceType();
-
     void onSaveProtoData();
     void onLoadProtoData();
     void onViewProtoMessage();

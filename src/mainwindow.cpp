@@ -21,6 +21,7 @@
 MainWindow::MainWindow(QWidget * parent) noexcept
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , mModel(mProtoManager)
 {
     ui->setupUi(this);
 
@@ -84,32 +85,11 @@ void MainWindow::onSetClasses(const QStringList& classes)
 
 void MainWindow::onPrepareMenu(const QPoint &p)
 {
-    QModelIndex idx = ui->tvProtoTree->indexAt(p);
-    ProtoTreeItem *item = static_cast<ProtoTreeItem*>(idx.internalPointer());
-
-//        if(item->type() == proto::FieldDescriptor::TYPE_BYTES) {
-//            QAction * actTransform = new QAction("Преобразовать тип", &menu);
-//            actTransform->setData(idx);
-//            connect(actTransform, SIGNAL(triggered()), SLOT(onReplaceType()));
-//            menu.addAction(actTransform);
-//        }
-
-    if(item->actions().size() > 0) {
+    auto actions = mModel.actions(ui->tvProtoTree->indexAt(p));
+    if(actions.size() > 0) {
         QMenu menu;
-        menu.addActions(item->actions());
+        menu.addActions(actions);
         menu.exec( ui->tvProtoTree->mapToGlobal(p) );
-    }
-}
-
-void MainWindow::onReplaceType()
-{
-    ProtoTypeDialog dlg(mProtoManager, this);
-    if(dlg.exec() == QDialog::Accepted) {
-        QAction * act = static_cast<QAction*>(sender());
-        QModelIndex idx = qvariant_cast<QModelIndex>(act->data());
-        mModel.onReplaceType(idx,
-            mProtoManager.getClassDescriptor(dlg.pPackage(), dlg.pClass()));
-        ui->tvProtoTree->expand(idx.sibling(idx.row(),0));
     }
 }
 

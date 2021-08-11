@@ -23,6 +23,13 @@ class ProtoTreeItem : public QObject
     Q_OBJECT
 
 public:
+    enum Action
+    {
+        ACT_INSERT,
+        ACT_REMOVE,
+        ACT_TRANSFORM
+    };
+
     enum ItemState
     {
         STATE_EMPTY,
@@ -42,12 +49,14 @@ public:
     QVariant value() const;
     virtual QString typeName() const;
     virtual ItemState state() const;
-    const QList<QAction*>& actions() const;
+    const QList<Action>& itemActions() const;
     void expand();
     void setValue(const QVariant& data);
 
     void setDesc(const proto::Descriptor * desc); //TODO hide it
     void removeItem(ProtoTreeItem* item);
+    ProtoTreeItem* createNode(const proto::FieldDescriptor * field);
+    ProtoTreeItem* createRepeatedNode(const proto::FieldDescriptor * field);
 
     virtual QItemDelegate* getDelegate() const = 0;
 
@@ -61,13 +70,10 @@ public:
     const proto::FieldDescriptor * field() const;
 
 protected:
-    ProtoTreeItem* createNode(const proto::FieldDescriptor * field);
-    ProtoTreeItem* createRepeatedNode(const proto::FieldDescriptor * field);
-
     void expandChildren();
     void clearChildren();
 
-    void addAction(QAction* action);
+    void addItemAction(Action action);
 
     bool isRepeated() const;
     bool isRequired() const;
@@ -78,16 +84,13 @@ protected:
     ProtobufModel& model();
 
 private:
-    void init();
-
-private:
     const proto::FieldDescriptor * mField;
     QString mName;
     QVariant mValue;
     const proto::Descriptor * mDesc;
     ProtobufModel& mModel;
 
-    QList<QAction*> mActions;
+    QList<Action> mItemActions;
     std::vector<ProtoTreeItem*> mChildItems;
     ProtoTreeItem *mParentItem;
 };

@@ -19,9 +19,6 @@ protected:
     void addFieldValue(google::protobuf::Message *, const google::protobuf::FieldDescriptor *) override {}
     void initFieldValue(const google::protobuf::Message *) override;
     void initRepeatedFieldValue(const google::protobuf::Message *, int) override {}
-
-private:
-    void init();
 };
 
 #endif // REPEATEDPROTOITEM_H

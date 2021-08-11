@@ -24,7 +24,8 @@ ProtoTreeItem::ProtoTreeItem(ProtobufModel& model, const google::protobuf::Descr
     , mModel(model)
     , mParentItem(parentItem)
 {
-    init();
+    if(mParentItem && mParentItem->isRepeated())
+        addItemAction(ACT_REMOVE);
 }
 
 ProtoTreeItem::ProtoTreeItem(ProtobufModel& model, const google::protobuf::FieldDescriptor * field, ProtoTreeItem *parentItem)
@@ -35,7 +36,8 @@ ProtoTreeItem::ProtoTreeItem(ProtobufModel& model, const google::protobuf::Field
     , mModel(model)
     , mParentItem(parentItem)
 {
-    init();
+    if(mParentItem && mParentItem->isRepeated())
+        addItemAction(ACT_REMOVE);
 }
 
 ProtoTreeItem::~ProtoTreeItem() {}
@@ -64,9 +66,9 @@ void ProtoTreeItem::clearChildren()
     mChildItems.clear();
 }
 
-void ProtoTreeItem::addAction(QAction *action)
+void ProtoTreeItem::addItemAction(ProtoTreeItem::Action action)
 {
-    mActions.append(action);
+    mItemActions.append(action);
 }
 
 bool ProtoTreeItem::isRepeated() const
@@ -92,17 +94,6 @@ bool ProtoTreeItem::isMessageType() const
 ProtobufModel &ProtoTreeItem::model()
 {
     return mModel;
-}
-
-void ProtoTreeItem::init()
-{
-    if(mParentItem && mParentItem->isRepeated())
-    {
-        QAction *act = new QAction(this);
-        act->setText("Удалить");
-        connect(act, &QAction::triggered, [&](){ model().removeItem(this); });
-        addAction(act);
-    }
 }
 
 const google::protobuf::Descriptor *ProtoTreeItem::descriptor() const
@@ -214,9 +205,9 @@ ProtoTreeItem::ItemState ProtoTreeItem::state() const
     return isRequired() ? STATE_EMPTY : STATE_OPTIONAL;
 }
 
-const QList<QAction *> &ProtoTreeItem::actions() const
+const QList<ProtoTreeItem::Action> &ProtoTreeItem::itemActions() const
 {
-    return mActions;
+    return mItemActions;
 }
 
 ProtoTreeItem *ProtoTreeItem::parentItem()

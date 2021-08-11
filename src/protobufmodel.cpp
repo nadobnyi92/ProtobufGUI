@@ -3,6 +3,7 @@
 #include "tree_items/repeatedprotoitem.h"
 #include "tree_items/bytestprotoitem.h"
 #include "prototreeerror.h"
+#include "prototypedialog.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -45,20 +46,6 @@ void ProtobufModel::onExpand(const QModelIndex &index)
 
     item->expand(); //FIXME after signal
     beginInsertRows(index.sibling(index.row(),0), 0, item->children().size());
-    endInsertRows();
-}
-
-void ProtobufModel::onReplaceType(const QModelIndex &index, const proto::Descriptor* desc)
-{
-    BytesProtoItem *pItem = static_cast<BytesProtoItem*>(index.internalPointer()); //fixit
-    beginRemoveRows(index, 0, pItem->children().size());
-    try {
-        pItem->setDesc(desc);
-    } catch (ProtoTreeError& e) {
-        emit processProtoError(e);
-    }
-    endRemoveRows();
-    beginInsertRows(index, 0, pItem->children().size());
     endInsertRows();
 }
 
@@ -189,31 +176,67 @@ Qt::ItemFlags ProtobufModel::flags(const QModelIndex &index) const
     return QAbstractItemModel::flags(index) | Qt::ItemIsEnabled;
 }
 
-void ProtobufModel::addItem(ProtoTreeItem* parent, ProtoTreeItem* child)
+QList<QAction *> ProtobufModel::actions(const QModelIndex& index)
 {
-    QModelIndex idx = fromItem(parent);
-    if(!idx.isValid())
-    {
-        qDebug() << "index is not found";
-        return;
-    }
-    beginInsertRows(idx, parent->children().size(), parent->children().size());
-    endInsertRows();
-    onExpand(idx);
-}
+    ProtoTreeItem *item = toItem(index);
 
-void ProtobufModel::removeItem(ProtoTreeItem* item)
-{
-    QModelIndex idx = fromItem(item);
-    QModelIndex parentIdx = fromItem(item->parentItem());
-    if(!idx.isValid() || !parentIdx.isValid())
+    QList<QAction*> actions;
+    for(ProtoTreeItem::Action act: item->itemActions())
     {
-        qDebug() << "index is not found";
-        return;
+        switch (act)
+        {
+        case ProtoTreeItem::ACT_INSERT:
+        {
+            QAction * act = new QAction(this);
+            act->setText("Добавить");
+            connect(act, &QAction::triggered, this, [item, index, this]() {
+                item->createNode(item->field());
+                beginInsertRows(index, item->children().size(), item->children().size());
+                endInsertRows();
+                onExpand(index);
+            });
+            actions.append(act);
+            break;
+        }
+        case ProtoTreeItem::ACT_REMOVE:
+        {
+            QAction *act = new QAction(this);
+            act->setText("Удалить");
+            connect(act, &QAction::triggered, [item, index, this](){
+                if(!index.parent().isValid()) return;
+                beginRemoveRows(index.parent(), index.row(), index.row());
+                item->parentItem()->removeItem(item);
+                endRemoveRows();
+            });
+            actions.append(act);
+            break;
+        }
+        case ProtoTreeItem::ACT_TRANSFORM:
+        {
+            QAction * act = new QAction(this);
+            act->setText("Преобразовать тип");
+            connect(act, &QAction::triggered, [item, index, this](){
+                ProtoTypeDialog dlg(mProtoManager);
+                if(dlg.exec() == QDialog::Accepted) {
+                    beginRemoveRows(index, 0, item->children().size());
+                    try {
+                        item->setDesc(mProtoManager.getClassDescriptor(dlg.pPackage(), dlg.pClass()));
+                    } catch (ProtoTreeError& e) {
+                        emit processProtoError(e);
+                    }
+                    endRemoveRows();
+                    beginInsertRows(index, 0, item->children().size());
+                    endInsertRows();
+                    onExpand(index);
+                }
+            });
+            actions.append(act);
+            break;
+        }
+        default: break;
+        }
     }
-    beginRemoveRows(parentIdx, idx.row(), idx.row());
-    item->parentItem()->removeItem(item);
-    endRemoveRows();
+    return actions;
 }
 int ProtobufModel::itemIndex(ProtoTreeItem *item) const
 {
