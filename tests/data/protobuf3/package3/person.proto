@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+enum Title
+{
+    DIRECTOR = 0;
+    MANAGER = 1;
+    WORKER = 2;
+};
+
+message Person 
+{
+    string first_name = 1;
+    string last_name = 2;
+    string middle_name = 3;
+    Title title  = 4;
+};

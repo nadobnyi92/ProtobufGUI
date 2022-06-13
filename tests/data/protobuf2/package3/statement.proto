@@ -1,0 +1,10 @@
+syntax = "proto2";
+
+package package3;
+
+message State {
+    optional State parent = 1;
+    required int32 value = 2;
+    repeated State childrens = 3;
+}
+

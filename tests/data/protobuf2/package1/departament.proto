@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+package package1;
+
+import "person.proto";
+
+message Departament
+{
+    required string title = 1;
+    required Person manager = 2;
+    repeated Person workers = 3;
+}

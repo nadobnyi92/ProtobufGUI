@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+import "item.proto";
+import "stat.proto";
+
+message Character
+{
+    string name = 1;
+    repeated Stat stats = 2;
+    repeated Item items = 3;
+}

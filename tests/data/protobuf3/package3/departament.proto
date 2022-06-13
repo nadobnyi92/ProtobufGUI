@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+import "person.proto";
+
+message Departament
+{
+    string title = 1;
+    Person manager = 2;
+    repeated Person workers = 3;
+}

@@ -1,0 +1,16 @@
+syntax "proto3";
+
+enum ItemType
+{
+    Sword = 0;
+    Gun = 1;
+    Armor = 2;
+    Book = 3;
+}
+
+message Item
+{
+    ItemType type = 1;
+    bytes data = 2;
+}
+

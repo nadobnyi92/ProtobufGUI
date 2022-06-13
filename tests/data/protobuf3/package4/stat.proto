@@ -1,0 +1,16 @@
+syntax "proto3";
+
+enum StatType
+{
+    STAMINA = 0;
+    STRANGE = 1;
+    AGILE = 2;
+    INTELLEGENCE = 3;
+}
+
+message Stat
+{
+    StatType type = 1;
+    int32 value = 2;
+}
+

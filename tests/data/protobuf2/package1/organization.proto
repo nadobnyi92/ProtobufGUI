@@ -1,0 +1,14 @@
+syntax = "proto2";
+
+package package1;
+
+import "person.proto";
+import "departament.proto";
+import "address.proto";
+
+message Organization
+{
+    required Person director = 1;
+    repeated Departament departaments = 2;
+    required Address address = 3;
+};

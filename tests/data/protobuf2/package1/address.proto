@@ -1,0 +1,19 @@
+syntax = "proto2";
+
+package package1;
+
+enum AddressType {
+    LEGAL = 0;
+    PHYSICAL = 1;
+}
+
+message Address {
+    required AddressType type = 1;
+    required string country = 2;
+    required string city = 3;
+    required string street = 4;
+    required int32 house = 5;
+    optional int32 corpus = 6;
+    optional int32 flat = 7;
+    required int32 postcode = 8;
+}

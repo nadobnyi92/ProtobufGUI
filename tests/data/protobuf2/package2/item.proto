@@ -1,0 +1,36 @@
+syntax = "proto2";
+
+package package2;
+
+enum ItemType {
+    SWORD = 0;
+    GUN = 1;
+    ARMOR = 2;
+    BOOK = 3;
+}
+
+message Item {
+    required ItemType type = 1;
+    required bytes data = 2;
+}
+
+message SwordItem
+{
+    required int32 damage = 1;
+    required int32 speed = 2;
+}
+
+message GunItem {
+    required int32 damage =1;
+    required int32 speed = 2;
+    required int32 ammoSize = 3;
+}
+
+message ArmorItem {
+    required int32 armor = 1;
+}
+
+message BookItem {
+    required int32 intellege = 1;
+}
+

@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+enum AddressType
+{
+    LEGAL = 0;
+    PHYSICAL = 1;
+}
+
+message Address {
+    AddressType type = 1;
+    string country = 2;
+    string city = 3;
+    string street = 4;
+    int32 house = 5;
+    int32 corpus = 6;
+    int32 flat = 7;
+    int32 postcode = 8;
+}

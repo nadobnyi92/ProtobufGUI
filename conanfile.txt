@@ -1,5 +1,5 @@
 [requires]
-protobuf/3.5.1@bincrafters/stable 
+protobuf/3.21.1
 
 [generators]
 cmake
