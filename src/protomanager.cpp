@@ -23,6 +23,16 @@ QStringList removeEmptyOrDupl(const QStringList& src)
     return res;
 }
 
+QStringList removeDupl(const QStringList& src)
+{
+    QStringList res;
+    std::copy_if(src.begin(), src.end(),
+                 std::back_inserter(res),
+                 [&](const QString& val) {return !res.contains(val) && !val.trimmed().isEmpty();});
+    res.sort();
+    return res;
+}
+
 class ProtoContext
 {
 private:
@@ -80,7 +90,7 @@ ProtoManager::~ProtoManager() {}
 void ProtoManager::setPackage(const QString& pPackage)
 {
     mCurPackage = pPackage;
-    emit onPackageChange(removeEmptyOrDupl(mProtoPackages[mCurPackage].keys()));
+    emit onPackageChange(removeDupl(mProtoPackages[mCurPackage].keys()));
 }
 
 void ProtoManager::setClass(const QString& pClass)
@@ -115,6 +125,7 @@ void ProtoManager::reload()
 
         for (int i = 0, c = fDesc->message_type_count(); i < c; ++i) {
             proto::Descriptor const * desc = fDesc->message_type(i);
+            std::cout << fDesc->package().c_str() << std::endl;
             mProtoPackages[fDesc->package().c_str()][desc->name().c_str()] = desc;
         }
     }

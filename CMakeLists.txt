@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.1)
 project(ProtobufGUI)
 
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include(${CMAKE_SOURCE_DIR}/conan.cmake)
 conan_cmake_run(
