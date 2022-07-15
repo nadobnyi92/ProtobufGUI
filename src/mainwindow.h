@@ -19,6 +19,7 @@ public:
 
 public slots:
     void onLoadClasses(bool);
+    void onLoadSingleFile(bool);
     void onSetPackages(const QStringList&);
     void onSetClasses(const QStringList&);
     void onPrepareMenu( const QPoint& p );

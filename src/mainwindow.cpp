@@ -35,8 +35,10 @@ MainWindow::MainWindow(QWidget * parent) noexcept
 
     ui->tvProtoTree->installEventFilter(this);
 
-    connect(ui->tbLoad, &QToolButton::clicked,
+    connect(ui->tbOpenFolder, &QToolButton::clicked,
             this, &MainWindow::onLoadClasses);
+    connect(ui->tbOpenFile, &QToolButton::clicked,
+            this, &MainWindow::onLoadSingleFile);
     connect(ui->tbReload, &QToolButton::clicked,
             &mProtoManager, &ProtoManager::reload);
     connect(ui->cbPackage, &QComboBox::currentTextChanged,
@@ -73,6 +75,14 @@ MainWindow::MainWindow(QWidget * parent) noexcept
 void MainWindow::onLoadClasses(bool)
 {
     QUrl path = QFileDialog::getExistingDirectoryUrl(this, "load proto dirs", QDir::homePath());
+    if(!path.isEmpty())
+         mProtoManager.load(path);
+}
+
+void MainWindow::onLoadSingleFile(bool)
+{
+    QString path = QFileDialog::getOpenFileName(this, "load proto file", QDir::homePath(), "Protobuf(*.proto)");
+    qDebug() << path;
     if(!path.isEmpty())
          mProtoManager.load(path);
 }

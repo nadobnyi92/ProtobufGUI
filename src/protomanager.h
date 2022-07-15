@@ -36,6 +36,8 @@ public:
 public slots:
     void setPackage(const QString& pPackage);
     void setClass(const QString& pClass);
+    void reloadDir();
+    void reloadFile();
 
 signals:
     void onProtoChange(const QStringList& packages);

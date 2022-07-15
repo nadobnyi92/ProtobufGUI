@@ -50,10 +50,17 @@
        <widget class="QComboBox" name="cbClass"/>
       </item>
       <item>
-       <widget class="QToolButton" name="tbLoad">
+       <widget class="QToolButton" name="tbOpenFolder">
         <property name="toolTip">
          <string>load proto classes</string>
         </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="tbOpenFile">
         <property name="text">
          <string>...</string>
         </property>

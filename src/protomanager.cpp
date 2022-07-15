@@ -2,6 +2,7 @@
 #include <QDirIterator>
 #include <QMessageBox>
 #include <QSet>
+#include <QDebug>
 
 #include <google/protobuf/compiler/importer.h>
 #include <google/protobuf/dynamic_message.h>
@@ -110,8 +111,13 @@ void ProtoManager::load(const QUrl& path)
 
 void ProtoManager::reload()
 {
-    QString p = mProtoPath.toLocalFile();
+    QFileInfo info { mProtoPath.toLocalFile() };
+    info.isDir() ? reloadDir() : reloadFile();
+}
 
+void ProtoManager::reloadDir()
+{
+    QString p = mProtoPath.toLocalFile();
     context.reset(new ProtoContext());
     context->mapPath("", p.toStdString());
     QDir root(p);
@@ -136,6 +142,33 @@ void ProtoManager::reload()
     }
     emit onProtoChange(removeEmptyOrDupl(mProtoPackages.keys()));
 }
+
+void ProtoManager::reloadFile()
+{
+    QFileInfo info { mProtoPath.toLocalFile() };
+    QDir root = info.absoluteDir();
+    qDebug() << root.absolutePath();
+    context.reset(new ProtoContext());
+    context->mapPath("", root.absolutePath().toStdString());
+
+    qDebug() << root.relativeFilePath( info.absoluteFilePath() );
+    const proto::FileDescriptor * fDesc = context->import(root.relativeFilePath( info.absoluteFilePath() ).toStdString());
+    if(fDesc == nullptr)
+        return;
+
+    for (int i = 0, c = fDesc->message_type_count(); i < c; ++i) {
+        proto::Descriptor const * desc = fDesc->message_type(i);
+        std::cout << fDesc->package().c_str() << std::endl;
+        mProtoPackages[fDesc->package().c_str()][desc->name().c_str()] = desc;
+    }
+    if(context->errors().size() > 0) {
+        ProtoErrorDialog dlg;
+        dlg.addErrors(context->errors());
+        dlg.exec();
+    }
+    emit onProtoChange(removeEmptyOrDupl(mProtoPackages.keys()));
+}
+
 
 QMultiHash<QString, QString> ProtoManager::getProtoClasses() const
 {
